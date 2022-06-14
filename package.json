@@ -1,0 +1,23 @@
+{
+  "name": "radish",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://df-git.informatik.uni-kl.de/teaching/df-project/ss22/radish.git"
+  },
+  "dependencies": {
+    "mongodb": "^4.7.0"
+  },
+  "prettier": {
+  "semi": true
+},
+  "author": "Radish Group",
+  "devDependencies": {
+    "eslint": "^8.17.0",
+    "prettier": "^2.7.0"
+  }
+}
