@@ -1,2 +1,19 @@
-node_modules
+**/node_modules/*
 .idea
+
+# sveltekit files
+farmbot-app/.DS_Store
+farmbot-app/dist
+farmbot-app/test-results/
+farmbot-app/package-lock.json
+farmbot-app/yarn.lock
+farmbot-app/packages/create-svelte/template/CHANGELOG.md
+farmbot-app/packages/kit/src/packaging/test/watch/package
+farmbot-app/documentation/types.js
+farmbot-app/.env
+farmbot-app/.vercel_build_output
+farmbot-app/.svelte-kit
+farmbot-app/.cloudflare
+farmbot-app/.pnpm-debug.log
+farmbot-app/.netlify
+farmbot-app/.turbo
