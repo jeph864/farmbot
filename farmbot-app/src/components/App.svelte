@@ -1,10 +1,10 @@
 <script>
-	import SeedingJobControls from "./CreateSeedingJob.svelte";
+	import JobControls from "./JobControls.svelte";
 </script>
 
 <main>
 	<h1>Digital Farming Project</h1>
-	<SeedingJobControls />
+	<JobControls />
 </main>
 
 <style>
