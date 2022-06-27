@@ -1,4 +1,5 @@
 <script>
+    import ActionItem from "./ActionItem.svelte";
 
     let depth;
     let dist;
@@ -18,9 +19,8 @@
 
 </script>
 
-<main>
-    <h1>Create a new seeding job</h1>
-
+<ActionItem>
+    <div>Create a new seeding job</div>
     <div>
         <table id="myTable" border="0" cellpadding="3">
             <tr>
@@ -57,30 +57,22 @@
             </tr>
         </table>
     </div>
-</main>
+</ActionItem>
 
 <style>
     main {
         text-align: center;
-        padding: 2em;
+        padding: 16px;
         margin: auto;
     }
 
 
     #myTable {
-        width:30%;
         table-layout: fixed;
-        background-color:lightblue;
+        background-color: lightblue;
         outline: 2px solid green;
-        margin-left: 35%;
+        margin-left: 16px;
     }
 
-    h1 {
-        text-align: center;
-        color: #00aa00;
-        text-transform: uppercase;
-        font-size: 4em;
-        font-weight: 200;
-    }
 
 </style>
