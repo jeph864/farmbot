@@ -1,7 +1,7 @@
 {
   "name": "radish",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,14 +10,28 @@
     "url": "https://df-git.informatik.uni-kl.de/teaching/df-project/ss22/radish.git"
   },
   "dependencies": {
-    "mongodb": "^4.7.0"
+    "axios": "^0.27.2",
+    "body": "^5.1.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "farmbot": "^15.0.0",
+    "generic-session": "^0.1.2",
+    "hyperscript": "^2.0.2",
+    "mongodb": "^4.7.0",
+    "pwd": "^1.1.0",
+    "redirecter": "^0.2.3",
+    "request": "^2.88.2",
+    "routes-router": "^4.3.1",
+    "send-data": "^8.0.0"
   },
   "prettier": {
-  "semi": true
-},
+    "semi": true
+  },
   "author": "Radish Group",
   "devDependencies": {
     "eslint": "^8.17.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.7.0"
   }
 }
