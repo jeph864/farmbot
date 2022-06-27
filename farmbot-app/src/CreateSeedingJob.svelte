@@ -19,8 +19,7 @@
 
 </script>
 
-<ActionItem>
-    <div>Create a new seeding job</div>
+<ActionItem description="Create a new seeding job">
     <div>
         <table id="myTable" border="0" cellpadding="3">
             <tr>
@@ -69,9 +68,6 @@
 
     #myTable {
         table-layout: fixed;
-        background-color: lightblue;
-        outline: 2px solid green;
-        margin-left: 16px;
     }
 
 
