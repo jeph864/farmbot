@@ -9,7 +9,7 @@ const users = require("./utils/users");
 const SeedingJob = require("./utils/seeding_job");
 const { saveApiData } = require("./utils/users");
 
-const port =3000;
+const port = 3001;
 let seeding_job = null ;
 let bot = null;
 let status_message = null;
@@ -265,7 +265,7 @@ dbConnect.connect(function(err){
 
   //start the server
   app.listen(port, ()=>{
-    console.log("Webserver started on port 3000");
+    console.log("Webserver started on port " + port);
   });
 })
 
