@@ -1,20 +1,29 @@
 <script>
     import ActionItem from "./ActionItem.svelte";
 
-    let depth;
-    let dist;
-    let plant = "e.g. radish";
+    let name, depth, min_dist;
+    let plant_type = "e.g. radish";
     let x1 = 0;
     let y1 = 0;
     let x2 = 200;
     let y2 = 300;
 
-    function cancel() {
-        //TODO: go back to App.svelte
-    }
-
     function create() {
-        //TODO: create new job and close window (go back to App.svelte)
+        createJob({
+            name,
+            plant_type,
+            min_dist,
+            working_area: {
+                pos: {
+                    x: x1,
+                    y: y1
+                },
+                end_pos: {
+                    x: x2,
+                    y: y2
+                }
+            }
+        })
     }
 
 </script>
@@ -23,12 +32,16 @@
     <div>
         <table id="myTable" border="0" cellpadding="3">
             <tr>
+                <td>name:</td>
+                <td><input bind:value={name}></td>
+            </tr>
+            <tr>
                 <td>plant type:</td>
-                <td><input bind:value={plant}></td>
+                <td><input bind:value={plant_type}></td>
             </tr>
             <tr>
                 <td>plant distance (in mm):</td>
-                <td><input bind:value={dist}></td>
+                <td><input bind:value={min_dist}></td>
             </tr>
             <tr>
                 <td>seeding depth (in mm):</td>
@@ -47,11 +60,8 @@
                 <td>&ensp;</td>
             </tr>
             <tr>
-                <td><button on:click={cancel}>
-                    cancel
-                </button></td>
                 <td><button on:click={create}>
-                    create job
+                    Create job
                 </button></td>
             </tr>
         </table>
