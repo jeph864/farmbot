@@ -5,7 +5,7 @@
     let jobName;
     let plantingDepth;
     let dist;
-    let plant = "e.g. radish";
+    let plant = "radish";
     let x1 = 0;
     let y1 = 0;
     let x2 = 200;
@@ -58,11 +58,11 @@
             </tr>
             <tr>
                 <td>Plant distance (in mm):</td>
-                <td><input bind:value={dist}></td>
+                <td><input type = "number" bind:value={dist}></td>
             </tr>
             <tr>
                 <td>Seeding depth (in mm):</td>
-                <td><input bind:value={plantingDepth}></td>
+                <td><input type = "number" bind:value={plantingDepth}></td>
             </tr>
             <tr>
                 <td>&ensp;</td>
@@ -70,7 +70,7 @@
             </tr>
             <tr>
                 <td>Working area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
-                <td>x1: <input bind:value={x1}><br /> y1: <input bind:value={y1}> <br /> x2: <input bind:value={x2}> <br /> y2: <input bind:value={y2}></td>
+                <td>x1: <input type = "number" bind:value={x1}><br /> y1: <input type = "number" bind:value={y1}> <br /> x2: <input type = "number" bind:value={x2}> <br /> y2: <input type = "number" bind:value={y2}></td>
             </tr>
         </table>
         <button on:click={create}>
