@@ -60,9 +60,6 @@
                 <td>&ensp;</td>
             </tr>
             <tr>
-<!--                <td><button on:click={cancel}>-->
-<!--                    cancel-->
-<!--                </button></td>-->
                 <td><button on:click={create}>
                     Create job
                 </button></td>
