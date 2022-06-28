@@ -2,29 +2,45 @@
     import ActionItem from "./ActionItem.svelte";
     import { createJob } from "../fetchers.js";
 
-    let name, depth, min_dist;
-    let plant_type = "radish";
+    let jobName;
+    let plantingDepth;
+    let dist;
+    let plant = "e.g. radish";
     let x1 = 0;
     let y1 = 0;
     let x2 = 200;
     let y2 = 300;
+    let jobCreated="";
 
     function create() {
-        createJob({
-            name,
-            plant_type,
-            min_dist,
-            working_area: {
-                pos: {
-                    x: x1,
-                    y: y1
-                },
-                end_pos: {
-                    x: x2,
-                    y: y2
-                }
-            }
-        })
+        if(dist>=0){
+            if(plantingDepth>=0) {
+                if (x1 <= x2) {
+                    if (y1 <= y2) {
+
+                        createJob({
+                            jobName,
+                            plant,
+                            dist,
+                            working_area: {
+                                pos: {
+                                    x: x1,
+                                    y: y1
+                                },
+                                end_pos: {
+                                    x: x2,
+                                    y: y2
+                                }
+                            }
+                        })
+
+                        jobCreated="Seeding Job created successfully!"
+
+                    }
+                    else { alert("y2 cannot be greater than y1"); }
+                } else { alert("x2 cannot be greater than x1"); }
+            } else{ alert("planting depth must be a positive number") }
+        } else{ alert("plant distance must be a positive number") }
     }
 
 </script>
@@ -33,43 +49,36 @@
     <div>
         <table id="myTable" border="0" cellpadding="3">
             <tr>
-                <td>name:</td>
-                <td><input bind:value={name}></td>
+                <td>Name of the job:</td>
+                <td><input bind:value={jobName}></td>
             </tr>
             <tr>
-                <td>plant type:</td>
-                <td><input bind:value={plant_type}></td>
+                <td>Plant type:</td>
+                <td><input bind:value={plant}></td>
             </tr>
             <tr>
-                <td>plant distance (in mm):</td>
-                <td><input type = "number" bind:value={min_dist}></td>
+                <td>Plant distance (in mm):</td>
+                <td><input bind:value={dist}></td>
             </tr>
             <tr>
-                <td>seeding depth (in mm):</td>
-                <td><input type = "number" bind:value={depth}></td>
-            </tr>
-            <tr>
-                <td>&ensp;</td>
-                <td>&ensp;</td>
-            </tr>
-            <tr>
-                <td>working area: <br /> (coordinates in mm)</td>
-                <td>x1: <input type = "number" bind:value={x1}><br /> y1: <input type = "number" bind:value={y1}> <br /> x2: <input type = "number"  bind:value={x2}> <br /> y2: <input type = "number"  bind:value={y2}></td>
+                <td>Seeding depth (in mm):</td>
+                <td><input bind:value={plantingDepth}></td>
             </tr>
             <tr>
                 <td>&ensp;</td>
                 <td>&ensp;</td>
             </tr>
             <tr>
-                <td><button on:click={create}>
-                    Create job
-                </button></td>
+                <td>Working area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
+                <td>x1: <input bind:value={x1}><br /> y1: <input bind:value={y1}> <br /> x2: <input bind:value={x2}> <br /> y2: <input bind:value={y2}></td>
             </tr>
         </table>
+        <button on:click={create}>
+            Create job
+        </button>
+        <br /> <p style="color: green;">{jobCreated}</p>
     </div>
 </ActionItem>
-
-
 
 <style>
     main {
@@ -77,7 +86,6 @@
         padding: 16px;
         margin: auto;
     }
-
 
     #myTable {
         table-layout: fixed;

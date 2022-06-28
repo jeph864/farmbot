@@ -1,9 +1,13 @@
 <script>
   import CreateSeedingJob from "./CreateSeedingJob.svelte";
+  import BotStatus from "./BotStatus.svelte";
+  import ExecuteJob from "./ExecuteJob.svelte";
 </script>
 
 <div class="container">
   <CreateSeedingJob />
+  <ExecuteJob />
+  <BotStatus />
 </div>
 
 <style>
