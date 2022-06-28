@@ -6,9 +6,10 @@ async function createJob(job) {
   console.log(JSON.stringify(job))
   const init = {
     method: "POST",
-    mode: "no-cors",
+    mode: "cors",
     headers: {
-      "Content-Type": "application/json"
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(job)
   }

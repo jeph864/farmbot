@@ -3,6 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const api = require("./utils/api")
+const cors = require("cors")
 
 const dbConnect = require("./utils/conn");
 const users = require("./utils/users");
@@ -25,7 +26,7 @@ app.use(session({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cors({ origin: '*' , credentials :  false}));
 //app.use(authChecker);
 app.get('/', function(request, response) {
   response.send("Welcome in");
@@ -90,10 +91,10 @@ app.get('/search/', function(req, res, next){
 })
 app.post('/jobs/create/', function(req, res, next){
   let params = req.body;
-  console.log(req);
   seeding_job.createJob(params, function(error ,results){
     if(error) throw error;
     if (results) {
+      res.setHeader('Access-Control-Allow-Origin', '*')
       res.send("Job created successfully");
     }
     next();
