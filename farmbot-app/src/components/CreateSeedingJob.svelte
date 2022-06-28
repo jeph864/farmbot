@@ -1,5 +1,6 @@
 <script>
     import ActionItem from "./ActionItem.svelte";
+    import { createJob } from "../fetchers.js";
 
     let name, depth, min_dist;
     let plant_type = "e.g. radish";

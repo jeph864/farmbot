@@ -32,6 +32,7 @@ var SeedingJob = /** @class */ (function () {
 
     }
     this.__init_params = function(input){
+      console.log(input)
       input.working_area.length = input.working_area.end_pos.x - input.working_area.pos.x;
       input.working_area.width = input.working_area.end_pos.y - input.working_area.pos.y;
       return Object.assign(this.__default_params, input);

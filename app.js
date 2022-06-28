@@ -90,6 +90,7 @@ app.get('/search/', function(req, res, next){
 })
 app.post('/jobs/create/', function(req, res, next){
   let params = req.body;
+  console.log(req);
   seeding_job.createJob(params, function(error ,results){
     if(error) throw error;
     if (results) {

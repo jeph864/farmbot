@@ -1,15 +1,24 @@
-const baseUrl = "127.0.0.1";
+const baseUrl = "http://localhost:3001";
+// const baseUrl = ""
 
 async function createJob(job) {
-  const url = `${baseUrl}/jobs/create/`
-  const res = await fetch(url, {
+  const url = `${baseUrl}/jobs/create`
+  console.log(JSON.stringify(job))
+  const init = {
     method: "POST",
+    mode: "no-cors",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(job)
+  }
+  fetch(url, init).then((res) => {
+    console.log(res)
+    return res.json();
+  }).catch(err => {
+    console.error(err)
   });
-  return res.json();
+
 }
 
 async function searchJobs(query) {
@@ -27,9 +36,12 @@ async function executeJob(job_id) {
   const url = `${baseUrl}/jobs/execute/${job_id}`
   const res = await fetch(url, {
     method: "GET",
+    mode: "no-cors",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
   });
   return res.json();
 }
+
+export {createJob, searchJobs, executeJob}
