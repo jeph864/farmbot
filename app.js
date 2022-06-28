@@ -102,7 +102,6 @@ app.post('/jobs/create/', function(req, res, next){
 });
 
 app.get('/jobs/execute/', function(req,response,next){
-
   seeding_job.executeJob(req.body.job_id, function(error, results){
     if (results){
       console.log(results)

@@ -3,7 +3,7 @@
     import { createJob } from "../fetchers.js";
 
     let name, depth, min_dist;
-    let plant_type = "e.g. radish";
+    let plant_type = "radish";
     let x1 = 0;
     let y1 = 0;
     let x2 = 200;
@@ -42,11 +42,11 @@
             </tr>
             <tr>
                 <td>plant distance (in mm):</td>
-                <td><input bind:value={min_dist}></td>
+                <td><input type = "number" bind:value={min_dist}></td>
             </tr>
             <tr>
                 <td>seeding depth (in mm):</td>
-                <td><input bind:value={depth}></td>
+                <td><input type = "number" bind:value={depth}></td>
             </tr>
             <tr>
                 <td>&ensp;</td>
@@ -54,7 +54,7 @@
             </tr>
             <tr>
                 <td>working area: <br /> (coordinates in mm)</td>
-                <td>x1: <input bind:value={x1}><br /> y1: <input bind:value={y1}> <br /> x2: <input bind:value={x2}> <br /> y2: <input bind:value={y2}></td>
+                <td>x1: <input type = "number" bind:value={x1}><br /> y1: <input type = "number" bind:value={y1}> <br /> x2: <input type = "number"  bind:value={x2}> <br /> y2: <input type = "number"  bind:value={y2}></td>
             </tr>
             <tr>
                 <td>&ensp;</td>

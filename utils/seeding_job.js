@@ -146,10 +146,14 @@ var SeedingJob = /** @class */ (function () {
         status: { running: false },
         working_area: { pos: { x: 0, y: 0 }, length: 150, width: 100 }
       }*/
-      const pos = jobs.working_area.pos, width= jobs.working_area.width, length = jobs.working_area.length;
+      const pos = jobs.working_area.pos
+      let length = jobs.working_area.length
+      let width= jobs.working_area.width
       let locations = [];
-      for(let i = pos.x+jobs.min_dist; i<length; i = i+jobs.min_dist){
-        for(let j = pos.y+jobs.min_dist;j<width; j = j+ jobs.min_dist){
+      length = length + pos.x
+      width = width + pos.y
+      for(let i = pos.x+jobs.min_dist; i<length-jobs.min_dist; i = i+jobs.min_dist){
+        for(let j = pos.y+jobs.min_dist;j<width-jobs.min_dist; j = j+ jobs.min_dist){
           locations.push({
             x:i, y:j, z: jobs.depth
           })
