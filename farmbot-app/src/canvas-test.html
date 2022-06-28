@@ -5,11 +5,118 @@
   <title>Canvas test</title>
 </head>
 <body>
+  <button onclick="selectAreaCoords()">Select sub-area</button>
+  <button onclick="saveCoords()">Save</button>
   <canvas width="800" height="600" id="canvas"></canvas>
   <script>
     const canvas = document.getElementById("canvas");
-    const c = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d');
+
+    // let x = 0;
+    // let y = 0;
+    let state = "point-select";
+    let shapes = [];
+
+    function computeLeftAndRightCorner(x, y, width, height) {
+      return {
+        x1:
+      }
+    }
+
+    function clearCanvas(ctx) {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    }
+
+    function drawCross(ctx, x, y, height) {
+      const half = height / 2;
+      ctx.beginPath();
+      ctx.strokeStyle = '#ea0606'
+      ctx.moveTo(x - half, y);
+      ctx.lineTo(x + half, y);
+      ctx.moveTo(x, y - half);
+      ctx.lineTo(x, y + half);
+      ctx.stroke();
+      ctx.strokeStyle = 'black'
+      ctx.closePath()
+    }
+
+    function drawCenterLines(ctx, x, y) {
+      ctx.beginPath();
+      ctx.strokeStyle = '#9d9b9b'
+      ctx.setLineDash([5, 3]);
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, ctx.canvas.height);
+      ctx.moveTo(0, y);
+      ctx.lineTo(ctx.canvas.width, y);
+      ctx.stroke();
+      ctx.strokeStyle = 'black'
+      ctx.setLineDash([0, 0]);
+      ctx.closePath()
+    }
+
+    function selectPoint(ctx, e) {
+      // simple point select
+      clearCanvas(ctx);
+      x = e.offsetX;
+      y = e.offsetY;
+      drawCenterLines(ctx, x, y, 20);
+      drawCross(ctx, x, y, 20);
+      return [x, y]
+    }
+
+    function selectArea(ctx, x, y, e) {
+      const [width, height] = [e.offsetX - x, e.offsetY - y];
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+      ctx.strokeRect(x, y, width, height);
+      return [width, height]
+    }
+
+    function selectAreaCoords() {
+      let state = "select-point"
+      let x = 0;
+      let y = 0;
+
+      let width, height;
+
+      clearCanvas(ctx);
+
+      function selectPointAndUpdate(e) {
+        [x, y] = selectPoint(ctx, e);
+      }
+
+      function selectAreaAndUpdate(e) {
+        [width, height] = selectArea(ctx, x, y, e);
+        console.log([width, height]);
+      }
+
+      canvas.addEventListener('mousemove', selectPointAndUpdate);
+
+      canvas.addEventListener('click', (e) => {
+        canvas.removeEventListener('mousemove', selectPointAndUpdate);
+        clearCanvas(ctx)
+        drawCross(ctx, x, y, 20);
+
+        canvas.addEventListener('mousemove', selectAreaAndUpdate);
+
+        canvas.addEventListener('click', () => {
+          console.log("triggered")
+          canvas.removeEventListener('mousemove', selectAreaAndUpdate)
+        }, { once: true })
+      }, { once: true });
+    }
+
   </script>
 
 </body>
 </html>
+
+<style>
+  body {
+    padding: 16px;
+  }
+
+  canvas {
+    border: 2px solid grey;
+    /*padding: 16px;*/
+  }
+</style>
