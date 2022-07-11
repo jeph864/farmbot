@@ -1,5 +1,6 @@
 **/node_modules/*
 .idea
+package-lock.json
 
 # sveltekit files
 farmbot-app/.DS_Store
