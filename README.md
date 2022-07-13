@@ -28,6 +28,16 @@ Run the server as follows:
 node app.js
 ```
 
+### Coordinates of the Farmbot
+
+- Soil
+   - z: -468 (now)
+   - maximum z movement for the farmbot is -471
+- Box with seeds
+   - this ist the actual position, can be moved easily
+   - x: 990
+   - y: 725
+   - z: -468
 ### Endpoints
 All request require the parameter  to be in the request body.
 
