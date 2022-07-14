@@ -1,10 +1,10 @@
 <script>
+// @ts-nocheck
+
     import ActionItem from "./ActionItem.svelte";
-
-
-
+    import { editJob } from "../fetchers.js"; 
     //only example, need all the jobs from the database (names)
-    //TODO: het all the jobs
+    //TODO: get all the jobs
     let selected = 'Job 1';
     let options = [
         'Job 1',
@@ -13,21 +13,48 @@
     ]
 
     //fill in the selected data here
-    let jobName;
-    let plantingDepth;
-    let dist;
-    let plant;
-    let x1;
-    let y1;
-    let x2;
-    let y2;
-    let jobCreated;
+    let jobName = 'test';
+    let plantingDepth = 1;
+    let dist = 1;
+    let plant = "radish";
+    let x1 = 0;
+    let y1 = 0;
+    let x2 = 200;
+    let y2 = 300;
+    let jobCreated="";
 
     function edit() {
-        //TODO: edit seeding job, send data to endpoint
+        
+        if(dist>=0){
+            if(plantingDepth>=0) {
+                if (x1 <= x2) {
+                    if (y1 <= y2) {
+                        editJob({
+                            jobName,
+                            plant,
+                            dist,
+                            working_area: {
+                                pos: {
+                                    x: x1,
+                                    y: y1
+                                },
+                                end_pos: {
+                                    x: x2,
+                                    y: y2
+                                }
+                            }
+                        })
+
+                        jobCreated="Seeding Job created successfully!"
+
+                    }
+                    else { alert("y2 cannot be greater than y1"); }
+                } else { alert("x2 cannot be greater than x1"); }
+            } else{ alert("planting depth must be a positive number") }
+        } else{ alert("plant distance must be a positive number") }
     }
 
-</script>
+    </script>
 
 <ActionItem description="Edit a seeding job">
 
@@ -67,7 +94,7 @@
             </tr>
         </table>
 
-        <button on:click={null}>
+        <button on:click={edit}>
             Update seeding job
         </button>
 

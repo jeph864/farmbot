@@ -3,10 +3,10 @@ const { rpcRequest } = require("farmbot");
 const ObjectID = require('mongodb').ObjectId;
 
 
-var SeedingJob = /** @class */ (function () {
-  function SeedingJob(bot, config={}){
+var WateringJob = /** @class */ (function () {
+  function WateringJob(bot, config={}){
     this.db = dbConnect.getDatabase();
-    this.seeding_collection = "seeding_jobs";
+    this.watering_collection = "watering_jobs";
     this.delayed_jobs = "delayed_jobs";
     this.bot = bot;
     if(config){
@@ -15,16 +15,12 @@ var SeedingJob = /** @class */ (function () {
     }
     this.base_z = config.base_z ? config.base_z : 0;
     this.__default_params = {
-      name: "Seeding Job",
+      name: "Watering Job",
       id: 0,
-      depth : 0,
+      amount_of_water : 0,
+      height : 0,
       min_dist : 0,
       plant_type: "radish",
-      working_area : {
-        pos: {x: 0, y:0},
-        end_pos: {x: 0, y:0},
-        length : 0,
-        width : 0
       },
       status: {running: false}
     };
@@ -64,7 +60,6 @@ var SeedingJob = /** @class */ (function () {
 
         }).catch(e => console.error(e));
     };
-
     this.executeJob = function(job_id, callback){
       let _this = this;
       let run = async function(items){
@@ -260,7 +255,6 @@ var SeedingJob = /** @class */ (function () {
     };
     this.getStatus = function (){
     };
-    
     this.deleteJob = function(){
     };
     this.updateJob = function(jobParams){

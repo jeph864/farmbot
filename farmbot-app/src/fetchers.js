@@ -1,3 +1,4 @@
+// @ts-nocheck
 const baseUrl = "http://localhost:3001";
 // const baseUrl = ""
 
@@ -33,6 +34,28 @@ async function searchJobs(query) {
   return res.json();
 }
 
+async function editJob(job) {
+  const url = `${baseUrl}/jobs/edit`
+  console.log(JSON.stringify(job))
+  const init = {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(job)
+  }
+  fetch(url, init).then((res) => {
+    console.log(res)
+    return res.json();
+  }).catch(err => {
+    console.error(err)
+  });
+  alert("y2 cannot be greater than y1");
+}
+
+
 async function executeJob(job_id) {
   const url = `${baseUrl}/jobs/execute/${job_id}`
   const res = await fetch(url, {
@@ -45,4 +68,4 @@ async function executeJob(job_id) {
   return res.json();
 }
 
-export {createJob, searchJobs, executeJob}
+export {createJob, searchJobs, editJob, executeJob}

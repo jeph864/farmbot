@@ -110,6 +110,15 @@ function normalize_path(path, trailing_slash) {
 	return path;
 }
 
+class LoadURL extends URL {
+	/** @returns {string} */
+	get hash() {
+		throw new Error(
+			'url.hash is inaccessible from load. Consider accessing hash from the page store within the script tag of your component.'
+		);
+	}
+}
+
 /** @param {HTMLDocument} doc */
 function get_base_uri(doc) {
 	let baseURI = doc.baseURI;
@@ -338,9 +347,14 @@ function parse_route_id(id) {
 										.split(/\[(.+?)\]/)
 										.map((content, i) => {
 											if (i % 2) {
-												const [, rest, name, type] = /** @type {RegExpMatchArray} */ (
-													param_pattern.exec(content)
-												);
+												const match = param_pattern.exec(content);
+												if (!match) {
+													throw new Error(
+														`Invalid param: ${content}. Params and matcher names can only have underscores and alphanumeric characters.`
+													);
+												}
+
+												const [, rest, name, type] = match;
 												names.push(name);
 												types.push(type);
 												return rest ? '(.*?)' : '([^/]+?)';
@@ -568,16 +582,18 @@ function create_client({ target, session, base, trailing_slash }) {
 	let token;
 
 	/**
-	 * @param {string} href
+	 * @param {string | URL} url
 	 * @param {{ noscroll?: boolean; replaceState?: boolean; keepfocus?: boolean; state?: any }} opts
 	 * @param {string[]} redirect_chain
 	 */
 	async function goto(
-		href,
+		url,
 		{ noscroll = false, replaceState = false, keepfocus = false, state = {} },
 		redirect_chain
 	) {
-		const url = new URL(href, get_base_uri(document));
+		if (typeof url === 'string') {
+			url = new URL(url, get_base_uri(document));
+		}
 
 		if (router_enabled) {
 			return navigate({
@@ -714,9 +730,12 @@ function create_client({ target, session, base, trailing_slash }) {
 				const root = document.body;
 				const tabindex = root.getAttribute('tabindex');
 
-				getSelection()?.removeAllRanges();
 				root.tabIndex = -1;
 				root.focus({ preventScroll: true });
+
+				setTimeout(() => {
+					getSelection()?.removeAllRanges();
+				});
 
 				// restore `tabindex` as to prevent `root` from stealing input from elements
 				if (tabindex !== null) {
@@ -939,6 +958,7 @@ function create_client({ target, session, base, trailing_slash }) {
 		}
 
 		const session = $session;
+		const load_url = new LoadURL(url);
 
 		if (module.load) {
 			/** @type {import('types').LoadEvent} */
@@ -948,18 +968,7 @@ function create_client({ target, session, base, trailing_slash }) {
 				props: props || {},
 				get url() {
 					node.uses.url = true;
-
-					return new Proxy(url, {
-						get: (target, property) => {
-							if (property === 'hash') {
-								throw new Error(
-									'url.hash is inaccessible from load. Consider accessing hash from the page store within the script tag of your component.'
-								);
-							}
-
-							return Reflect.get(target, property, target);
-						}
-					});
+					return load_url;
 				},
 				get session() {
 					node.uses.session = true;
@@ -1139,7 +1148,11 @@ function create_client({ target, session, base, trailing_slash }) {
 							props = res.status === 204 ? {} : await res.json();
 						} else {
 							status = res.status;
-							error = new Error('Failed to load data');
+							try {
+								error = await res.json();
+							} catch (e) {
+								error = new Error('Failed to load data');
+							}
 						}
 					}
 
@@ -1311,14 +1324,9 @@ function create_client({ target, session, base, trailing_slash }) {
 			const params = route.exec(path);
 
 			if (params) {
+				const id = normalize_path(url.pathname, trailing_slash) + url.search;
 				/** @type {import('./types').NavigationIntent} */
-				const intent = {
-					id: url.pathname + url.search,
-					route,
-					params,
-					url
-				};
-
+				const intent = { id, route, params, url };
 				return intent;
 			}
 		}

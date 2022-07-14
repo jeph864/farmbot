@@ -101,6 +101,19 @@ app.post('/jobs/create/', function(req, res, next){
   })
 });
 
+
+app.post('/jobs/edit/', function(req, res, next){
+  let params = req.body;
+  seeding_job.editJob(params, function(error ,results){
+    if(error) throw error;
+    if (results) {
+      res.setHeader('Access-Control-Allow-Origin', '*')
+      res.send("Job created successfully");
+    }
+    next();
+  })
+});
+
 app.get('/jobs/execute/', function(req,response,next){
   seeding_job.executeJob(req.body.job_id, function(error, results){
     if (results){
