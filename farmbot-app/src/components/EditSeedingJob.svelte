@@ -21,7 +21,7 @@
     let y1 = 0;
     let x2 = 200;
     let y2 = 300;
-    let jobCreated="";
+    let jobEdited="";
 
     function edit() {
         
@@ -45,7 +45,7 @@
                             }
                         })
 
-                        jobCreated="Seeding Job created successfully!"
+                        jobEdited="Seeding Job Edited successfully!"
 
                     }
                     else { alert("y2 cannot be greater than y1"); }
@@ -97,7 +97,7 @@
         <button on:click={edit}>
             Update seeding job
         </button>
-
+        <br /> <p style="color: green;">{jobEdited}</p>
 
     </div>
 </ActionItem>

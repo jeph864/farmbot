@@ -52,7 +52,6 @@ async function editJob(job) {
   }).catch(err => {
     console.error(err)
   });
-  alert("y2 cannot be greater than y1");
 }
 
 

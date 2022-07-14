@@ -37,6 +37,7 @@ var SeedingJob = /** @class */ (function () {
       return Object.assign(this.__default_params, input);
     }
     this.createJob = function (jobParams, callback){
+      console.log('SEEDING FUNC', jobParams)
       var params = this.__init_params(jobParams);
       delete params._id;
       const job = params;
@@ -63,6 +64,10 @@ var SeedingJob = /** @class */ (function () {
             })
 
         }).catch(e => console.error(e));
+    };
+
+    this.editJob = function (jobParams, callback){
+      console.log(jobParams)
     };
 
     this.executeJob = function(job_id, callback){
