@@ -12,6 +12,7 @@
     "url": "https://df-git.informatik.uni-kl.de/teaching/df-project/ss22/radish.git"
   },
   "dependencies": {
+    "agenda": "^4.3.0",
     "axios": "^0.27.2",
     "body": "^5.1.0",
     "cors": "^2.8.5",
@@ -33,8 +34,12 @@
   },
   "author": "Radish Group",
   "devDependencies": {
+    "@babel/eslint-parser": "^7.18.2",
+    "@tsconfig/node16": "^1.0.3",
+    "@types/agenda": "^4.1.0",
     "eslint": "^8.17.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "prettier": "^2.7.0"
+    "prettier": "^2.7.0",
+    "typescript": "^4.7.4"
   }
 }

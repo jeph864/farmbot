@@ -7,7 +7,9 @@ module.exports = {
         sourceType: "module",
         allowImportExportEverywhere: true,
         ecmaVersion: 8,
+        //requireConfigFile: false,
     },
+    "parser": "@babel/eslint-parser",
     root: true,
     //extends: ["eslint:recommended", "plugin:prettier/recommended"],
 };

@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "noImplicitAny": false,
+    "allowUnreachableCode": false,
+    "strictNullChecks": true,
+    "outDir": "./dist",
+    "rootDir": "./utils",
+    "skipLibCheck": true,
+    "lib": [
+      "es2018",
+      "dom"
+    ]
+  },
+  "exclude": [
+    "*__tests__*",
+    "node_modules",
+    "typings",
+    "dist",
+    "uicore",
+    "farmbot-app"
+  ],
+  "include": [
+    "./utils"
+  ],
+  "compileOnSave": false,
+  "buildOnSave": false
+}

@@ -7,11 +7,15 @@ const cors = require("cors")
 
 const dbConnect = require("./utils/conn");
 const users = require("./utils/users");
-const SeedingJob = require("./utils/seeding_job");
-const { saveApiData } = require("./utils/users");
 
+const { saveApiData } = require("./utils/users");
+const {SeedingJob } = require("./dist/jobs/seeding")
+const { WateringJob } = require("./dist/jobs/watering");
+
+//const SeedingJob = require("./utils/seeding_job");
 const port = 3001;
 let seeding_job = null ;
+let watering_job = null;
 let bot = null;
 let status_message = null;
 
@@ -89,13 +93,23 @@ app.get('/search/', function(req, res, next){
     next();
   })
 })
+app.get('/jobs/get', function(req, res, next){
+  console.log(seeding_job.getConfig())
+  seeding_job.getAll()
+    .then(data => {
+      console.log(data)
+      res.json(data);
+      next();
+    }).catch(e => {console.error(e)})
+})
 app.post('/jobs/create/', function(req, res, next){
   let params = req.body;
   seeding_job.createJob(params, function(error ,results){
     if(error) throw error;
     if (results) {
+
       res.setHeader('Access-Control-Allow-Origin', '*')
-      res.send("Job created successfully");
+      res.json(results);
     }
     next();
   })
@@ -104,7 +118,6 @@ app.post('/jobs/create/', function(req, res, next){
 app.get('/jobs/execute/', function(req,response,next){
   seeding_job.executeJob(req.body.job_id, function(error, results){
     if (results){
-      console.log(results)
       response.send("Finished running job in the queue");
     }
     if(error) throw error;
@@ -120,6 +133,13 @@ app.get('/status', function(req, res, next){
   }
 });
 
+app.post('/jobs/watering/execute', function(req, res, next){
+  const location = req.body;
+  watering_job.doWatering(location)
+    .then(_ => {
+      res.send("Finished watering");
+    }).catch(_ => res.send("Couldn't finish the watering job successfully"))
+})
 app.post('/move', function(req,res, next){
   if (req.body.home && req.body.home.value){
     bot.home(req.body.home.args || {speed:100, axis: "all"}).then(function(ack){
@@ -203,8 +223,10 @@ dbConnect.connect(function(err){
              status_message = JSON.parse(payload.toString()).location_data.position;
            }
          })
-
+        console.log("Initializing the Jobs")
          seeding_job = new SeedingJob(bot);
+         watering_job = new WateringJob(bot);
+
        }
      })
    }else{

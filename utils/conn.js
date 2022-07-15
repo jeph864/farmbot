@@ -20,5 +20,6 @@ module.exports = {
   },
   getDatabase : function(){
     return dbConnection;
-  }
+  },
+  client
 };
