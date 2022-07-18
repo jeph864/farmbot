@@ -13,12 +13,14 @@
 		text-align: center;
 		padding: 16px;
 		margin: auto;
+		background-color: #cceecc;
 	}
 
 	h1 {
+		font-size: 40px;
 		text-align: center;
-		color: #00aa00;
+		color: #00CC00;
 		text-transform: uppercase;
-		font-weight: 200;
+		font-weight: 300;
 	}
 </style>
