@@ -14,7 +14,6 @@
     export let y2;
     let jobCreated="";
 
-
       function  create() {
         if(dist>=0){
             if(plantingDepth>=0) {
