@@ -11,6 +11,7 @@ const users = require("./utils/users");
 const { saveApiData } = require("./utils/users");
 const {SeedingJob } = require("./dist/jobs/seeding")
 const { WateringJob } = require("./dist/jobs/watering");
+const { Scheduler } = require("./dist/jobs/scheduler");
 
 //const SeedingJob = require("./utils/seeding_job");
 const port = 3001;
@@ -111,6 +112,23 @@ app.post('/jobs/create/', function(req, res, next){
       res.setHeader('Access-Control-Allow-Origin', '*')
       res.json(results);
     }
+    next();
+  })
+});
+app.post('/jobs/seeding/update/', function(req, res, next){
+  let params = req.body;
+  seeding_job.updateJob(params, function(e, r){
+    if(e) throw  e;
+    if(r)  res.json(r);
+    next();
+  })
+});
+
+app.post('/jobs/watering/update/', function(req, res, next){
+  let params = req.body;
+  watering_job.updateJob(params, function(e, r){
+    if(e) throw  e;
+    if(r)  res.json(r);
     next();
   })
 });
@@ -226,6 +244,34 @@ dbConnect.connect(function(err){
         console.log("Initializing the Jobs")
          seeding_job = new SeedingJob(bot);
          watering_job = new WateringJob(bot);
+
+         const agenda_db = dbConnect.getDatabase();
+         let sch1 = new Scheduler(agenda_db), sch2 = new Scheduler(agenda_db);
+         let ag2 = sch1.getAgenda()
+
+         ag2
+           .define("Job2", function(job){
+           console.log(Date.now() + "Job2: Loggin the second job"  )
+         })
+         ag2.every("30 seconds", "Job2")
+           .then(_ => {
+             ag2.start()
+               .then(_ => {})
+           })
+         let sch = new Scheduler(dbConnect.getDatabase()); agenda = sch.getAgenda();
+         agenda
+           .define("Job1", function(job){
+             console.log(Date.now() + " : Logging the task")
+         })
+         agenda.every('1 minute','Job1')
+           .then(_ => {
+             agenda.start()
+               .then(_ => {
+
+               })
+           })
+
+
 
        }
      })
