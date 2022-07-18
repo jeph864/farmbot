@@ -7,9 +7,11 @@ export interface SeedingStep extends JobStep {
 }
 export declare class SeedingJob extends Job {
     private tray_pos;
+    private watering_job;
     constructor(bot: Farmbot, config?: any);
-    private default_params;
+    private getDefaultParams;
     initParams: (inputJob: Seeding) => Seeding;
     runStep: (dest: any) => Promise<RpcOk | RpcError>;
     private plantSeed;
+    afterUpdate: (jobParams: any, callback: any) => void;
 }

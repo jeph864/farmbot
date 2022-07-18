@@ -17,6 +17,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SeedingJob = void 0;
 var job_1 = require("./job");
+var watering_1 = require("./watering");
 var SEEDING_COLLECTION = "seeding_jobs";
 var SEEDING_COLLECTION_SEQ = "seeding_jobs_seq";
 var SeedingJob = /** @class */ (function (_super) {
@@ -24,22 +25,37 @@ var SeedingJob = /** @class */ (function (_super) {
     function SeedingJob(bot, config) {
         if (config === void 0) { config = {}; }
         var _this_1 = _super.call(this, bot, config) || this;
-        _this_1.default_params = {
-            name: "Job 0",
-            id: 0,
-            depth: 0,
-            min_dist: 0,
-            plant_type: "radish",
-            working_area: _this_1.df_working_area,
-            status: { running: false }
+        _this_1.getDefaultParams = function () {
+            var df = {
+                name: "Job 0",
+                id: -1,
+                depth: 0,
+                min_dist: 0,
+                plant_type: "radish",
+                working_area: {
+                    beg_pos: { x: 0, y: 0, z: 0 },
+                    end_pos: { x: 0, y: 0, z: 0 },
+                    length: 0,
+                    width: 0
+                },
+                status: { running: false }
+            };
+            return df;
         };
         // @ts-ignore
         _this_1.initParams = function (inputJob) {
-            inputJob.working_area.length = inputJob.working_area.end_pos.x - inputJob.working_area.beg_pos.x;
-            inputJob.working_area.width = inputJob.working_area.end_pos.y - inputJob.working_area.beg_pos.y;
-            inputJob.working_area.beg_pos = Object.assign(_this_1.df_position, inputJob.working_area.beg_pos);
-            inputJob.working_area.end_pos = Object.assign(_this_1.df_position, inputJob.working_area.end_pos);
-            return Object.assign(_this_1.default_params, inputJob);
+            var pos = {
+                x1: inputJob.working_area.beg_pos.x,
+                y1: inputJob.working_area.beg_pos.y,
+                x2: inputJob.working_area.end_pos.x,
+                y2: inputJob.working_area.end_pos.y
+            };
+            var length, width;
+            length = pos.x2 - pos.x1, width = pos.y2 - pos.y1;
+            inputJob.working_area.beg_pos = Object.assign({ x: 0, y: 0, z: 0 }, inputJob.working_area.beg_pos);
+            inputJob.working_area.end_pos = Object.assign({ x: 0, y: 0, z: 0 }, inputJob.working_area.end_pos);
+            inputJob.working_area.width = width, inputJob.working_area.length = length;
+            return Object.assign(_this_1.getDefaultParams(), inputJob);
         };
         _this_1.runStep = function (dest) {
             return _this_1.plantSeed(_this_1.tray_pos, dest, 100);
@@ -62,10 +78,16 @@ var SeedingJob = /** @class */ (function (_super) {
                 return _this.bot.moveAbsolute({ x: dest.x, y: dest.y, z: dest.z, speed: speed });
             });
         };
+        _this_1.afterUpdate = function (jobParams, callback) {
+            _this_1.watering_job.updateJob(jobParams, function (e, r) {
+                callback(e, r);
+            });
+        };
         _this_1.collection = SEEDING_COLLECTION;
         _this_1.tray_pos = { x: 10, y: 10, z: 0 };
         _this_1.collection_seq = SEEDING_COLLECTION_SEQ;
         _this_1.config.pin_id = 30538;
+        _this_1.watering_job = new watering_1.WateringJob(bot);
         return _this_1;
     }
     return SeedingJob;

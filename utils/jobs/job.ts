@@ -2,7 +2,13 @@ import { CSInteger, Farmbot, NamedPin, RpcError, RpcOk, rpcRequest } from "farmb
 import * as dbConnect from "../../utils/conn"
 import { Db, MongoClient } from "mongodb";
 
-
+export enum EventStatus {
+  Running,
+  Delayed,
+  Scheduled,
+  Failed
+}
+export type EventDate = Date| "now";
 const DELAYED_JOBS = "delayed_jobs";
 export interface Position{
   x: number;
@@ -23,10 +29,12 @@ export interface DelayedJob{
 }
 
 
+
 export interface JobParams {
   name: string;
   id: number;
   status: { running: boolean};
+  from_seeding?:boolean
 }
 export  interface Seeding extends JobParams{
   name: string;
@@ -39,6 +47,7 @@ export  interface Seeding extends JobParams{
 }
 export interface Watering  extends  JobParams{
   name: string;
+  seeding_id: number;
   amount: number;
   id: number
   min_dist: number
@@ -53,7 +62,15 @@ export interface JobStep{
 
 }
 
-
+export interface Event{
+  name:string;
+  event_id?: number;
+  job_id?: number;
+  type:string;
+  status:EventStatus;
+  time: EventDate;
+  additional_args?: any
+}
 
 export abstract class Job{
   protected  readonly bot: Farmbot;
@@ -175,23 +192,63 @@ export abstract class Job{
           }).catch( e => console.error(e))
       })
   };
+  updateJob = (jobParams: JobParams, callback) => {
+    const params = this.initParams(jobParams);
+    const job = params;
+    let _this = this;
+    this.getJobSeq( (seq) => {
+      let  _insert : boolean = false;
+      let filter = {}
+
+      if(job.id === -1 || typeof jobParams.id !== "number"){
+        job.id = seq.next_id;
+        _insert = true;
+      }
+      filter = {id: job.id};
+      _this.db.collection(this.collection)
+        .updateOne(filter, {$set: job}, {upsert: _insert})
+        .then((upres) => {
+          console.log(upres);
+          _this.setJobSeq(_insert)
+            .then(_ => {
+              const tmp_job = job;
+              if(upres.acknowledged &&(upres.modifiedCount > 0 || upres.upsertedCount > 0)){
+                //@ts-ignore
+                tmp_job.seeding_id = job.id;
+                tmp_job.id = -1;
+                tmp_job.from_seeding = true;
+                _this.afterUpdate(tmp_job, (_, r) =>{
+                  r;
+                  callback(null, job);
+                }, tmp_job)
+              }else{
+                callback(null, job);
+              }
+
+            })
+
+        }).catch( e => callback(e, null))
+    })
+  };
+  abstract  afterUpdate  (jobParams: JobParams, callback, data)
  getJobSeq = (callback) => {
   let _this = this;
-  this.db.collection(this.collection_seq)
+  return this.db.collection(this.collection_seq)
     .findOne({})
     .then(res => {
       const doc = {next_id : 0}
       if (res) {
-        callback(res);
+        if (callback)callback(res);
       }
       else _this.db.collection(this.collection_seq).insertOne(doc)
-        .then(_ => { callback(doc);})
-        .catch( _ => callback(null))
-    }).catch(_ => callback(null));
+        .then(_ => { if (callback) callback(doc);})
+        .catch( _ => {if (callback) callback(null)})
+    }).catch(_ => {if (callback) callback(null)});
 }
- setJobSeq = () => {
-   this.db.collection(this.collection_seq)
-    .updateOne({}, {$inc : {nextid: 1}})
+ setJobSeq = (set : boolean = true) => {
+
+   return this.db.collection(this.collection_seq)
+    .updateOne({}, {$inc : {next_id: set?1 : 0}})
 }
 
   addToQueue = (job_id, callback) => {
@@ -285,11 +342,6 @@ export abstract class Job{
   }
   getStatus = () => {};
   deleteJob = () => {};
-  updateJob = (jobParams) => {
-    const job = this.initParams(jobParams);
-    return this.db.collection(this.collection)
-      .updateOne({id: jobParams.id}, {$set: {job}}, {upsert: false})
-  };
   getJob = () => {};
   lock = () => {};
   unlock = () => {};

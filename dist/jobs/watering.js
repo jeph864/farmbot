@@ -24,29 +24,34 @@ var WateringJob = /** @class */ (function (_super) {
     function WateringJob(bot, config) {
         if (config === void 0) { config = {}; }
         var _this_1 = _super.call(this, bot, config) || this;
-        _this_1.default_params = {
-            name: "Job 0",
-            id: 0,
-            depth: 0,
-            min_dist: 0,
-            amount: 0,
-            height: 0,
-            working_area: {
-                beg_pos: { x: 0, y: 0, z: 0 },
-                end_pos: { x: 0, y: 0, z: 0 },
-                length: 0,
-                width: 0
-            },
-            status: { running: false },
-            next: (function (d) { return new Date(d.setDate(d.getDate() - 1)); })(new Date) //initialize with an expired date unless the user updates the date
+        _this_1.getDefaultParams = function () {
+            var df = {
+                name: "Job 0",
+                id: 0,
+                depth: 0,
+                min_dist: 0,
+                amount: 0,
+                height: 0,
+                seeding_id: -1,
+                from_seeding: false,
+                working_area: {
+                    beg_pos: { x: 0, y: 0, z: 0 },
+                    end_pos: { x: 0, y: 0, z: 0 },
+                    length: 0,
+                    width: 0
+                },
+                status: { running: false },
+                next: (function (d) { return new Date(d.setDate(d.getDate() - 1)); })(new Date) //initialize with an expired date unless the user updates the date
+            };
+            return df;
         };
         // @ts-ignore
         _this_1.initParams = function (input) {
             input.working_area.length = input.working_area.end_pos.x - input.working_area.beg_pos.x;
             input.working_area.width = input.working_area.end_pos.y - input.working_area.beg_pos.y;
-            input.working_area.beg_pos = Object.assign(_this_1.df_position, input.working_area.beg_pos);
-            input.working_area.end_pos = Object.assign(_this_1.df_position, input.working_area.end_pos);
-            return Object.assign(_this_1.default_params, input);
+            input.working_area.beg_pos = Object.assign({ x: 0, y: 0, z: 0 }, input.working_area.beg_pos);
+            input.working_area.end_pos = Object.assign({ x: 0, y: 0, z: 0 }, input.working_area.end_pos);
+            return Object.assign(_this_1.getDefaultParams(), input);
         };
         _this_1.runStep = function (dest) {
             return _this_1.doWatering(dest, 100);
@@ -61,6 +66,48 @@ var WateringJob = /** @class */ (function (_super) {
                 return _this.delay(5000);
             }).then(function (_) {
                 return _this.writePin(0);
+            });
+        };
+        _this_1.afterUpdate = function (_, callback, data) {
+            if (data === void 0) { data = null; }
+            callback(data);
+        };
+        _this_1.updateJob = function (jobParams, callback) {
+            var params = _this_1.initParams(jobParams);
+            var job = params;
+            var _this = _this_1;
+            _this_1.getJobSeq(function (seq) {
+                var _insert = false;
+                var filter = {};
+                if ((job.id == -1 && typeof job.from_seeding == "boolean" && job.from_seeding) || (job.id === -1 && !job.from_seeding) || typeof jobParams.id !== "number") {
+                    job.id = seq.next_id;
+                    _insert = true;
+                }
+                filter = { id: job.id };
+                if (job.seeding_id !== -1) {
+                    filter = { seeding_id: job.seeding_id };
+                    _insert = true;
+                }
+                _this.db.collection(_this_1.collection)
+                    .findOne(filter)
+                    .then(function (results) {
+                    if (results && results.seeding_id > -1) {
+                        job.id = results.id;
+                        filter = { id: results.id };
+                    }
+                    else {
+                    }
+                    _this.db.collection(_this_1.collection)
+                        .updateOne(filter, { $set: job }, { upsert: _insert })
+                        .then(function (_) {
+                        _this.setJobSeq(_insert)
+                            .then(function (_) {
+                            //@ts-ignore
+                            jobParams.seeding_id = job.id;
+                            callback(null, job);
+                        });
+                    }).catch(function (e) { return callback(e, null); });
+                });
             });
         };
         _this_1.collection = WATERING_COLLECTION;

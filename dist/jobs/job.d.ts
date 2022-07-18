@@ -22,6 +22,7 @@ export interface JobParams {
     status: {
         running: boolean;
     };
+    from_seeding?: boolean;
 }
 export interface Seeding extends JobParams {
     name: string;
@@ -36,6 +37,7 @@ export interface Seeding extends JobParams {
 }
 export interface Watering extends JobParams {
     name: string;
+    seeding_id: number;
     amount: number;
     id: number;
     min_dist: number;
@@ -69,8 +71,10 @@ export declare abstract class Job {
     calculateSteps: (job: any) => Position[];
     executeJob: (job_id: any, callback: any) => Promise<void>;
     createJob: (jobParams: JobParams, callback: any) => void;
-    getJobSeq: (callback: any) => void;
-    setJobSeq: () => void;
+    updateJob: (jobParams: JobParams, callback: any) => void;
+    abstract afterUpdate(jobParams: JobParams, callback: any, data: any): any;
+    getJobSeq: (callback: any) => Promise<void>;
+    setJobSeq: (set?: boolean) => Promise<import("mongodb").UpdateResult>;
     addToQueue: (job_id: any, callback: any) => Promise<void>;
     removeFromQueue: (job_id: number) => Promise<import("bson").Document | import("mongodb").UpdateResult>;
     writePin: (value?: number, pin_id?: number, mode?: number) => Promise<RpcOk | RpcError>;
@@ -82,7 +86,6 @@ export declare abstract class Job {
     delay: (t: any) => Promise<unknown>;
     getStatus: () => void;
     deleteJob: () => void;
-    updateJob: (jobParams: any) => Promise<import("mongodb").UpdateResult>;
     getJob: () => void;
     lock: () => void;
     unlock: () => void;

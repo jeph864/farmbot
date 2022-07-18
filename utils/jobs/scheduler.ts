@@ -5,7 +5,7 @@ import { MongoClient } from "mongodb";
 
 export class FMEventEmitter extends  events.EventEmitter{}
 
-export class RadishAgenda {
+export class Scheduler {
   private agenda :Agenda;
   private client
   constructor(client) {
@@ -18,8 +18,11 @@ export class RadishAgenda {
       .sort({ nextRunAt: 1, priority: -1 })
     this.client = client;
   };
-  start = async () =>{
-    return await this.agenda.start();
+  start =  () =>{
+    return  this.agenda.start();
+  }
+  getAgenda = () =>{
+    return this.agenda;
   }
   define = (jobname, [options], handler) => {
     return this.agenda.define(jobname, options, handler);

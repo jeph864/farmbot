@@ -139,24 +139,65 @@ var Job = /** @class */ (function () {
                 }).catch(function (e) { return console.error(e); });
             });
         };
+        this.updateJob = function (jobParams, callback) {
+            var params = _this_1.initParams(jobParams);
+            var job = params;
+            var _this = _this_1;
+            _this_1.getJobSeq(function (seq) {
+                var _insert = false;
+                var filter = {};
+                if (job.id === -1 || typeof jobParams.id !== "number") {
+                    job.id = seq.next_id;
+                    _insert = true;
+                }
+                filter = { id: job.id };
+                _this.db.collection(_this_1.collection)
+                    .updateOne(filter, { $set: job }, { upsert: _insert })
+                    .then(function (upres) {
+                    console.log(upres);
+                    _this.setJobSeq(_insert)
+                        .then(function (_) {
+                        var tmp_job = job;
+                        if (upres.acknowledged && (upres.modifiedCount > 0 || upres.upsertedCount > 0)) {
+                            //@ts-ignore
+                            tmp_job.seeding_id = job.id;
+                            tmp_job.id = -1;
+                            tmp_job.from_seeding = true;
+                            _this.afterUpdate(tmp_job, function (_, r) {
+                                r;
+                                callback(null, job);
+                            }, tmp_job);
+                        }
+                        else {
+                            callback(null, job);
+                        }
+                    });
+                }).catch(function (e) { return callback(e, null); });
+            });
+        };
         this.getJobSeq = function (callback) {
             var _this = _this_1;
-            _this_1.db.collection(_this_1.collection_seq)
+            return _this_1.db.collection(_this_1.collection_seq)
                 .findOne({})
                 .then(function (res) {
                 var doc = { next_id: 0 };
                 if (res) {
-                    callback(res);
+                    if (callback)
+                        callback(res);
                 }
                 else
                     _this.db.collection(_this_1.collection_seq).insertOne(doc)
-                        .then(function (_) { callback(doc); })
-                        .catch(function (_) { return callback(null); });
-            }).catch(function (_) { return callback(null); });
+                        .then(function (_) { if (callback)
+                        callback(doc); })
+                        .catch(function (_) { if (callback)
+                        callback(null); });
+            }).catch(function (_) { if (callback)
+                callback(null); });
         };
-        this.setJobSeq = function () {
-            _this_1.db.collection(_this_1.collection_seq)
-                .updateOne({}, { $inc: { nextid: 1 } });
+        this.setJobSeq = function (set) {
+            if (set === void 0) { set = true; }
+            return _this_1.db.collection(_this_1.collection_seq)
+                .updateOne({}, { $inc: { next_id: set ? 1 : 0 } });
         };
         this.addToQueue = function (job_id, callback) {
             var _this = _this_1;
@@ -266,11 +307,6 @@ var Job = /** @class */ (function () {
         };
         this.getStatus = function () { };
         this.deleteJob = function () { };
-        this.updateJob = function (jobParams) {
-            var job = _this_1.initParams(jobParams);
-            return _this_1.db.collection(_this_1.collection)
-                .updateOne({ id: jobParams.id }, { $set: { job: job } }, { upsert: false });
-        };
         this.getJob = function () { };
         this.lock = function () { };
         this.unlock = function () { };
