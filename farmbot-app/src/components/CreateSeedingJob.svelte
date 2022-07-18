@@ -2,7 +2,7 @@
     import ActionItem from "./ActionItem.svelte";
     import { createJob } from "../fetchers.js";
 
-    let jobName;
+    let name;
     let plantingDepth;
     let dist;
     let plant = "radish";
@@ -19,11 +19,11 @@
                     if (y1 <= y2) {
 
                         createJob({
-                            jobName,
+                            name,
                             plant,
                             dist,
                             working_area: {
-                                pos: {
+                                beg_pos: {
                                     x: x1,
                                     y: y1
                                 },
@@ -50,7 +50,7 @@
         <table id="myTable" border="0" cellpadding="3">
             <tr>
                 <td>Name of the job:</td>
-                <td><input bind:value={jobName}></td>
+                <td><input bind:value={name}></td>
             </tr>
             <tr>
                 <td>Plant type:</td>

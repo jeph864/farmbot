@@ -51,7 +51,7 @@
 </div>
 
 <div class="table">
-  <!-- <JobList /> -->
+  <JobList />
 </div>
 
 <style>
