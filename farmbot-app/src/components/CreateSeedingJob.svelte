@@ -1,5 +1,7 @@
 <script>
     import ActionItem from "./ActionItem.svelte";
+    import onUpdate from "./JobList.svelte";
+    import jobs from "./JobList.svelte";
     import { createJob } from "../fetchers.js";
 
     let name;
@@ -12,7 +14,8 @@
     let y2 = 300;
     let jobCreated="";
 
-    function create() {
+
+      function  create() {
         if(dist>=0){
             if(plantingDepth>=0) {
                 if (x1 <= x2) {
@@ -41,6 +44,7 @@
                 } else { alert("x2 cannot be greater than x1"); }
             } else{ alert("planting depth must be a positive number") }
         } else{ alert("plant distance must be a positive number") }
+
     }
 
 </script>
