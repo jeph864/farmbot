@@ -1,29 +1,32 @@
 <script>
     import ActionItem from "./ActionItem.svelte";
+    import onUpdate from "./JobList.svelte";
+    import jobs from "./JobList.svelte";
     import { createJob } from "../fetchers.js";
 
     let name;
-    let depth;
-    let min_dist;
-    let plant_type = "radish";
+    let plantingDepth;
+    let dist;
+    let plant = "radish";
     export let x1;
     export let y1;
     export let x2;
     export let y2;
     let jobCreated="";
 
-    function create() {
-        if(min_dist>=0){
-            if(depth>=0) {
+
+      function  create() {
+        if(dist>=0){
+            if(plantingDepth>=0) {
                 if (x1 <= x2) {
                     if (y1 <= y2) {
 
                         createJob({
                             name,
-                            plant_type,
-                            min_dist,
+                            plant,
+                            dist,
                             working_area: {
-                                pos: {
+                                beg_pos: {
                                     x: x1,
                                     y: y1
                                 },
@@ -41,6 +44,7 @@
                 } else { alert("x2 cannot be greater than x1"); }
             } else{ alert("planting depth must be a positive number") }
         } else{ alert("plant distance must be a positive number") }
+
     }
 
 </script>
@@ -54,15 +58,15 @@
             </tr>
             <tr>
                 <td>Plant type:</td>
-                <td><input bind:value={plant_type}></td>
+                <td><input bind:value={plant}></td>
             </tr>
             <tr>
                 <td>Plant distance (in mm):</td>
-                <td><input type = "number" bind:value={min_dist}></td>
+                <td><input type = "number" bind:value={dist}></td>
             </tr>
             <tr>
                 <td>Seeding depth (in mm):</td>
-                <td><input type = "number" bind:value={depth}></td>
+                <td><input type = "number" bind:value={plantingDepth}></td>
             </tr>
             <tr>
                 <td>&ensp;</td>
