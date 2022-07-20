@@ -1,7 +1,6 @@
 <script>
   import CreateSeedingJob from "./CreateSeedingJob.svelte";
   import BotStatus from "./BotStatus.svelte";
-  import ExecuteJob from "./ExecuteJob.svelte";
   import CreateWateringJob from "./CreateWateringJob.svelte";
   import ExecuteWateringJob from "./ExecuteWateringJob.svelte";
   import EditSeedingJob from "./EditSeedingJob.svelte";
@@ -15,8 +14,8 @@
 
   export let first=true;
   let coords = spring({ x: 0, y: 0 } );
-  let coords1 = spring({ x: 10, y: 10 } );
-  let coords2 = spring({ x: 50, y: 50 } );
+  let coords1 = spring({ x: 30, y: 30 } );
+  let coords2 = spring({ x: 100, y: 200 } );
 
   function getField(){
     let element = document.getElementById('field');
@@ -32,8 +31,8 @@
     <CreateSeedingJob x1={$coords1.x*3} y1={$coords1.y*3} x2={$coords2.x*3} y2={$coords2.y*3} />
     <EditSeedingJob />
     <CreateWateringJob />
-    <!-- <EditWateringJob /> -->
-    <ExecuteWateringJob />
+    <EditWateringJob />
+    <!-- <ExecuteWateringJob />  -->
     <BotStatus />
   </div>
 
@@ -73,10 +72,12 @@
 
 <style>
   .container {
+      padding-bottom: 8px;
     display: flex;
     justify-content: center;
     flex-direction: row;
     align-items: start;
+      overflow-x: auto;
   }
   .container2 {
       display: flex;
@@ -85,6 +86,7 @@
       align-items: center;
   }
   .jobs{
+      padding-right: 20px;
       height: 402px;
       display: inline;
       justify-content: center;
@@ -104,7 +106,7 @@
   }
   .table {
       width: 50%;
-      height: 600px;
+      height: 400px;
       border: 2px solid #c7c7c7;
       border-radius: 8px;
       box-shadow: rgba(0, 0, 0, 100) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
@@ -113,6 +115,7 @@
       flex-direction: column;
       align-items: center;
       overflow-y: auto;
+      margin: 10px;
   }
   circle {
       fill: #ff3e00;

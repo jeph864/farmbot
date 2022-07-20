@@ -1,77 +1,19 @@
 import { CSInteger, Farmbot, NamedPin, RpcError, RpcOk, rpcRequest } from "farmbot";
 import * as dbConnect from "../../utils/conn"
 import { Db, MongoClient } from "mongodb";
+import {
+  WorkingArea, Position, JobParams,
+  EventDate,
+  DelayedJob,
+  Seeding,
+  Watering,
+  JobStep,
+  Event,
+  Plant
+} from "./interfaces";
 
-export enum EventStatus {
-  Running,
-  Delayed,
-  Scheduled,
-  Failed
-}
-export type EventDate = Date| "now";
 const DELAYED_JOBS = "delayed_jobs";
-export interface Position{
-  x: number;
-  y: number;
-  z: number;
-}
-
-export interface  WorkingArea {
-  beg_pos : Position;
-  end_pos: Position;
-  length : number;
-  width: number
-}
-export interface DelayedJob{
-  id:number;
-  type: string;
-  q_pos: number;
-}
-
-
-
-export interface JobParams {
-  name: string;
-  id: number;
-  status: { running: boolean};
-  from_seeding?:boolean
-}
-export  interface Seeding extends JobParams{
-  name: string;
-  id: number;
-  depth: number;
-  min_dist: number;
-  plant_type: string;
-  working_area: WorkingArea;
-  status: { running: boolean};
-}
-export interface Watering  extends  JobParams{
-  name: string;
-  seeding_id: number;
-  amount: number;
-  id: number
-  min_dist: number
-  depth: number;
-  height: number;
-  working_area: WorkingArea;
-  status: { running: boolean};
-  next: Date
-
-}
-export interface JobStep{
-
-}
-
-export interface Event{
-  name:string;
-  event_id?: number;
-  job_id?: number;
-  type:string;
-  status:EventStatus;
-  time: EventDate;
-  additional_args?: any
-}
-
+const PLANT_COLLECTION = "plants";
 export abstract class Job{
   protected  readonly bot: Farmbot;
   protected  config;
@@ -79,6 +21,9 @@ export abstract class Job{
   protected collection;
   protected readonly delayed_jobs;
   protected   collection_seq;
+  private plants;
+  protected safe_height;
+  protected ground_level ;
 
   protected constructor(bot: Farmbot, config = {}) {
     this.bot = bot;
@@ -87,6 +32,9 @@ export abstract class Job{
     this.collection = "";
     this.collection_seq = this.collection + "_seq"
     this.delayed_jobs = DELAYED_JOBS;
+    this.plants = PLANT_COLLECTION;
+    this.safe_height = 80;
+    this.ground_level = -468;
     //initialize the seq collection
     this.getJobSeq((e) => {
       if(e) console.log("Successfully initialized " + this.collection_seq);
@@ -131,7 +79,7 @@ export abstract class Job{
     for(let i = pos.x+job.min_dist; i<length-job.min_dist; i = i+job.min_dist){
       for(let j = pos.y+job.min_dist;j<width-job.min_dist; j = j+ job.min_dist){
         locations.push({
-          x:i, y:j, z: job.depth
+          x:i, y:j, z: 0
         })
       }
     }
@@ -140,24 +88,21 @@ export abstract class Job{
 
   executeJob = (job_id, callback) => {
     let _this = this;
-    return this.addToQueue(job_id, function(_, data){
-      let top = data[0];
-      return _this.getAllJobs({id: top.job_id}, function(e, d){
-        if(e) {
-          callback(e, null);
-        }
-        let ready_job = d[0];
-        let steps = _this.calculateSteps(ready_job), step_count = steps.length;
-        _this.executeAllSteps(steps).then(function(_){
-          _this.removeFromQueue(ready_job.id)
-            .then(function(data){
-              console.log(data)
-              callback(null, "Finished running all job steps")
-            })
+    return _this.getAllJobs({id: job_id}, function(e, d){
+      if(e) {
+        callback(e, null);
+      }
+      let ready_job = d[0];
+      let steps = _this.calculateSteps(ready_job), step_count = steps.length;
+      _this.executeAllSteps(steps).then(function(_){
+        _this.removeFromQueue(ready_job.id)
+          .then(function(data){
+            console.log(data)
+            callback(null, "Finished running all job steps")
+          })
 
-        }).catch(function(err){
-          throw err;
-        })
+      }).catch(function(err){
+        throw err;
       })
     })
   };
@@ -192,7 +137,7 @@ export abstract class Job{
           }).catch( e => console.error(e))
       })
   };
-  updateJob = (jobParams: JobParams, callback) => {
+  updateJob = (jobParams: JobParams, callback, args = {update_after : true}) => {
     const params = this.initParams(jobParams);
     const job = params;
     let _this = this;
@@ -208,7 +153,6 @@ export abstract class Job{
       _this.db.collection(this.collection)
         .updateOne(filter, {$set: job}, {upsert: _insert})
         .then((upres) => {
-          console.log(upres);
           _this.setJobSeq(_insert)
             .then(_ => {
               const tmp_job = job;
@@ -220,7 +164,7 @@ export abstract class Job{
                 _this.afterUpdate(tmp_job, (_, r) =>{
                   r;
                   callback(null, job);
-                }, tmp_job)
+                }, tmp_job, args.update_after)
               }else{
                 callback(null, job);
               }
@@ -230,7 +174,7 @@ export abstract class Job{
         }).catch( e => callback(e, null))
     })
   };
-  abstract  afterUpdate  (jobParams: JobParams, callback, data)
+  abstract  afterUpdate  (jobParams: JobParams, callback, data, update)
  getJobSeq = (callback) => {
   let _this = this;
   return this.db.collection(this.collection_seq)
@@ -281,13 +225,14 @@ export abstract class Job{
       });
   };
   removeFromQueue = (job_id : number) => {
-    let _this = this;
+    return Promise.resolve("Queue depreacted: " + job_id);
+    /*let _this = this;
     return this.db.collection(this.delayed_jobs)
       .deleteOne({job_id : job_id})
       .then(function(_){
         return _this.db.collection(_this.collection)
           .updateMany({}, {$inc : {q_pos: -1}} )
-      })
+      })*/
   };
   writePin = (value:number = 1, pin_id: number = this.config.pin_id, mode:number = 0) => {
     let args = {
@@ -325,15 +270,27 @@ export abstract class Job{
     }
     return results;
   }
+convertMl = (duration: number) => {
+    return duration;
+}
 
+write = (pin_number, value, pin_mode = 0) => {
+    const args =  { pin_mode: pin_mode, pin_value: value, pin_number: pin_number }
+    // @ts-ignore
+  return this.bot.writePin(args/*{pin_number: pin_number, pin_mode:0, pin_value: value}*/)
+}
 
+getJob = (job_id) => {
+    return this.db.collection(this.collection)
+      .findOne({id: job_id})
+}
   getAllJobs = (filter: {}, callback) => {
     return this.db.collection(this.collection)
       .find(filter).toArray().then( res => callback(null, res))
       .catch(err => callback(err, null));
   };
   getAll = (filter: {}) => {
-    console.log("Collection: ${this.collection}")
+    //console.log("Collection: ${this.collection}")
     return this.db.collection(this.collection)
       .find(filter).toArray()
   };
@@ -342,12 +299,15 @@ export abstract class Job{
   }
   getStatus = () => {};
   deleteJob = () => {};
-  getJob = () => {};
   lock = () => {};
   unlock = () => {};
   getDelayedJobs = (callback) =>{
     this.db.collection(this.delayed_jobs)
       .find().toArray().then(res => callback(null, res))
       .catch(err => callback(err, null));
+  };
+  updatePlant = (plant :Plant) => {
+    return this.db.collection(this.plants)
+      .updateOne({$and: [{x: plant.location.x}, {y:plant.location.y}, {z:plant.location.z}]},{$set: plant}, {upsert: true})
   };
 };

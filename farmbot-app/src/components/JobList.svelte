@@ -1,5 +1,5 @@
 <script>
-  import { getJobs } from "../fetchers.js";
+  import { executeJob, getJobs } from "../fetchers.js";
 
   let jobs
   let names
@@ -7,7 +7,7 @@
   async function gettingJobs(){
     jobs = await getJobs();
     if (jobs) return jobs;
-    else throw  new Error("Error occured")
+    else throw  new Error("Error occurred")
   }
   jobs = gettingJobs();
 
@@ -17,10 +17,18 @@ export async function onUpdate(){
   jobs = gettingJobs();
 }
 
+function execute(id){
+
+  executeJob(id);
+  console.log(id);
+  //TODO: execute "executeJob" from fetchers.js to pass the job to execute
+}
+
+function edit(id){
+  //TODO
+}
+
 </script>
-
-
-
 
 
 
@@ -31,7 +39,7 @@ export async function onUpdate(){
 
 <table id>
   <caption>
-    <th>Seeding jobs</th>
+    <th><p style="">Seeding jobs</p></th>
   </caption>
   <thead>
   <tr>
@@ -41,6 +49,8 @@ export async function onUpdate(){
       <th>{"Plant distance"}</th>
       <th>{"Area width"}</th>
       <th>{"Area length"}</th>
+    <th>{"execute job"}</th>
+    <th>{"edit job"}</th>
   </tr>
   </thead>
   <tbody>
@@ -53,6 +63,8 @@ export async function onUpdate(){
       <td>{value.dist}</td>
       <td>{value.working_area.width}</td>
       <td>{value.working_area.length}</td>
+      <td><button on:click={execute(value.id)}>execute</button></td>
+      <td><button on:click={edit(value.id)}>edit</button></td>
     </tr>
   {/each}
   </tbody>

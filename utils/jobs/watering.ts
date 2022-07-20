@@ -1,17 +1,18 @@
-import { Job, JobParams, JobStep, Position, Seeding, Watering } from "./job";
+import { Job,  } from "./job";
+import {JobParams, JobStep, Position, Seeding, Watering} from "./interfaces";
 import { Farmbot } from "farmbot";
 
-const WATERING_COLLECTION = "watering_jobs";
+export const WATERING_COLLECTION = "watering_jobs";
 const WATERING_COLLECTION_SEQ = "watering_jobs_seq";
 
 export class WateringJob extends Job {
-  private pin : number;
+  private pin_number : number;
 
   constructor(bot: Farmbot, config:any = {}) {
     super(bot, config);
     this.collection = WATERING_COLLECTION;
     this.collection_seq = WATERING_COLLECTION_SEQ
-    this.pin = 0
+    this.pin_number = 8;
     config.pin_id = 30536;
   }
 
@@ -25,6 +26,7 @@ export class WateringJob extends Job {
       height: 0,
       seeding_id: -1,
       from_seeding: false,
+      scheduled: false,
       working_area :  {
         beg_pos: { x: 0, y: 0, z: 0},
         end_pos : {x: 0, y: 0, z: 0},
@@ -51,14 +53,16 @@ export class WateringJob extends Job {
     let _this = this;
     return this.bot.moveAbsolute({x:dest.x, y:dest.y,z:dest.z, speed:speed})
       .then (function(_){
-        return _this.writePin(1, _this.config.pin_id)
+        return _this.bot.writePin({pin_mode : 0, pin_number:_this.pin_number, pin_value:1})
       }).then(function(_){
         return _this.delay(5000);
       }).then(function(_){
-        return  _this.writePin(0);
+        return _this.bot.writePin({pin_mode : 0, pin_number:_this.pin_number, pin_value:0})
       })
   };
-  afterUpdate = (_, callback, data = null) => {
+  afterUpdate = (_, callback, data = null, update = false) => {
+    //if(!update) callback(data);
+    update = update;
     callback(data)
   }
   updateJob = (jobParams, callback) => {
