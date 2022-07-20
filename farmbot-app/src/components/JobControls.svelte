@@ -8,12 +8,13 @@
   import EditWateringJob from "./EditWateringJob.svelte";
   import JobList from "./JobList.svelte";
   import { spring } from 'svelte/motion';
+  import WateringList from "./WateringList.svelte";
 
   export let l=0;
   export let t=0;
 
   export let first=true;
-  let coords = spring({ x: 50, y: 50 } );
+  let coords = spring({ x: 0, y: 0 } );
   let coords1 = spring({ x: 10, y: 10 } );
   let coords2 = spring({ x: 50, y: 50 } );
 
@@ -28,7 +29,7 @@
 
 <div class="container">
   <div class="jobs">
-    <CreateSeedingJob x1={$coords1.x*4} y1={$coords1.y*4} x2={$coords2.x*4} y2={$coords2.y*4} />
+    <CreateSeedingJob x1={$coords1.x*3} y1={$coords1.y*3} x2={$coords2.x*3} y2={$coords2.y*3} />
     <!-- <EditSeedingJob /> -->
     <ExecuteJob />
     <CreateWateringJob />
@@ -37,7 +38,7 @@
     <BotStatus />
   </div>
 
-  <div class="container2">
+
   <div class="field">
 
 
@@ -57,13 +58,18 @@
     </svg>
 
   </div>
+
+
+
 </div>
 
-
-</div>
-
+<div class="container2">
 <div class="table">
   <JobList />
+</div>
+<div class="table">
+  <WateringList />
+</div>
 </div>
 
 <style>
@@ -76,11 +82,11 @@
   .container2 {
       display: flex;
       justify-content: center;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
   }
   .jobs{
-      height: 380px;
+      height: 402px;
       display: inline;
       justify-content: center;
       flex-direction: column;
@@ -99,20 +105,22 @@
   }
   .table {
       width: 50%;
+      height: 600px;
       border: 2px solid #c7c7c7;
       border-radius: 8px;
       box-shadow: rgba(0, 0, 0, 100) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
       display: flex;
-      justify-content: center;
+      justify-content: start;
       flex-direction: column;
       align-items: center;
+      overflow-y: auto;
   }
   circle {
       fill: #ff3e00;
   }
   svg {
-      width: 672px;
-      height: 302px;
+      width: 896px;
+      height: 402px;
   }
 
 </style>
