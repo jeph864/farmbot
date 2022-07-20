@@ -11,9 +11,10 @@
     let options = [];
 
     let name;
-    let plantingDepth;
+    let id;
     let dist;
     let plant;
+    let depth;
     let x1;
     let y1;
     let x2;
@@ -33,9 +34,20 @@
     }
     function edit() {
         //TODO: edit seeding job, send data to endpoint
-        /*updateJob({
+        name = document.getElementById("name").value;
+        dist = document.getElementById("dist").value;
+        plant = document.getElementById("plant_type").value;
+        depth = document.getElementById("depth").value;
+        x1 = document.getElementById("x1").value;
+        y1 = document.getElementById("y1").value;
+        x2 = document.getElementById("x2").value;
+        y2 = document.getElementById("y2").value;
+        id = document.getElementById("id").value;
+
+        updateJob({
             name,
             plant,
+            depth,
             dist,
             working_area: {
                 beg_pos: {
@@ -47,10 +59,13 @@
                     y: y2
                 }
             }
-        },name);*/
-        alert();
-        //jobCreated="Seeding Job edited successfully!"
-        jobCreated=editValue.dist;
+        },id);
+
+
+        //alert(document.getElementById("id").value);
+        jobCreated="Seeding Job edited successfully!"
+
+
     }
     export async function  searchJob(){
         job = await searchJobs(selected);
@@ -92,26 +107,31 @@
         {:then  editData}
         <table id="myTable" border="0" cellpadding="3">
             {#each Object.values(editData) as editValue}
+                <tr>
+                    <td>ID of the job:</td>
+                    <td><input type = "number" value={editValue.id} id="id" readonly></td>
+                </tr>
             <tr>
                 <td>Name of the job:</td>
-                <td><p>{editValue.name}</p></td>
+                <td><input value={editValue.name} id="name"></td>
             </tr>
 
 
             <tr>
                 <td>Plant type:</td>
-                <td><input value={editValue.plant}></td>
+                <td><input value={editValue.plant} id="plant_type"></td>
 
             </tr>
             <tr>
                 <td>Plant distance (in mm):</td>
-                <td><input type = "number" bind:value={editValue.dist}></td>
+                <td><input type = "number" value={editValue.dist} id="dist"></td>
+
 
 
             </tr>
             <tr>
                 <td>Seeding depth (in mm):</td>
-                <td><input type = "number" value={editValue.depth}></td>
+                <td><input type = "number" value={editValue.depth} id="depth"></td>
             </tr>
             <tr>
                 <td>&ensp;</td>
@@ -119,7 +139,7 @@
             </tr>
             <tr>
                 <td>Working area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
-                <td>x1: <input type = "number" value={editValue.working_area.beg_pos.x}><br /> y1: <input type = "number" value={editValue.working_area.beg_pos.y}> <br /> x2: <input type = "number" value={editValue.working_area.end_pos.x}> <br /> y2: <input type = "number" value={editValue.working_area.end_pos.y}></td>
+                <td>x1: <input type = "number" value={editValue.working_area.beg_pos.x} id="x1"><br /> y1: <input type = "number" value={editValue.working_area.beg_pos.y} id="y1"> <br /> x2: <input type = "number" value={editValue.working_area.end_pos.x} id="x2"> <br /> y2: <input type = "number" value={editValue.working_area.end_pos.y} id="y2"></td>
             </tr>
 
             {/each}

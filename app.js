@@ -139,6 +139,7 @@ app.post('/jobs/seeding/update/', function(req, res, next){
 
 app.post('/jobs/watering/update/', function(req, res, next){
   let params = req.body;
+  console.log("here");
   watering_job.updateJob(params, function(e, r){
     if(e) throw  e;
     if(r)  res.json(r);

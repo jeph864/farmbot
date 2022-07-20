@@ -30,7 +30,7 @@
 <div class="container">
   <div class="jobs">
     <CreateSeedingJob x1={$coords1.x*3} y1={$coords1.y*3} x2={$coords2.x*3} y2={$coords2.y*3} />
-    <!-- <EditSeedingJob /> -->
+    <EditSeedingJob />
     <ExecuteJob />
     <CreateWateringJob />
     <!-- <EditWateringJob /> -->

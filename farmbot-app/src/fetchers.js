@@ -88,7 +88,7 @@ async function getStatus(){
 
 
 async function updateJob(job,query) {
-  const url = `${baseUrl}/jobs/seeding/update?name=${query}`
+  const url = `${baseUrl}/jobs/seeding/update?id=${query}`
   //console.log(JSON.stringify(job))
   const init = {
     method: "POST",
