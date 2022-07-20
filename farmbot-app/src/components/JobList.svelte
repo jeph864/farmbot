@@ -1,5 +1,4 @@
 <script>
-  import Job from "./Job.svelte";
   import { getJobs } from "../fetchers.js";
 
   export let jobs
