@@ -103,6 +103,15 @@ app.get('/jobs/get', function(req, res, next){
       next();
     }).catch(e => {console.error(e)})
 })
+app.get('/jobs/watering/get', function(req, res, next){
+  console.log(watering_job.getConfig())
+  watering_job.getAll()
+    .then(data => {
+      console.log(data)
+      res.json(data);
+      next();
+    }).catch(e => {console.error(e)})
+})
 app.post('/jobs/create/', function(req, res, next){
   let params = req.body;
   seeding_job.createJob(params, function(error ,results){
