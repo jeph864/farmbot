@@ -14,8 +14,8 @@
 
   export let first=true;
   let coords = spring({ x: 0, y: 0 } );
-  let coords1 = spring({ x: 10, y: 10 } );
-  let coords2 = spring({ x: 50, y: 50 } );
+  let coords1 = spring({ x: 30, y: 30 } );
+  let coords2 = spring({ x: 100, y: 200 } );
 
   function getField(){
     let element = document.getElementById('field');
@@ -32,7 +32,7 @@
     <EditSeedingJob />
     <CreateWateringJob />
     <EditWateringJob />
-    <ExecuteWateringJob />
+    <!-- <ExecuteWateringJob />  -->
     <BotStatus />
   </div>
 
@@ -72,7 +72,7 @@
 
 <style>
   .container {
-      padding-bottom: 4px;
+      padding-bottom: 8px;
     display: flex;
     justify-content: center;
     flex-direction: row;
@@ -86,7 +86,7 @@
       align-items: center;
   }
   .jobs{
-      padding-right: 10px;
+      padding-right: 20px;
       height: 402px;
       display: inline;
       justify-content: center;
@@ -115,6 +115,7 @@
       flex-direction: column;
       align-items: center;
       overflow-y: auto;
+      margin: 10px;
   }
   circle {
       fill: #ff3e00;

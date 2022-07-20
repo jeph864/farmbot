@@ -19,6 +19,12 @@
 
   function toggleJob(name){
     //TODO: activate/deactivate watering job
+
+
+  }
+
+  function execute(id){
+    //TODO: directly execute watering job
   }
 
 </script>
@@ -31,7 +37,7 @@
 
   <table id>
     <caption>
-      <th>Watering jobs</th>
+      <th><p style="">Watering jobs</p></th>
     </caption>
     <thead>
     <tr>
@@ -39,7 +45,8 @@
       <th>{"Plant-Type"}</th>
       <th>{"scheduled at"}</th>
       <th>{"active"}</th>
-      <th>{"activate/deactivate"} </th>
+      <th>{"activate/ deactivate"} </th>
+      <th>{"directly execute job"} </th>
     </tr>
     </thead>
     <tbody>
@@ -53,7 +60,8 @@
         {:else}                 <p style="color: red;"> {"not active"} </p>
             {/if}
         </td>
-        <td><button on:click={toggleJob(value.name)}>toggle watering job</button></td>
+        <td><button on:click={toggleJob(value.id)}>toggle job</button></td>
+        <td><button on:click={execute(value.id)}>execute now</button></td>
       </tr>
     {/each}
     </tbody>

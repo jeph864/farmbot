@@ -2,12 +2,6 @@
   import ActionItem from "./ActionItem.svelte";
   import { getStatus } from "../fetchers.js";
 
-  //TODO: remove comment when frontend-backend connection is fixed:
-  //let status = getStatus();
-  //TODO: remove when frontend-backend connection is fixed:
-  //let status = "No status yet";
-
-
   let status
 
   async function gettingStatus(){

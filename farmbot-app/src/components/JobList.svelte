@@ -7,7 +7,7 @@
   async function gettingJobs(){
     jobs = await getJobs();
     if (jobs) return jobs;
-    else throw  new Error("Error occured")
+    else throw  new Error("Error occurred")
   }
   jobs = gettingJobs();
 
@@ -39,7 +39,7 @@ function edit(id){
 
 <table id>
   <caption>
-    <th>Seeding jobs</th>
+    <th><p style="">Seeding jobs</p></th>
   </caption>
   <thead>
   <tr>
