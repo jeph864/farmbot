@@ -1,56 +1,6 @@
 import { CSInteger, Farmbot, RpcError, RpcOk } from "farmbot";
 import { Db } from "mongodb";
-export interface Position {
-    x: number;
-    y: number;
-    z: number;
-}
-export interface WorkingArea {
-    beg_pos: Position;
-    end_pos: Position;
-    length: number;
-    width: number;
-}
-export interface DelayedJob {
-    id: number;
-    type: string;
-    q_pos: number;
-}
-export interface JobParams {
-    name: string;
-    id: number;
-    status: {
-        running: boolean;
-    };
-    from_seeding?: boolean;
-}
-export interface Seeding extends JobParams {
-    name: string;
-    id: number;
-    depth: number;
-    min_dist: number;
-    plant_type: string;
-    working_area: WorkingArea;
-    status: {
-        running: boolean;
-    };
-}
-export interface Watering extends JobParams {
-    name: string;
-    seeding_id: number;
-    amount: number;
-    id: number;
-    min_dist: number;
-    depth: number;
-    height: number;
-    working_area: WorkingArea;
-    status: {
-        running: boolean;
-    };
-    next: Date;
-}
-export interface JobStep {
-}
+import { WorkingArea, Position, JobParams, JobStep, Plant } from "./interfaces";
 export declare abstract class Job {
     protected readonly bot: Farmbot;
     protected config: any;
@@ -58,6 +8,9 @@ export declare abstract class Job {
     protected collection: any;
     protected readonly delayed_jobs: any;
     protected collection_seq: any;
+    private plants;
+    protected safe_height: any;
+    protected ground_level: any;
     protected constructor(bot: Farmbot, config?: {});
     getConfig: () => any;
     setConfig: () => void;
@@ -69,25 +22,30 @@ export declare abstract class Job {
     minPos: (pos1: Position, pos2: Position) => Position;
     maxPos: (pos1: Position, pos2: Position) => Position;
     calculateSteps: (job: any) => Position[];
-    executeJob: (job_id: any, callback: any) => Promise<void>;
+    executeJob: (job_id: any, callback: any) => Promise<any>;
     createJob: (jobParams: JobParams, callback: any) => void;
-    updateJob: (jobParams: JobParams, callback: any) => void;
-    abstract afterUpdate(jobParams: JobParams, callback: any, data: any): any;
+    updateJob: (jobParams: JobParams, callback: any, args?: {
+        update_after: boolean;
+    }) => void;
+    abstract afterUpdate(jobParams: JobParams, callback: any, data: any, update: any): any;
     getJobSeq: (callback: any) => Promise<void>;
     setJobSeq: (set?: boolean) => Promise<import("mongodb").UpdateResult>;
     addToQueue: (job_id: any, callback: any) => Promise<void>;
-    removeFromQueue: (job_id: number) => Promise<import("bson").Document | import("mongodb").UpdateResult>;
+    removeFromQueue: (job_id: number) => Promise<string>;
     writePin: (value?: number, pin_id?: number, mode?: number) => Promise<RpcOk | RpcError>;
     move: (dest: Position, speed: CSInteger) => Promise<RpcOk | RpcError>;
     markAs: (args: any, body: any) => Promise<RpcOk | RpcError>;
     executeAllSteps: (items: any) => Promise<(RpcOk | RpcError)[]>;
+    convertMl: (duration: number) => number;
+    write: (pin_number: any, value: any, pin_mode?: number) => Promise<RpcOk | RpcError>;
+    getJob: (job_id: any) => Promise<import("mongodb").WithId<import("bson").Document> | null>;
     getAllJobs: (filter: {}, callback: any) => Promise<any>;
     getAll: (filter: {}) => Promise<import("mongodb").WithId<import("bson").Document>[]>;
     delay: (t: any) => Promise<unknown>;
     getStatus: () => void;
     deleteJob: () => void;
-    getJob: () => void;
     lock: () => void;
     unlock: () => void;
     getDelayedJobs: (callback: any) => void;
+    updatePlant: (plant: Plant) => Promise<import("mongodb").UpdateResult>;
 }

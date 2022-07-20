@@ -15,9 +15,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WateringJob = void 0;
+exports.WateringJob = exports.WATERING_COLLECTION = void 0;
 var job_1 = require("./job");
-var WATERING_COLLECTION = "watering_jobs";
+exports.WATERING_COLLECTION = "watering_jobs";
 var WATERING_COLLECTION_SEQ = "watering_jobs_seq";
 var WateringJob = /** @class */ (function (_super) {
     __extends(WateringJob, _super);
@@ -34,6 +34,7 @@ var WateringJob = /** @class */ (function (_super) {
                 height: 0,
                 seeding_id: -1,
                 from_seeding: false,
+                scheduled: false,
                 working_area: {
                     beg_pos: { x: 0, y: 0, z: 0 },
                     end_pos: { x: 0, y: 0, z: 0 },
@@ -61,15 +62,18 @@ var WateringJob = /** @class */ (function (_super) {
             var _this = _this_1;
             return _this_1.bot.moveAbsolute({ x: dest.x, y: dest.y, z: dest.z, speed: speed })
                 .then(function (_) {
-                return _this.writePin(1, _this.config.pin_id);
+                return _this.bot.writePin({ pin_mode: 0, pin_number: _this.pin_number, pin_value: 1 });
             }).then(function (_) {
                 return _this.delay(5000);
             }).then(function (_) {
-                return _this.writePin(0);
+                return _this.bot.writePin({ pin_mode: 0, pin_number: _this.pin_number, pin_value: 0 });
             });
         };
-        _this_1.afterUpdate = function (_, callback, data) {
+        _this_1.afterUpdate = function (_, callback, data, update) {
             if (data === void 0) { data = null; }
+            if (update === void 0) { update = false; }
+            //if(!update) callback(data);
+            update = update;
             callback(data);
         };
         _this_1.updateJob = function (jobParams, callback) {
@@ -110,9 +114,9 @@ var WateringJob = /** @class */ (function (_super) {
                 });
             });
         };
-        _this_1.collection = WATERING_COLLECTION;
+        _this_1.collection = exports.WATERING_COLLECTION;
         _this_1.collection_seq = WATERING_COLLECTION_SEQ;
-        _this_1.pin = 0;
+        _this_1.pin_number = 8;
         config.pin_id = 30536;
         return _this_1;
     }
