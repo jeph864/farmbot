@@ -14,7 +14,7 @@
   export let t=0;
 
   export let first=true;
-  let coords = spring({ x: 50, y: 50 } );
+  let coords = spring({ x: 0, y: 0 } );
   let coords1 = spring({ x: 10, y: 10 } );
   let coords2 = spring({ x: 50, y: 50 } );
 
