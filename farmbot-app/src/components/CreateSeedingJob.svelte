@@ -1,9 +1,7 @@
 <script>
     import ActionItem from "./ActionItem.svelte";
     import onUpdate from "./JobList.svelte";
-    import jobs from "./JobList.svelte";
     import { createJob } from "../fetchers.js";
-
 
     let name;
     let depth;
