@@ -28,7 +28,7 @@
 
 <div class="container">
   <div class="jobs">
-    <CreateSeedingJob x1={$coords1.x} y1={$coords1.y} x2={$coords2.x} y2={$coords2.y} />
+    <CreateSeedingJob x1={$coords1.x*4} y1={$coords1.y*4} x2={$coords2.x*4} y2={$coords2.y*4} />
     <!-- <EditSeedingJob /> -->
     <ExecuteJob />
     <CreateWateringJob />
@@ -111,8 +111,8 @@
       fill: #ff3e00;
   }
   svg {
-      width: 600px;
-      height: 320px;
+      width: 672px;
+      height: 302px;
   }
 
 </style>
