@@ -2,12 +2,12 @@
 	"name": "farmbot-app",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
-		"build": "svelte-kit build",
+		"dev": "vite dev",
+		"build": "vite build",
 		"package": "svelte-kit package",
-		"preview": "svelte-kit preview",
-		"prepare": "svelte-kit sync",
-		"check": "svelte-check --tsconfig ./jsconfig.json",
+		"preview": "vite  preview",
+		"prepare": "vite sync",
+		"check": "vite --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./jsconfig.json --watch",
 		"test": "playwright test",
 		"lint": "prettier --check --plugin-search-dir=. .",
@@ -25,6 +25,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"svelte-canvas": "^0.7.1"
+		"svelte-canvas": "^0.7.1",
+		"vite": "^3.0.2"
 	}
 }

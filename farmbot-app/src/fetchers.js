@@ -59,16 +59,16 @@ async function searchJobs(query) {
 }
 
 async function executeJob(job_id) {
-  const url = `${baseUrl}/jobs/execute`
+  const url = `${baseUrl}/jobs/seeding/execute?id=${job_id}`
   const res = await fetch(url, {
-    method: "GET",
+    method: "POST",
     mode: "no-cors",
     headers: {
       "Content-Type": "application/json",
     },
-    body: {job_id : job_id}
   });
   return res.json();
+  
 }
 
 async function getStatus(){
