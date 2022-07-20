@@ -34,6 +34,10 @@
   <tr>
       <th>{"Name"}</th>
       <th>{"Plant-Type"}</th>
+      <th>{"Planting depth"}</th>
+      <th>{"Plant distance"}</th>
+      <th>{"Area width"}</th>
+      <th>{"Area length"}</th>
   </tr>
   </thead>
   <tbody>
@@ -42,6 +46,10 @@
     <tr>
       <td>{value.name}</td>
       <td>{value.plant}</td>
+      <td>{value.depth}</td>
+      <td>{value.dist}</td>
+      <td>{value.working_area.width}</td>
+      <td>{value.working_area.length}</td>
     </tr>
   {/each}
   </tbody>
