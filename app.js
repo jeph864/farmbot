@@ -85,10 +85,14 @@ app.post('/register', function(request, response) {
 });
 
 app.get('/search/', function(req, res, next){
+
   let search_term = req.query.name, pattern = '^'+search_term;
+  console.log("searching for " + search_term)
   seeding_job.getAllJobs({name: {'$regex': pattern, '$options': 'i'}}, function(err, results){
+
     if(err) throw  err;
     if (results){
+      console.log(results)
       res.json(results);
     }
     next();

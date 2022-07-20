@@ -22,6 +22,7 @@ async function createJob(job) {
 
 }
 
+
 export async function getJobs() {
   const url = `${baseUrl}/jobs/get`
   const res = await fetch(url, {
@@ -34,16 +35,17 @@ export async function getJobs() {
 }
 
 async function searchJobs(query) {
-  const url = `${baseUrl}/jobs/search/${query}`
+
+  const url = `${baseUrl}/search?name=${query}`
   const res = await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json"
     },
   });
+
   return res.json();
 }
-
 async function executeJob(job_id) {
   const url = `${baseUrl}/jobs/execute/${job_id}`
   const res = await fetch(url, {
@@ -69,4 +71,25 @@ async function getStatus(){
 
 }
 
-export {createJob, searchJobs, executeJob, getStatus}
+
+async function updateJob(job,query) {
+  const url = `${baseUrl}/jobs/seeding/update?name=${query}`
+  //console.log(JSON.stringify(job))
+  const init = {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(job)
+  }
+  fetch(url, init).then((res) => {
+    console.log(res)
+    return res.json();
+  }).catch(err => {
+    console.error(err)
+  });
+
+}
+export {createJob, searchJobs, executeJob, getStatus,updateJob}

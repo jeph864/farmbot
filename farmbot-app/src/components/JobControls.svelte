@@ -33,7 +33,7 @@
 <div class="container">
   <div class="jobs">
     <CreateSeedingJob />
-    <!-- <EditSeedingJob /> -->
+    <EditSeedingJob />
     <ExecuteJob />
     <CreateWateringJob />
     <!-- <EditWateringJob /> -->

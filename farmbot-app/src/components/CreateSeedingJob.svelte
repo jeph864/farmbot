@@ -29,7 +29,7 @@
                                 beg_pos: {
                                     x: x1,
                                     y: y1
-                                },
+                                 },
                                 end_pos: {
                                     x: x2,
                                     y: y2

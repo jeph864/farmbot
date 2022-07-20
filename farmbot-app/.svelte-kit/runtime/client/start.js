@@ -17,10 +17,14 @@ function coalesce_to_error(err) {
 }
 
 /**
- * @param {import('types').LoadOutput} loaded
+ * @param {import('types').LoadOutput | void} loaded
  * @returns {import('types').NormalizedLoadOutput}
  */
 function normalize(loaded) {
+	if (!loaded) {
+		return {};
+	}
+
 	// TODO remove for 1.0
 	// @ts-expect-error
 	if (loaded.fallthrough) {
@@ -40,7 +44,10 @@ function normalize(loaded) {
 		const status = loaded.status;
 
 		if (!loaded.error && has_error_status) {
-			return { status: status || 500, error: new Error() };
+			return {
+				status: status || 500,
+				error: new Error(`${status}`)
+			};
 		}
 
 		const error = typeof loaded.error === 'string' ? new Error(loaded.error) : loaded.error;
@@ -108,6 +115,15 @@ function normalize_path(path, trailing_slash) {
 	}
 
 	return path;
+}
+
+class LoadURL extends URL {
+	/** @returns {string} */
+	get hash() {
+		throw new Error(
+			'url.hash is inaccessible from load. Consider accessing hash from the page store within the script tag of your component.'
+		);
+	}
 }
 
 /** @param {HTMLDocument} doc */
@@ -338,9 +354,14 @@ function parse_route_id(id) {
 										.split(/\[(.+?)\]/)
 										.map((content, i) => {
 											if (i % 2) {
-												const [, rest, name, type] = /** @type {RegExpMatchArray} */ (
-													param_pattern.exec(content)
-												);
+												const match = param_pattern.exec(content);
+												if (!match) {
+													throw new Error(
+														`Invalid param: ${content}. Params and matcher names can only have underscores and alphanumeric characters.`
+													);
+												}
+
+												const [, rest, name, type] = match;
 												names.push(name);
 												types.push(type);
 												return rest ? '(.*?)' : '([^/]+?)';
@@ -568,16 +589,18 @@ function create_client({ target, session, base, trailing_slash }) {
 	let token;
 
 	/**
-	 * @param {string} href
+	 * @param {string | URL} url
 	 * @param {{ noscroll?: boolean; replaceState?: boolean; keepfocus?: boolean; state?: any }} opts
 	 * @param {string[]} redirect_chain
 	 */
 	async function goto(
-		href,
+		url,
 		{ noscroll = false, replaceState = false, keepfocus = false, state = {} },
 		redirect_chain
 	) {
-		const url = new URL(href, get_base_uri(document));
+		if (typeof url === 'string') {
+			url = new URL(url, get_base_uri(document));
+		}
 
 		if (router_enabled) {
 			return navigate({
@@ -714,9 +737,12 @@ function create_client({ target, session, base, trailing_slash }) {
 				const root = document.body;
 				const tabindex = root.getAttribute('tabindex');
 
-				getSelection()?.removeAllRanges();
 				root.tabIndex = -1;
 				root.focus({ preventScroll: true });
+
+				setTimeout(() => {
+					getSelection()?.removeAllRanges();
+				});
 
 				// restore `tabindex` as to prevent `root` from stealing input from elements
 				if (tabindex !== null) {
@@ -939,6 +965,7 @@ function create_client({ target, session, base, trailing_slash }) {
 		}
 
 		const session = $session;
+		const load_url = new LoadURL(url);
 
 		if (module.load) {
 			/** @type {import('types').LoadEvent} */
@@ -948,18 +975,7 @@ function create_client({ target, session, base, trailing_slash }) {
 				props: props || {},
 				get url() {
 					node.uses.url = true;
-
-					return new Proxy(url, {
-						get: (target, property) => {
-							if (property === 'hash') {
-								throw new Error(
-									'url.hash is inaccessible from load. Consider accessing hash from the page store within the script tag of your component.'
-								);
-							}
-
-							return Reflect.get(target, property, target);
-						}
-					});
+					return load_url;
 				},
 				get session() {
 					node.uses.session = true;
@@ -1021,24 +1037,17 @@ function create_client({ target, session, base, trailing_slash }) {
 				});
 			}
 
-			let loaded;
-
 			if (import.meta.env.DEV) {
 				try {
 					lock_fetch();
-					loaded = await module.load.call(null, load_input);
+					node.loaded = normalize(await module.load.call(null, load_input));
 				} finally {
 					unlock_fetch();
 				}
 			} else {
-				loaded = await module.load.call(null, load_input);
+				node.loaded = normalize(await module.load.call(null, load_input));
 			}
 
-			if (!loaded) {
-				throw new Error('load function must return a value');
-			}
-
-			node.loaded = normalize(loaded);
 			if (node.loaded.stuff) node.stuff = node.loaded.stuff;
 			if (node.loaded.dependencies) {
 				node.loaded.dependencies.forEach(add_dependency);
@@ -1079,7 +1088,7 @@ function create_client({ target, session, base, trailing_slash }) {
 		let stuff = root_stuff;
 		let stuff_changed = false;
 
-		/** @type {number | undefined} */
+		/** @type {number} */
 		let status = 200;
 
 		/** @type {Error | null} */
@@ -1139,7 +1148,11 @@ function create_client({ target, session, base, trailing_slash }) {
 							props = res.status === 204 ? {} : await res.json();
 						} else {
 							status = res.status;
-							error = new Error('Failed to load data');
+							try {
+								error = await res.json();
+							} catch (e) {
+								error = new Error('Failed to load data');
+							}
 						}
 					}
 
@@ -1161,7 +1174,7 @@ function create_client({ target, session, base, trailing_slash }) {
 
 						if (node.loaded) {
 							if (node.loaded.error) {
-								status = node.loaded.status;
+								status = node.loaded.status ?? 500;
 								error = node.loaded.error;
 							}
 
@@ -1311,14 +1324,9 @@ function create_client({ target, session, base, trailing_slash }) {
 			const params = route.exec(path);
 
 			if (params) {
+				const id = normalize_path(url.pathname, trailing_slash) + url.search;
 				/** @type {import('./types').NavigationIntent} */
-				const intent = {
-					id: url.pathname + url.search,
-					route,
-					params,
-					url
-				};
-
+				const intent = { id, route, params, url };
 				return intent;
 			}
 		}
@@ -1695,7 +1703,7 @@ function create_client({ target, session, base, trailing_slash }) {
 						if (node.loaded.error) {
 							if (error) throw node.loaded.error;
 							error_args = {
-								status: node.loaded.status,
+								status: node.loaded.status ?? 500,
 								error: node.loaded.error,
 								url,
 								routeId
