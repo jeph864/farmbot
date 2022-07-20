@@ -1,8 +1,10 @@
 <script>
-  import { getWateringJobs } from "../fetchers.js";
+  import { executeWateringJob, getWateringJobs } from "../fetchers.js";
+  import ActiveJob from "./ActiveJob.svelte";
 
   export let wateringJobs
   let names
+  let x=true;
 
   export async function gettingWateringJobs(){
     wateringJobs = await getWateringJobs();
@@ -17,14 +19,15 @@
     wateringJobs = gettingWateringJobs();
   }
 
-  function toggleJob(name){
+  function toggleJob(id,active){
     //TODO: activate/deactivate watering job
-
+    //update(id, active -> !active)
+    x=!x;
 
   }
 
   function execute(id){
-    //TODO: directly execute watering job
+    executeWateringJob(id);
   }
 
 </script>
@@ -56,20 +59,17 @@
         <td>{value.name}</td>
         <td>{value.plant}</td>
         <td>{value.next}</td>
-        <td>{#if value.active}  <p style="color: green;">{"active"} </p>
-        {:else}                 <p style="color: red;"> {"not active"} </p>
-            {/if}
+        <td>
+
+          <ActiveJob active={value.active} y={x} />
+
         </td>
-        <td><button on:click={toggleJob(value.id)}>toggle job</button></td>
+        <td><button on:click={toggleJob(value.id, value.active)}>toggle job</button></td>
         <td><button on:click={execute(value.id)}>execute now</button></td>
       </tr>
     {/each}
     </tbody>
   </table>
-
-
-
-
 
 {:catch error}
   <p>Got some error while processing</p>

@@ -1,6 +1,7 @@
 <script>
   import { executeJob, getJobs } from "../fetchers.js";
 
+
   let jobs
   let names
 
@@ -57,7 +58,7 @@ function edit(id){
 
   {#each Object.values(data) as value}
     <tr>
-      <td>{value.name}</td>
+      <td><p style="">{value.name}</p></td>
       <td>{value.plant}</td>
       <td>{value.depth}</td>
       <td>{value.dist}</td>

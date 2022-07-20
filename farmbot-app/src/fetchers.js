@@ -22,7 +22,7 @@ async function createJob(job) {
 
 }
 
-export async function getJobs() {
+async function getJobs() {
   const url = `${baseUrl}/jobs/get`
   const res = await fetch(url, {
     method: "GET",
@@ -34,7 +34,7 @@ export async function getJobs() {
 }
 
 
-export async function getWateringJobs() {
+async function getWateringJobs() {
   const url = `${baseUrl}/jobs/watering/get`
   const res = await fetch(url, {
     method: "GET",
@@ -59,7 +59,19 @@ async function searchJobs(query) {
 }
 
 async function executeJob(job_id) {
-  const url = `${baseUrl}/jobs/execute`
+  const url = `${baseUrl}/jobs/seeding/execute`
+  const res = await fetch(url, {
+    method: "GET",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: {job_id : job_id}
+  });
+  return res.json();
+}
+async function executeWateringJob(job_id) {
+  const url = `${baseUrl}/jobs/watering/execute`
   const res = await fetch(url, {
     method: "GET",
     mode: "no-cors",
@@ -80,8 +92,34 @@ async function getStatus(){
     },
   });
   return res.json();
-
-
 }
 
-export {createJob, searchJobs, executeJob, getStatus}
+
+async function getPlantPos(){
+  //TODO: create fetcher for getting plant positions
+
+  //for test purpose:
+  let plant1 = {
+    location:{
+      x: 2000,
+      y: 700,
+      z: 0
+    },
+    name: "test",
+    stage: "planted"
+  }
+  let plant2 = {
+    location:{
+      x: 2000,
+      y: 600,
+      z: 0
+    },
+    name: "test",
+    stage: "planned"
+  }
+  let plants=[plant1,plant2]
+  return plants
+}
+
+
+export {createJob, searchJobs,getJobs, getWateringJobs, executeJob, executeWateringJob, getStatus, getPlantPos}
