@@ -7,7 +7,7 @@ var Settings = /** @class */ (function () {
         var _this = this;
         this.initial_params = {
             device_id: 0,
-            tray_pos: { x: 900, y: 600, z: -468 },
+            tray_pos: { x: 900, y: 725, z: -464 },
             safe_height: 30,
             ground_level: -486,
             watering: {
@@ -28,6 +28,14 @@ var Settings = /** @class */ (function () {
                 .then(function (res) {
                 return res;
             });
+        };
+        this.saveSettings = function (settings) {
+            return _this.db.collection(_this.settings_collection).
+                updateOne({ id: 0 }, { $set: settings }, { upsert: true });
+        };
+        this.getSettings = function () {
+            return _this.db.collection(_this.settings_collection)
+                .findOne();
         };
         this.api = api;
         this.db = dbConnect.getDatabase();

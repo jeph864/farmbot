@@ -4,6 +4,7 @@ declare class Settings {
     private db;
     private api_collection;
     private current_sess_user;
+    private settings_collection;
     constructor(api: any, user: any);
     initial_params: {
         device_id: number;
@@ -42,6 +43,8 @@ declare class Settings {
         };
     };
     getDevice: () => void;
+    saveSettings: (settings: any) => any;
+    getSettings: () => any;
 }
 export declare let config: Settings;
 export {};

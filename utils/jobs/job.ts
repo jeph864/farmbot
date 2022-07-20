@@ -87,6 +87,7 @@ export abstract class Job{
   }
 
   executeJob = (job_id, callback) => {
+    let started = new Date();
     let _this = this;
     return _this.getAllJobs({id: job_id}, function(e, d){
       if(e) {
@@ -95,17 +96,26 @@ export abstract class Job{
       let ready_job = d[0];
       let steps = _this.calculateSteps(ready_job), step_count = steps.length;
       _this.executeAllSteps(steps).then(function(_){
-        _this.removeFromQueue(ready_job.id)
-          .then(function(data){
-            console.log(data)
-            callback(null, "Finished running all job steps")
+        return _this.updateLastRun(job_id, started)
+          .then((_) => {
+            _this.removeFromQueue(ready_job.id)
+              .then(function(data){
+                console.log(data)
+                callback(null, "Finished running all job steps")
+              })
           })
+
 
       }).catch(function(err){
         throw err;
       })
     })
   };
+  updateLastRun = (job_id, date) => {
+    const lastFinished = new Date();
+    return this.db.collection(this.collection)
+      .updateOne({id: job_id}, {$set: {lastRun: date, lastFinished: lastFinished}})
+}
   createJob = (jobParams: JobParams, callback) => {
     const params = this.initParams(jobParams);
     const job = params;

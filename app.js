@@ -182,12 +182,40 @@ app.get('/pinwrite', (req, res, next)=>{
       res.send("Wrote")
     }).catch((e) => {console.error(e)})
 })
-app.post('/jobs/watering/execute', function(req, res, next){
+/*app.post('/jobs/watering/execute', function(req, res, next){
   const location = req.body;
   watering_job.doWatering(location)
     .then(_ => {
       res.send("Finished watering");
     }).catch(_ => res.send("Couldn't finish the watering job successfully"))
+})*/
+
+app.post('/jobs/watering/execute', function(req, res, next){
+  let job_id;
+  if(!req.query.id){
+    const dest_location = req.body.dest;
+    const tray_location = req.body.tray_pos;
+    seeding_job.plantSeed(tray_location, dest_location)
+      .then(_ => {
+        res.send("Finished Planting step");
+      }).catch(_ => res.send("Couldn't finish the watering job successfully"))
+  }else{
+    job_id = parseInt(req.query.id);
+    watering_job.getJob(job_id)
+      .then((job) => {
+        let event = {
+          job_id : job.id,
+          type: "watering",
+          status: EventStatus.NotRunning,
+          time: "now"
+        }
+        return event_queue.add(event, {single_event: true});
+      }).then((r) => {
+
+      res.send("Job submitted");
+    })
+  }
+
 })
 app.post('/jobs/seeding/execute', function(req, res, next){
   let job_id;

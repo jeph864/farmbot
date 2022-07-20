@@ -23,6 +23,7 @@ export declare abstract class Job {
     maxPos: (pos1: Position, pos2: Position) => Position;
     calculateSteps: (job: any) => Position[];
     executeJob: (job_id: any, callback: any) => Promise<any>;
+    updateLastRun: (job_id: any, date: any) => Promise<import("mongodb").UpdateResult>;
     createJob: (jobParams: JobParams, callback: any) => void;
     updateJob: (jobParams: JobParams, callback: any, args?: {
         update_after: boolean;
