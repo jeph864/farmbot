@@ -1,10 +1,10 @@
 <script>
   import { getJobs } from "../fetchers.js";
 
-  export let jobs
+  let jobs
   let names
 
-  export async function gettingJobs(){
+  async function gettingJobs(){
     jobs = await getJobs();
     if (jobs) return jobs;
     else throw  new Error("Error occured")
@@ -37,6 +37,10 @@ export async function onUpdate(){
   <tr>
       <th>{"Name"}</th>
       <th>{"Plant-Type"}</th>
+      <th>{"Planting depth"}</th>
+      <th>{"Plant distance"}</th>
+      <th>{"Area width"}</th>
+      <th>{"Area length"}</th>
   </tr>
   </thead>
   <tbody>
@@ -45,6 +49,10 @@ export async function onUpdate(){
     <tr>
       <td>{value.name}</td>
       <td>{value.plant}</td>
+      <td>{value.depth}</td>
+      <td>{value.dist}</td>
+      <td>{value.working_area.width}</td>
+      <td>{value.working_area.length}</td>
     </tr>
   {/each}
   </tbody>
