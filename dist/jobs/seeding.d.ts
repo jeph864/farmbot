@@ -1,17 +1,20 @@
-import { Job, Position, Seeding, JobStep } from "./job";
-import { CSInteger, Farmbot, RpcError, RpcOk } from "farmbot";
+import { Job } from "./job";
+import { Position, Seeding, JobStep } from "./interfaces";
+import { CSInteger, Farmbot } from "farmbot";
 export interface SeedingStep extends JobStep {
     tray_pos: Position;
     dest: Position;
     speed: CSInteger;
 }
+export declare const SEEDING_COLLECTION = "seeding_jobs";
 export declare class SeedingJob extends Job {
     private tray_pos;
     private watering_job;
+    private pin_number;
     constructor(bot: Farmbot, config?: any);
     private getDefaultParams;
     initParams: (inputJob: Seeding) => Seeding;
-    runStep: (dest: any) => Promise<RpcOk | RpcError>;
-    private plantSeed;
-    afterUpdate: (jobParams: any, callback: any) => void;
+    runStep: (dest: any) => Promise<void>;
+    plantSeed: (bay_pos: Position, dest: Position, speed?: number) => Promise<void>;
+    afterUpdate: (jobParams: any, callback: any, update?: boolean) => void;
 }

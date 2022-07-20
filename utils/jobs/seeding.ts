@@ -1,4 +1,5 @@
-import { Job, Position, Seeding, WorkingArea, JobStep}  from "./job";
+import { Job }  from "./job";
+import  {Position, Seeding, WorkingArea, JobStep, Stage} from "./interfaces";
 import { CSInteger, Farmbot, RpcError, RpcOk } from "farmbot";
 import { WateringJob } from "./watering";
 
@@ -7,21 +8,21 @@ export interface SeedingStep extends  JobStep{
   dest: Position;
   speed: CSInteger
 }
-const SEEDING_COLLECTION = "seeding_jobs";
+export const SEEDING_COLLECTION = "seeding_jobs";
 const SEEDING_COLLECTION_SEQ = "seeding_jobs_seq";
 
 export class SeedingJob extends  Job{
   private tray_pos: Position;
   private watering_job : WateringJob;
-  private safe_height;
+  private pin_number;
   constructor(bot: Farmbot, config:any = {}) {
     super(bot, config);
     this.collection = SEEDING_COLLECTION;
-    this.tray_pos = {x:10, y:10, z:0}
+    this.tray_pos = {x:990, y:725, z: -468}
     this.collection_seq = SEEDING_COLLECTION_SEQ;
     this.config.pin_id = 30538;
     this.watering_job = new WateringJob(bot);
-    this.safe_height = 30;
+    this.pin_number = 9;
   }
 
 
@@ -38,7 +39,10 @@ export class SeedingJob extends  Job{
         length: 0,
         width: 0
       },
-      status: {running: false}
+      status: {running: false, active: false},
+      nextRunAt: "yesterday",
+      stage: "Not Planted",
+      scheduled: false
     }
     return df;
   }
@@ -60,27 +64,46 @@ export class SeedingJob extends  Job{
   runStep = (dest ) => {
     return this.plantSeed(this.tray_pos, dest, 100);
   };
-
-  private plantSeed = (bay_pos: Position, dest: Position, speed:number = 100) => {
+ plantSeed = (bay_pos: Position, dest: Position, speed:number = 100) => {
     let _this = this;
-    return this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z, speed: speed })
+    dest.z = dest.z + this.ground_level ;
+   return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z + _this.safe_height, speed: speed })
+     .then(function(_){
+       return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z, speed: speed });
+     })
       .then (function(_){
-        console.log("Moved successfully to bay position");
-        return _this.writePin(1)
+        console.log(`Moved successfully to tray position: x: ${bay_pos.x}, y: ${bay_pos.y} , z: ${bay_pos.z}`);
+        return _this.bot.writePin({pin_mode : 0, pin_number:_this.pin_number, pin_value:1})
       }).then(function(_){
         console.log("Wrote to pin: 1");
+        return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z + _this.safe_height, speed: speed })
+      })/*.then((_) =>{
+        return _this.bot.moveAbsolute({x:bay_pos.x, y:bay_pos.y,z:bay_pos.z + _this.safe_height, speed:speed})
+      })*/
+      .then((_) =>{
+      return _this.bot.moveAbsolute({x:dest.x, y:dest.y,z:bay_pos.z + _this.safe_height , speed:speed})
+      }).then((_) => {
         return _this.bot.moveAbsolute({x:dest.x, y:dest.y,z:dest.z, speed:speed})
-      }).then(function(_){
+      })
+      .then(function(_){
         console.log("Moved successfully to plant position ");
-        return  _this.writePin(0);
+        return _this.bot.writePin({pin_mode : 0, pin_number:_this.pin_number, pin_value:0})
       }).then(function(_){
         console.log("Wrote to pin: 0");
-        return _this.bot.moveAbsolute({x:dest.x, y:dest.y,z:dest.z, speed:speed});
-      })
+        return _this.bot.moveAbsolute({x:dest.x, y:dest.y,z:dest.z +_this.safe_height, speed:speed});
+      }).then((_) => {
+        console.log({x:dest.x, y:dest.y,z:dest.z +_this.safe_height, speed:speed})
+     }).catch((e) => {
+       console.log(e)
+     })
   };
-  afterUpdate = (jobParams, callback) => {
-    this.watering_job.updateJob(jobParams, (e, r) =>{
+
+  afterUpdate = (jobParams, callback, update = false) => {
+    callback(null, "No update");
+    jobParams; update;
+    //if(!update) callback(null, "No update");
+    /*this.watering_job.updateJob(jobParams, (e, r) =>{
       callback(e,r);
-    })
+    })*/
   }
 }

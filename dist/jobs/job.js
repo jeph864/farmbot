@@ -40,6 +40,7 @@ exports.Job = void 0;
 var farmbot_1 = require("farmbot");
 var dbConnect = require("../../utils/conn");
 var DELAYED_JOBS = "delayed_jobs";
+var PLANT_COLLECTION = "plants";
 var Job = /** @class */ (function () {
     function Job(bot, config) {
         if (config === void 0) { config = {}; }
@@ -76,7 +77,7 @@ var Job = /** @class */ (function () {
             for (var i = pos.x + job.min_dist; i < length - job.min_dist; i = i + job.min_dist) {
                 for (var j = pos.y + job.min_dist; j < width - job.min_dist; j = j + job.min_dist) {
                     locations.push({
-                        x: i, y: j, z: job.depth
+                        x: i, y: j, z: 0
                     });
                 }
             }
@@ -84,23 +85,20 @@ var Job = /** @class */ (function () {
         };
         this.executeJob = function (job_id, callback) {
             var _this = _this_1;
-            return _this_1.addToQueue(job_id, function (_, data) {
-                var top = data[0];
-                return _this.getAllJobs({ id: top.job_id }, function (e, d) {
-                    if (e) {
-                        callback(e, null);
-                    }
-                    var ready_job = d[0];
-                    var steps = _this.calculateSteps(ready_job), step_count = steps.length;
-                    _this.executeAllSteps(steps).then(function (_) {
-                        _this.removeFromQueue(ready_job.id)
-                            .then(function (data) {
-                            console.log(data);
-                            callback(null, "Finished running all job steps");
-                        });
-                    }).catch(function (err) {
-                        throw err;
+            return _this.getAllJobs({ id: job_id }, function (e, d) {
+                if (e) {
+                    callback(e, null);
+                }
+                var ready_job = d[0];
+                var steps = _this.calculateSteps(ready_job), step_count = steps.length;
+                _this.executeAllSteps(steps).then(function (_) {
+                    _this.removeFromQueue(ready_job.id)
+                        .then(function (data) {
+                        console.log(data);
+                        callback(null, "Finished running all job steps");
                     });
+                }).catch(function (err) {
+                    throw err;
                 });
             });
         };
@@ -139,7 +137,8 @@ var Job = /** @class */ (function () {
                 }).catch(function (e) { return console.error(e); });
             });
         };
-        this.updateJob = function (jobParams, callback) {
+        this.updateJob = function (jobParams, callback, args) {
+            if (args === void 0) { args = { update_after: true }; }
             var params = _this_1.initParams(jobParams);
             var job = params;
             var _this = _this_1;
@@ -154,7 +153,6 @@ var Job = /** @class */ (function () {
                 _this.db.collection(_this_1.collection)
                     .updateOne(filter, { $set: job }, { upsert: _insert })
                     .then(function (upres) {
-                    console.log(upres);
                     _this.setJobSeq(_insert)
                         .then(function (_) {
                         var tmp_job = job;
@@ -166,7 +164,7 @@ var Job = /** @class */ (function () {
                             _this.afterUpdate(tmp_job, function (_, r) {
                                 r;
                                 callback(null, job);
-                            }, tmp_job);
+                            }, tmp_job, args.update_after);
                         }
                         else {
                             callback(null, job);
@@ -232,13 +230,14 @@ var Job = /** @class */ (function () {
             });
         };
         this.removeFromQueue = function (job_id) {
-            var _this = _this_1;
-            return _this_1.db.collection(_this_1.delayed_jobs)
-                .deleteOne({ job_id: job_id })
-                .then(function (_) {
+            return Promise.resolve("Queue depreacted: " + job_id);
+            /*let _this = this;
+            return this.db.collection(this.delayed_jobs)
+              .deleteOne({job_id : job_id})
+              .then(function(_){
                 return _this.db.collection(_this.collection)
-                    .updateMany({}, { $inc: { q_pos: -1 } });
-            });
+                  .updateMany({}, {$inc : {q_pos: -1}} )
+              })*/
         };
         this.writePin = function (value, pin_id, mode) {
             if (value === void 0) { value = 1; }
@@ -292,13 +291,26 @@ var Job = /** @class */ (function () {
                 }
             });
         }); };
+        this.convertMl = function (duration) {
+            return duration;
+        };
+        this.write = function (pin_number, value, pin_mode) {
+            if (pin_mode === void 0) { pin_mode = 0; }
+            var args = { pin_mode: pin_mode, pin_value: value, pin_number: pin_number };
+            // @ts-ignore
+            return _this_1.bot.writePin(args /*{pin_number: pin_number, pin_mode:0, pin_value: value}*/);
+        };
+        this.getJob = function (job_id) {
+            return _this_1.db.collection(_this_1.collection)
+                .findOne({ id: job_id });
+        };
         this.getAllJobs = function (filter, callback) {
             return _this_1.db.collection(_this_1.collection)
                 .find(filter).toArray().then(function (res) { return callback(null, res); })
                 .catch(function (err) { return callback(err, null); });
         };
         this.getAll = function (filter) {
-            console.log("Collection: ${this.collection}");
+            //console.log("Collection: ${this.collection}")
             return _this_1.db.collection(_this_1.collection)
                 .find(filter).toArray();
         };
@@ -307,7 +319,6 @@ var Job = /** @class */ (function () {
         };
         this.getStatus = function () { };
         this.deleteJob = function () { };
-        this.getJob = function () { };
         this.lock = function () { };
         this.unlock = function () { };
         this.getDelayedJobs = function (callback) {
@@ -315,12 +326,19 @@ var Job = /** @class */ (function () {
                 .find().toArray().then(function (res) { return callback(null, res); })
                 .catch(function (err) { return callback(err, null); });
         };
+        this.updatePlant = function (plant) {
+            return _this_1.db.collection(_this_1.plants)
+                .updateOne({ $and: [{ x: plant.location.x }, { y: plant.location.y }, { z: plant.location.z }] }, { $set: plant }, { upsert: true });
+        };
         this.bot = bot;
         this.config = config;
         this.db = dbConnect.getDatabase();
         this.collection = "";
         this.collection_seq = this.collection + "_seq";
         this.delayed_jobs = DELAYED_JOBS;
+        this.plants = PLANT_COLLECTION;
+        this.safe_height = 80;
+        this.ground_level = -468;
         //initialize the seq collection
         this.getJobSeq(function (e) {
             if (e)

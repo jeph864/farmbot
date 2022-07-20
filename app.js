@@ -12,6 +12,8 @@ const { saveApiData } = require("./utils/users");
 const {SeedingJob } = require("./dist/jobs/seeding")
 const { WateringJob } = require("./dist/jobs/watering");
 const { Scheduler } = require("./dist/jobs/scheduler");
+const { EventQueue } = require("./dist/jobs/queue");
+const { EventStatus } = require("./dist/jobs/interfaces");
 
 //const SeedingJob = require("./utils/seeding_job");
 const port = 3001;
@@ -19,6 +21,7 @@ let seeding_job = null ;
 let watering_job = null;
 let bot = null;
 let status_message = null;
+let event_queue;
 
 
 const app = express();
@@ -95,10 +98,17 @@ app.get('/search/', function(req, res, next){
   })
 })
 app.get('/jobs/get', function(req, res, next){
-  console.log(seeding_job.getConfig())
   seeding_job.getAll()
     .then(data => {
       console.log(data)
+      res.json(data);
+      next();
+    }).catch(e => {console.error(e)})
+})
+
+app.get('/jobs/watering/get', function(req, res, next){
+  watering_job.getAll()
+    .then(data => {
       res.json(data);
       next();
     }).catch(e => {console.error(e)})
@@ -143,6 +153,20 @@ app.get('/jobs/execute/', function(req,response,next){
   })
 
 })
+app.post('/events/submit', (req, res, next) => {
+  let event = req.body;
+  event_queue.add(event)
+    .then(_ => {
+      res.send("Submitted new Event")
+    }).catch(_ =>  res.send("Could not submit the event"))
+})
+app.get('/events/process', (req, res, next) => {
+  event_queue.process().then( _ => {
+    res.send("Run the submitted events")
+  }).catch( e => {
+    res.send("Encountered an error during the processing of jobs")
+  })
+})
 app.get('/status', function(req, res, next){
   if(status_message){
     res.json(status_message)
@@ -151,6 +175,13 @@ app.get('/status', function(req, res, next){
   }
 });
 
+app.get('/pinwrite', (req, res, next)=>{
+  let pin_number= parseInt(req.query.number), pin_value = parseInt(req.query.value); //pin_mode = req.query.mode;
+  seeding_job.write(pin_number, pin_value)
+    .then((_) =>  {
+      res.send("Wrote")
+    }).catch((e) => {console.error(e)})
+})
 app.post('/jobs/watering/execute', function(req, res, next){
   const location = req.body;
   watering_job.doWatering(location)
@@ -158,14 +189,46 @@ app.post('/jobs/watering/execute', function(req, res, next){
       res.send("Finished watering");
     }).catch(_ => res.send("Couldn't finish the watering job successfully"))
 })
+app.post('/jobs/seeding/execute', function(req, res, next){
+  let job_id;
+  if(!req.query.id){
+    const dest_location = req.body.dest;
+    const tray_location = req.body.tray_pos;
+    seeding_job.plantSeed(tray_location, dest_location)
+      .then(_ => {
+        res.send("Finished Planting step");
+      }).catch(_ => res.send("Couldn't finish the watering job successfully"))
+  }else{
+    job_id = parseInt(req.query.id);
+    seeding_job.getJob(job_id)
+      .then((job) => {
+        let event = {
+          job_id : job.id,
+          type: "seeding",
+          status: EventStatus.NotRunning,
+          time: "now"
+        }
+        return event_queue.add(event, {single_event: true});
+      }).then((r) => {
+
+      res.send("Job submitted");
+    })
+  }
+
+})
 app.post('/move', function(req,res, next){
   if (req.body.home && req.body.home.value){
     bot.home(req.body.home.args || {speed:100, axis: "all"}).then(function(ack){
       res.send("Moved home");
-    }).catch(err => {res.send("Cannot move")})
+    }).catch(err => {
+      console.log(err)
+      res.send("Cannot move")
+    })
   }else{
-    let moveFunc = req.body.mode && req.body.mode == 1 ? bot.moveRelative: bot.moveAbsolute  ;
-    moveFunc({x:req.body.x, y:req.body.y, z:req.body.z, speed:req.body.speed || 100}).then(function(ack){
+   // console.log(req.body)
+    let moveFunc = req.body.mode && parseInt(req.body.mode) == 1 ? bot.moveRelative: bot.moveAbsolute  ;
+    moveFunc({x:req.body.x, y:req.body.y, z:req.body.z, speed:req.body.speed })
+      .then(function(ack){
       res.send("Moved successfully")
     }).catch(err => {res.send("Failed to move")})
   }
@@ -239,40 +302,33 @@ dbConnect.connect(function(err){
          client.on('message', function (topic, payload, packet){
            if(topic == bot.channel.status){
              status_message = JSON.parse(payload.toString()).location_data.position;
+             //console.log(status_message)
            }
          })
         console.log("Initializing the Jobs")
          seeding_job = new SeedingJob(bot);
          watering_job = new WateringJob(bot);
+         event_queue = new EventQueue(bot);
 
-         const agenda_db = dbConnect.getDatabase();
-         let sch1 = new Scheduler(agenda_db), sch2 = new Scheduler(agenda_db);
-         let ag2 = sch1.getAgenda()
-
-         ag2
-           .define("Job2", function(job){
-           console.log(Date.now() + "Job2: Loggin the second job"  )
+         let sch1 = new Scheduler(dbConnect.getDatabase());
+         let agenda1 = sch1.getAgenda();
+         agenda1.define("collectEvents", async (job) => {
+           await event_queue.collectEvents();
          })
-         ag2.every("30 seconds", "Job2")
+         agenda1.every("10 seconds", "collectEvents")
            .then(_ => {
-             ag2.start()
-               .then(_ => {})
-           })
-         let sch = new Scheduler(dbConnect.getDatabase()); agenda = sch.getAgenda();
-         agenda
-           .define("Job1", function(job){
-             console.log(Date.now() + " : Logging the task")
+             return agenda1.start()
+           }).then(_ => {})
+
+         let sch = new Scheduler(dbConnect.getDatabase());
+         let agenda = sch.getAgenda();
+         agenda.define("runQueuedJobs", async (job) => {
+           await event_queue.process();
          })
-         agenda.every('1 minute','Job1')
+         agenda.every("5 seconds", "runQueuedJobs")
            .then(_ => {
-             agenda.start()
-               .then(_ => {
-
-               })
-           })
-
-
-
+             return agenda.start()
+           }).then(_ => {})
        }
      })
    }else{
@@ -283,8 +339,8 @@ dbConnect.connect(function(err){
          password: "mYfarm2021*"
        },
        {
-         username: "kalagdf@rhrk.uni-kl.de",
-         password: "mYfarm2021*"
+         username: "doerr@cs.uni-kl.de",
+         password: "mYfarm2022*"
        }
      ]
      let db = dbConnect.getDatabase();
@@ -301,6 +357,7 @@ dbConnect.connect(function(err){
          .then(function(result){
            users.saveApiData(user[0].username, result, function(e){
              if(e){
+               console.error(e)
                console.log("Successfully fetched the fakebot data ")
                console.log("Closing the server, please restart")
                process.exit();
