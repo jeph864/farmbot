@@ -8,12 +8,11 @@
     let plantingDepth;
     let dist;
     let plant = "radish";
-    let x1 = 0;
-    let y1 = 0;
-    let x2 = 200;
-    let y2 = 300;
+    export let x1;
+    export let y1;
+    export let x2;
+    export let y2;
     let jobCreated="";
-
 
       function  create() {
         if(dist>=0){
@@ -75,6 +74,10 @@
             <tr>
                 <td>Working area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
                 <td>x1: <input type = "number" bind:value={x1}><br /> y1: <input type = "number" bind:value={y1}> <br /> x2: <input type = "number" bind:value={x2}> <br /> y2: <input type = "number" bind:value={y2}></td>
+            </tr>
+            <tr>
+                <td>&ensp;</td>
+                <td>&ensp;</td>
             </tr>
         </table>
         <button on:click={create}>
