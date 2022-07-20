@@ -84,4 +84,39 @@ async function getStatus(){
 
 }
 
-export {createJob, searchJobs, executeJob, getStatus}
+async function createWateringJob(watering_Job) {
+  const url = `${baseUrl}/jobs/watering/update/`
+  console.log(JSON.stringify(watering_Job))
+  const init = {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(watering_Job)
+  }
+  fetch(url, init).then((res) => {
+    console.log(res)
+    return res.json();
+  }).catch(err => {
+    console.error(err)
+  });
+
+}
+
+async function executeWateringJob(watering_job_id) {
+  const url = `${baseUrl}/jobs/watering/execute`
+  const res = await fetch(url, {
+    method: "GET",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: {job_id : watering_job_id}
+  });
+  return res.json();
+}
+
+
+export {createJob, searchJobs, executeJob, getStatus, createWateringJob, executeWateringJob}
