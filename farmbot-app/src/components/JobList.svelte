@@ -1,5 +1,5 @@
 <script>
-  import Job from "./Job.svelte";
+  //import Job from "./Job.svelte";
   import { getJobs } from "../fetchers.js";
 
   let jobs
