@@ -2,10 +2,10 @@
   import Job from "./Job.svelte";
   import { getJobs } from "../fetchers.js";
 
-  export let jobs
+  let jobs
   let names
 
-  export async function gettingJobs(){
+  async function gettingJobs(){
     jobs = await getJobs();
     if (jobs) return jobs;
     else throw  new Error("Error occured")
@@ -13,10 +13,6 @@
   jobs = gettingJobs();
 
 
-export async function onUpdate(){
-  jobs = undefined;
-  jobs = gettingJobs();
-}
 
 </script>
 

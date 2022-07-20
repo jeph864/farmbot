@@ -45,13 +45,14 @@ async function searchJobs(query) {
 }
 
 async function executeJob(job_id) {
-  const url = `${baseUrl}/jobs/execute/${job_id}`
+  const url = `${baseUrl}/jobs/execute`
   const res = await fetch(url, {
     method: "GET",
     mode: "no-cors",
     headers: {
       "Content-Type": "application/json",
     },
+    body: {job_id : job_id}
   });
   return res.json();
 }
