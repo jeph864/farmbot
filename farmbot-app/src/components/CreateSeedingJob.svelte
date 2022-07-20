@@ -1,11 +1,10 @@
 <script>
     import ActionItem from "./ActionItem.svelte";
     import onUpdate from "./JobList.svelte";
-    import jobs from "./JobList.svelte";
     import { createJob } from "../fetchers.js";
 
     let name;
-    let plantingDepth;
+    let depth;
     let dist;
     let plant = "radish";
     export let x1;
@@ -16,13 +15,14 @@
 
       function  create() {
         if(dist>=0){
-            if(plantingDepth>=0) {
+            if(depth>=0) {
                 if (x1 <= x2) {
                     if (y1 <= y2) {
 
                         createJob({
                             name,
                             plant,
+                            depth,
                             dist,
                             working_area: {
                                 beg_pos: {
@@ -65,7 +65,7 @@
             </tr>
             <tr>
                 <td>Seeding depth (in mm):</td>
-                <td><input type = "number" bind:value={plantingDepth}></td>
+                <td><input type = "number" bind:value={depth}></td>
             </tr>
             <tr>
                 <td>&ensp;</td>

@@ -33,6 +33,20 @@ export async function getJobs() {
   return res.json();
 }
 
+
+export async function getWateringJobs() {
+  const url = `${baseUrl}/jobs/watering/get`
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    },
+  });
+  return res.json();
+}
+
+
+
 async function searchJobs(query) {
   const url = `${baseUrl}/jobs/search/${query}`
   const res = await fetch(url, {
@@ -45,13 +59,14 @@ async function searchJobs(query) {
 }
 
 async function executeJob(job_id) {
-  const url = `${baseUrl}/jobs/execute/${job_id}`
+  const url = `${baseUrl}/jobs/execute`
   const res = await fetch(url, {
     method: "GET",
     mode: "no-cors",
     headers: {
       "Content-Type": "application/json",
     },
+    body: {job_id : job_id}
   });
   return res.json();
 }
