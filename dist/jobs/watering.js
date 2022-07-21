@@ -17,6 +17,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WateringJob = exports.WATERING_COLLECTION = void 0;
 var job_1 = require("./job");
+var queue_1 = require("./queue");
 exports.WATERING_COLLECTION = "watering_jobs";
 var WATERING_COLLECTION_SEQ = "watering_jobs_seq";
 var WateringJob = /** @class */ (function (_super) {
@@ -89,6 +90,9 @@ var WateringJob = /** @class */ (function (_super) {
                 return _this.delay(5000);
             }).then(function (_) {
                 return _this.bot.writePin({ pin_mode: 0, pin_number: _this.pin_number, pin_value: 0 });
+            }).catch(function (e) {
+                console.log(e);
+                queue_1.EventQueue.busy = false;
             });
         };
         _this_1.afterUpdate = function (_, callback, data, update) {

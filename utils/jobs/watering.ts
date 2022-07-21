@@ -1,6 +1,7 @@
 import { Job,  } from "./job";
 import {JobParams, JobStep, Position, Seeding, Watering} from "./interfaces";
 import { Farmbot } from "farmbot";
+import { EventQueue } from "./queue";
 
 export const WATERING_COLLECTION = "watering_jobs";
 const WATERING_COLLECTION_SEQ = "watering_jobs_seq";
@@ -81,6 +82,9 @@ export class WateringJob extends Job {
         return _this.delay(5000);
       }).then(function(_){
         return _this.bot.writePin({pin_mode : 0, pin_number:_this.pin_number, pin_value:0})
+      }).catch( e => {
+        console.log(e);
+        EventQueue.busy = false;
       })
   };
   afterUpdate = (_, callback, data = null, update = false) => {

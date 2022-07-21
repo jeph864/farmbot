@@ -8,8 +8,8 @@ export declare class WateringJob extends Job {
     private getDefaultParams;
     calculateSteps: (job: any) => Position[];
     initParams: (input: Watering) => Watering;
-    runStep: (dest: any) => Promise<import("farmbot").RpcOk | import("farmbot").RpcError>;
-    doWatering: (dest: Position, speed?: number) => Promise<import("farmbot").RpcOk | import("farmbot").RpcError>;
+    runStep: (dest: any) => Promise<void | import("farmbot").RpcOk | import("farmbot").RpcError>;
+    doWatering: (dest: Position, speed?: number) => Promise<void | import("farmbot").RpcOk | import("farmbot").RpcError>;
     afterUpdate: (_: any, callback: any, data?: null, update?: boolean) => void;
     updateJob: (jobParams: any, callback: any) => Promise<void | undefined>;
 }
