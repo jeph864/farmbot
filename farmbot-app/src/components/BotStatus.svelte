@@ -20,13 +20,13 @@
 
 </script>
 
-<ActionItem description="Status">
+<ActionItem description="Status of the bot">
 
 
   {#await  state}
     <p> Still waiting</p>
   {:then  data}
-    current position of the bot:
+    current position:
     x: {data.x}
     y: {data.y}
     z: {data.z}
