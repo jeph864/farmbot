@@ -65,6 +65,10 @@
                 <td>Working area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
                 <td>x1: <input type = "number" bind:value={x1}><br /> y1: <input type = "number" bind:value={y1}> <br /> x2: <input type = "number" bind:value={x2}> <br /> y2: <input type = "number" bind:value={y2}></td>
             </tr>
+            <tr>
+                <td>&ensp;</td>
+                <td>&ensp;</td>
+            </tr>
         </table>
 
         <button on:click={null}>
@@ -89,6 +93,8 @@
         background-color: #f8f7e5;
         border-color: grey;
         border-radius: 8px;
+        padding: 3px;
+        font-size: 14px;
     }
     button:hover {
          background-color: #eae9d4;
@@ -105,6 +111,7 @@
         background-color: #f8f7e5;
         font-size: 15px;
         border: #dddddd;
+        padding: 3px;
 
     }
 

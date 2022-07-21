@@ -85,6 +85,10 @@
                 <td>Interval in hours:</td>
                 <td><input type = "number" bind:value={interval}></td>
             </tr>
+            <tr>
+                <td>&ensp;</td>
+                <td>&ensp;</td>
+            </tr>
         </table>
         <button on:click={create}>
             Create watering job
@@ -107,6 +111,8 @@
         background-color: #f8f7e5;
         border-color: grey;
         border-radius: 8px;
+        padding: 3px;
+        font-size: 14px;
     }
     button:hover {
         background-color: #eae9d4;
@@ -122,6 +128,7 @@
         background-color: #f8f7e5;
         font-size: 15px;
         border: #dddddd;
+        padding: 3px;
 
     }
 

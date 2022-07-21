@@ -58,12 +58,16 @@
     cursor: pointer;
     user-select: none;
     padding: 16px;
+      border-radius: 16px;
+      box-shadow: rgba(50, 50, 93, 0.15) 0px 2px 5px -1px, rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
+      background-color: rgba(238, 236, 193, 0.85);
   }
 
   .content {
     display: flex;
     justify-content: center;
     padding: 16px;
+
   }
 
 </style>

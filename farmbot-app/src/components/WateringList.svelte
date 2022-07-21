@@ -105,6 +105,7 @@
         font-size: 15px;
         cursor: pointer;
         user-select: none;
+        padding: 3px;
     }
     button:hover {
         background-color: #e2ecec;
