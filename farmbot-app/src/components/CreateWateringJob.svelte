@@ -8,7 +8,7 @@
     let seeding_id;
     let amount;
     let height;
-    let next;
+    let nextRunAt;
     let interval;
 
     let selected;
@@ -30,14 +30,14 @@
     function create() {
 
         seeding_id = selected.id;
-        next = new Date(date)
-        console.log(next)
+        nextRunAt = new Date(date)
+        console.log(nextRunAt)
         createWateringJob({
             seeding_id,
             amount,
             height,
-            next
-            //interval,
+            nextRunAt,
+            interval
         })
     }
 
