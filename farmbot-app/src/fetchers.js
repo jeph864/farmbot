@@ -119,7 +119,7 @@ async function getPlantPos(){
   //TODO: create fetcher for getting plant positions
 
   //for test purpose:
-  let plant1 = {
+  /*let plant1 = {
     location:{
       x: 2000,
       y: 700,
@@ -138,7 +138,7 @@ async function getPlantPos(){
     stage: "planned"
   }
   let plants=[plant1,plant2]
-  return plants
+  return plants*/
 }
 
 async function createWateringJob(watering_Job) {

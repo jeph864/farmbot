@@ -2,14 +2,17 @@
   import ActionItem from "./ActionItem.svelte";
   import { getStatus } from "../fetchers.js";
 
+  let state
   let status
 
-  async function gettingStatus(){
-    status = await getStatus();
+  async function gettingStatus() {
+    while (true){
+      status = await getStatus();
     if (status) {
       console.log(status);
-     return status;}
-    else throw  new Error("Error occurred")
+      state = status;
+    } else throw  new Error("Error occurred")
+  }
   }
   status = gettingStatus();
 
@@ -20,7 +23,8 @@
 
 <ActionItem description="Status">
 
-  {#await  status}
+
+  {#await  state}
     <p> Still waiting</p>
   {:then  data}
 

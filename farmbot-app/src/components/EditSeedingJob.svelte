@@ -121,7 +121,7 @@
     {:then  nameData}
 
         {#if selected==''}
-            select job:
+            select job: &ensp;
             {/if}
 
             <select bind:value={selected}>
@@ -131,6 +131,7 @@
             </select>
 
             {#if selected!==''}
+
                 <button on:click={searchJob(selected)}>
                     Load Job Data
                 </button>

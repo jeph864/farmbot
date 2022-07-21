@@ -56,7 +56,6 @@ function execute(id){
       <th>{"Area width"}</th>
       <th>{"Area length"}</th>
     <th>{"execute job"}</th>
-    <th>{"edit job"}</th>
   </tr>
   </thead>
   <tbody>
@@ -70,7 +69,6 @@ function execute(id){
       <td>{value.working_area.width}</td>
       <td>{value.working_area.length}</td>
       <td><button on:click={execute(value.id)}>execute</button></td>
-      <td><button on:click={edit(value.id)}>edit</button></td>
     </tr>
   {/each}
   </tbody>
