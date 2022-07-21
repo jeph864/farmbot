@@ -93,6 +93,7 @@ export class EventQueue {
   }
   runReadyEvents = () => {
     let ready_events : Array<Event> = [];
+    const _future_ = "now"
     let filter = {time: "now", status:EventStatus.NotRunning}
     let _this = this;
     return this.db.collection(this.collection).find(filter)

@@ -119,6 +119,7 @@ var EventQueue = /** @class */ (function () {
         };
         this.runReadyEvents = function () {
             var ready_events = [];
+            var _future_ = "now";
             var filter = { time: "now", status: interfaces_1.EventStatus.NotRunning };
             var _this = _this_1;
             return _this_1.db.collection(_this_1.collection).find(filter)
