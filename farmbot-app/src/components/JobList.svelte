@@ -90,6 +90,10 @@ function edit(id){
         width: 100%;
     }
 
+    thead tr th {
+        position:sticky; top:0; background: #b3d9b3;
+    }
+
     th {
         text-align: left;
         padding: 6px;
@@ -116,5 +120,6 @@ function edit(id){
         background-color: #e2ecec;
         border-radius: 12px;
     }
+
 </style>
 

@@ -9,7 +9,6 @@
     while (true){
       status = await getStatus();
     if (status) {
-      console.log(status);
       state = status;
     } else throw  new Error("Error occurred")
   }
