@@ -27,6 +27,7 @@ function to_headers(object) {
  * @param {string[]} types
  */
 function negotiate(accept, types) {
+<<<<<<< HEAD
 	/** @type {Array<{ type: string, subtype: string, q: number, i: number }>} */
 	const parts = [];
 
@@ -55,6 +56,34 @@ function negotiate(accept, types) {
 
 		return a.i - b.i;
 	});
+=======
+	const parts = accept
+		.split(',')
+		.map((str, i) => {
+			const match = /([^/]+)\/([^;]+)(?:;q=([0-9.]+))?/.exec(str);
+			if (match) {
+				const [, type, subtype, q = '1'] = match;
+				return { type, subtype, q: +q, i };
+			}
+
+			throw new Error(`Invalid Accept header: ${accept}`);
+		})
+		.sort((a, b) => {
+			if (a.q !== b.q) {
+				return b.q - a.q;
+			}
+
+			if ((a.subtype === '*') !== (b.subtype === '*')) {
+				return a.subtype === '*' ? 1 : -1;
+			}
+
+			if ((a.type === '*') !== (b.type === '*')) {
+				return a.type === '*' ? 1 : -1;
+			}
+
+			return a.i - b.i;
+		});
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 
 	let accepted;
 	let min_priority = Infinity;
@@ -158,6 +187,21 @@ function serialize_error(error, get_stack) {
 }
 
 /**
+<<<<<<< HEAD
+=======
+ * Serialize an error into a JSON string, by copying its `name`, `message`
+ * and (in dev) `stack`, plus any custom properties, plus recursively
+ * serialized `cause` properties. This is necessary because
+ * `JSON.stringify(error) === '{}'`
+ * @param {Error} error
+ * @param {(error: Error) => string | undefined} get_stack
+ */
+function serialize_error(error, get_stack) {
+	return JSON.stringify(clone_error(error, get_stack));
+}
+
+/**
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
  * @param {Error} error
  * @param {(error: Error) => string | undefined} get_stack
  */
@@ -186,6 +230,7 @@ function clone_error(error, get_stack) {
 	return object;
 }
 
+<<<<<<< HEAD
 // TODO: Remove for 1.0
 /** @param {Record<string, any>} mod */
 function check_method_names(mod) {
@@ -204,6 +249,8 @@ const GENERIC_ERROR = {
 	id: '__error'
 };
 
+=======
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 /** @param {string} body */
 function error(body) {
 	return new Response(body, {
@@ -245,9 +292,13 @@ function is_text(content_type) {
  * @returns {Promise<Response>}
  */
 async function render_endpoint(event, mod, options) {
+<<<<<<< HEAD
 	const { method } = event.request;
 
 	check_method_names(mod);
+=======
+	const method = normalize_request_method(event);
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 
 	/** @type {import('types').RequestHandler} */
 	let handler = mod[method];
@@ -335,7 +386,11 @@ async function render_endpoint(event, mod, options) {
 	}
 
 	return new Response(
+<<<<<<< HEAD
 		method !== 'HEAD' && !bodyless_status_codes.has(status) ? normalized_body : undefined,
+=======
+		method !== 'head' && !bodyless_status_codes.has(status) ? normalized_body : undefined,
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 		{
 			status,
 			headers
@@ -1171,6 +1226,7 @@ class CspProvider extends BaseProvider {
 	}
 }
 
+<<<<<<< HEAD
 class CspReportOnlyProvider extends BaseProvider {
 	/**
 	 * @param {boolean} use_hashes
@@ -1237,6 +1293,8 @@ class Csp {
 	}
 }
 
+=======
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 const absolute = /^([a-z]+:)?\/?\//;
 const scheme = /^[a-z]+:/;
 
@@ -1382,6 +1440,7 @@ async function render_response({
 	}
 
 	if (resolve_opts.ssr) {
+<<<<<<< HEAD
 		const leaf = /** @type {import('./types.js').Loaded} */ (branch.at(-1));
 
 		if (leaf.loaded.status) {
@@ -1390,6 +1449,8 @@ async function render_response({
 			status = leaf.loaded.status;
 		}
 
+=======
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 		for (const { node, props, loaded, fetched, uses_credentials } of branch) {
 			if (node.imports) {
 				node.imports.forEach((url) => modulepreloads.add(url));
@@ -1470,6 +1531,10 @@ async function render_response({
 
 	let { head, html: body } = rendered;
 
+<<<<<<< HEAD
+=======
+	await csp_ready;
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 	const csp = new Csp(options.csp, {
 		dev: options.dev,
 		prerender: !!state.prerendering
@@ -2576,7 +2641,16 @@ async function load_node({
 			});
 		}
 
+<<<<<<< HEAD
 		loaded = normalize(await module.load.call(null, load_input));
+=======
+		loaded = await module.load.call(null, load_input);
+
+		if (!loaded) {
+			// TODO do we still want to enforce this now that there's no fallthrough?
+			throw new Error(`load function must return a value${options.dev ? ` (${node.file})` : ''}`);
+		}
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 	} else if (shadow.body) {
 		loaded = {
 			props: shadow.body
@@ -2687,13 +2761,20 @@ async function load_shadow_data(route, event, options, prerender) {
 		if (get) {
 			const { status, headers, body } = validate_shadow_output(await get(event));
 			add_cookies(/** @type {string[]} */ (data.cookies), headers);
+<<<<<<< HEAD
+=======
+			data.status = status;
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 
 			if (body instanceof Error) {
 				if (status < 400) {
 					data.status = 500;
 					data.error = new Error('A non-error status code was returned with an error body');
 				} else {
+<<<<<<< HEAD
 					data.status = status;
+=======
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 					data.error = body;
 				}
 
@@ -3540,7 +3621,10 @@ async function respond(request, options, state) {
 			});
 		}
 
+<<<<<<< HEAD
 		// TODO is this necessary? should we just return a plain 500 at this point?
+=======
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 		try {
 			const $session = await options.hooks.getSession(event);
 			return await respond_with_error({

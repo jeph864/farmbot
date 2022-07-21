@@ -67,14 +67,14 @@ var EventQueue = /** @class */ (function () {
                 }
                 //check if the event is scheduled
                 return _this.db.collection(_this_1.collection)
-                    .findOne({ job_id: event.job_id })
+                    .findOne({ $and: [{ job_id: event.job_id }, { event_id: event.event_id }] })
                     .then(function (r) {
                     if (r && args.single_event) {
                         return Promise.resolve("Empty");
                     }
                     else
                         return _this.db.collection(_this_1.collection)
-                            .updateOne(filter, { $set: event }, { upsert: _insert })
+                            .updateOne(filter, { $set: event }, { upsert: true })
                             .then(function (_) {
                             return _this.setEventSeq(_insert);
                         });

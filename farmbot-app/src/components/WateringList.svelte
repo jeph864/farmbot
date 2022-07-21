@@ -1,5 +1,5 @@
 <script>
-  import { getWateringJobs } from "../fetchers.js";
+  import {executeWateringJob, getWateringJobs} from "../fetchers.js";
 
   export let wateringJobs
   let names
@@ -25,6 +25,7 @@
 
   function execute(id){
     //TODO: directly execute watering job
+    executeWateringJob(id)
   }
 
 </script>

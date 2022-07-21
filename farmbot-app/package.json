@@ -4,8 +4,13 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+<<<<<<< HEAD
 		"package": "vite package",
 		"preview": "vite preview",
+=======
+		"package": "svelte-kit package",
+		"preview": "vite  preview",
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 		"prepare": "vite sync",
 		"check": "vite --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./jsconfig.json --watch",
@@ -25,8 +30,13 @@
 	},
 	"type": "module",
 	"dependencies": {
+<<<<<<< HEAD
 		"canvas": "^2.9.3",
 		"svelte-canvas": "^0.7.1",
 		"vite": "^3.0.1"
+=======
+		"svelte-canvas": "^0.7.1",
+		"vite": "^3.0.2"
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
 	}
 }

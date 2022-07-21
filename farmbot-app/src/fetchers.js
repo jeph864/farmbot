@@ -73,16 +73,16 @@ async function searchJobs(query) {
   return res.json();
 }
 async function executeJob(job_id) {
-  const url = `${baseUrl}/jobs/execute`
+  const url = `${baseUrl}/jobs/seeding/execute?id=${job_id}`
   const res = await fetch(url, {
-    method: "GET",
+    method: "POST",
     mode: "no-cors",
     headers: {
       "Content-Type": "application/json",
     },
-    body: {job_id : job_id}
   });
   return res.json();
+  
 }
 
 async function getStatus(){
@@ -98,11 +98,17 @@ async function getStatus(){
 
 }
 
+<<<<<<< HEAD
 
 async function updateJob(job) {
   const url = `${baseUrl}/jobs/seeding/update`
 
   console.log(JSON.stringify(job))
+=======
+async function createWateringJob(watering_Job) {
+  const url = `${baseUrl}/jobs/watering/update/`
+  console.log(JSON.stringify(watering_Job))
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
   const init = {
     method: "POST",
     mode: "cors",
@@ -110,7 +116,11 @@ async function updateJob(job) {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
+<<<<<<< HEAD
     body: JSON.stringify(job)
+=======
+    body: JSON.stringify(watering_Job)
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
   }
   fetch(url, init).then((res) => {
     console.log(res)
@@ -120,4 +130,23 @@ async function updateJob(job) {
   });
 
 }
+<<<<<<< HEAD
 export {createJob, searchJobs, executeJob, getStatus,updateJob}
+=======
+
+async function executeWateringJob(watering_job_id) {
+  const url = `${baseUrl}/jobs/watering/execute`
+  const res = await fetch(url, {
+    method: "GET",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: {job_id : watering_job_id}
+  });
+  return res.json();
+}
+
+
+export {createJob, searchJobs, executeJob, getStatus, createWateringJob, executeWateringJob}
+>>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48

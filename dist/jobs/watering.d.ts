@@ -10,5 +10,5 @@ export declare class WateringJob extends Job {
     runStep: (dest: any) => Promise<import("farmbot").RpcOk | import("farmbot").RpcError>;
     doWatering: (dest: Position, speed?: number) => Promise<import("farmbot").RpcOk | import("farmbot").RpcError>;
     afterUpdate: (_: any, callback: any, data?: null, update?: boolean) => void;
-    updateJob: (jobParams: any, callback: any) => void;
+    updateJob: (jobParams: any, callback: any) => Promise<void | undefined>;
 }

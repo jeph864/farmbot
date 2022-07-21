@@ -40,6 +40,8 @@ var SeedingJob = /** @class */ (function (_super) {
                 },
                 status: { running: false, active: false },
                 nextRunAt: "yesterday",
+                lastFinished: "never",
+                lastStarted: "never",
                 stage: "Not Planted",
                 scheduled: false
             };

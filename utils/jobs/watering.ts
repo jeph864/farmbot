@@ -27,6 +27,9 @@ export class WateringJob extends Job {
       seeding_id: -1,
       from_seeding: false,
       scheduled: false,
+      lastStarted: "never",
+      lastFinished: "never",
+      interval: -1,
       working_area :  {
         beg_pos: { x: 0, y: 0, z: 0},
         end_pos : {x: 0, y: 0, z: 0},
@@ -66,43 +69,63 @@ export class WateringJob extends Job {
     callback(data)
   }
   updateJob = (jobParams, callback) => {
-    const params = this.initParams(jobParams);
-    const job = params;
-    let _this = this;
-    this.getJobSeq( (seq) => {
-      let  _insert : boolean = false;
-      let filter = {}
-      if((job.id == -1 && typeof job.from_seeding == "boolean" && job.from_seeding ) || (job.id === -1 && !job.from_seeding) || typeof jobParams.id !== "number"){
-        job.id = seq.next_id;
-        _insert = true;
-      }
-      filter = {id: job.id};
-      if (job.seeding_id !== -1){
-        filter = {seeding_id: job.seeding_id};
-        _insert = true;
-      }
-      _this.db.collection(this.collection)
-        .findOne(filter)
-        .then((results) => {
-          if(results && results.seeding_id > -1){
-            job.id = results.id;
-            filter = {id: results.id}
-          }else{
+    if(typeof jobParams.seeding_id !== undefined){
+      return this.db.collection("seeding_jobs")
+        .findOne({id: jobParams.seeding_id})
+        .then((result) => {
+          if(result) {
+            let watering = result;
+            watering.next = jobParams.next;
+            watering.amount = jobParams.amount;
+            watering.name = jobParams.name;
+            watering.seeding_id = jobParams.seeding_id;
+            //@ts-ignore
+            const params = this.initParams(watering);
 
-          }
-          _this.db.collection(this.collection)
-            .updateOne(filter, {$set: job}, {upsert: _insert})
-            .then((_) => {
-              _this.setJobSeq(_insert)
-                .then(_ => {
-                  //@ts-ignore
-                  jobParams.seeding_id = job.id;
-                  callback(null, job);
+            const job = params;
+            let _this = this;
+            return this.getJobSeq( (seq) => {
+              let  _insert : boolean = false;
+              let filter = {}
+              if((job.id == -1 && typeof job.from_seeding == "boolean" && job.from_seeding ) || (job.id === -1 && !job.from_seeding) || typeof jobParams.id !== "number"){
+                job.id = seq.next_id;
+                _insert = true;
+              }
+              filter = {id: job.id};
+              if (job.seeding_id !== -1){
+                filter = {seeding_id: job.seeding_id};
+                _insert = true;
+              }
+              return _this.db.collection(this.collection)
+                .findOne(filter)
+                .then((results) => {
+                  if(results && results.seeding_id > -1){
+                    job.id = results.id;
+                    filter = {id: results.id}
+                  }else{
+
+                  }
+                  return _this.db.collection(this.collection)
+                    .updateOne(filter, {$set: job}, {upsert: _insert})
+                    .then((_) => {
+                      _this.setJobSeq(_insert)
+                        .then(_ => {
+                          //@ts-ignore
+                          jobParams.seeding_id = job.id;
+                          callback(null, job);
+                        })
+
+                    }).catch( e => callback(e, null))
                 })
+                .catch(e => {console.error(e)})
 
-            }).catch( e => callback(e, null))
-        })
+            })
+          }
+        }).catch((e) => console.error(e))
+    }else{
+      return Promise.reject("No seeding ID was given foe the job")
+    }
 
-    })
   };
+
 }

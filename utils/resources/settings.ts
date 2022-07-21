@@ -8,16 +8,18 @@ class Settings {
   private db;
   private api_collection;
   private current_sess_user;
+  private settings_collection;
   constructor(api, user) {
     this.api = api;
     this.db = dbConnect.getDatabase();
     this.api_collection = "apiData";
     this.current_sess_user = user;
+
   }
 
   initial_params = {
     device_id: 0,
-    tray_pos: {x:900, y:600, z: -468},
+    tray_pos: {x:900, y:725, z: -464},
     safe_height: 30,
     ground_level: -486,
     watering: {
@@ -38,6 +40,15 @@ class Settings {
       .then((res) => {
         return res
       })
+}
+saveSettings = (settings) => {
+
+    return this.db.collection(this.settings_collection).
+      updateOne({id: 0}, {$set: settings}, {upsert: true})
+}
+getSettings = () => {
+   return  this.db.collection(this.settings_collection)
+      .findOne()
 }
 
 }
