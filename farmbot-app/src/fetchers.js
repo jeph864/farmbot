@@ -106,9 +106,9 @@ async function createWateringJob(watering_Job) {
 }
 
 async function executeWateringJob(watering_job_id) {
-  const url = `${baseUrl}/jobs/watering/execute`
+  const url = `${baseUrl}/jobs/watering/execute?id=${watering_job_id}`
   const res = await fetch(url, {
-    method: "GET",
+    method: "POST",
     mode: "no-cors",
     headers: {
       "Content-Type": "application/json",

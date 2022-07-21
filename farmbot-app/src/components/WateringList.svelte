@@ -55,8 +55,8 @@
     {#each Object.values(data) as value}
       <tr>
         <td>{value.name}</td>
-        <td>{value.plant}</td>
-        <td>{value.next}</td>
+        <td>{value.plant_type}</td>
+        <td>{value.nextRunAt}</td>
         <td>{#if value.active}  <p style="color: green;">{"active"} </p>
         {:else}                 <p style="color: red;"> {"not active"} </p>
             {/if}
