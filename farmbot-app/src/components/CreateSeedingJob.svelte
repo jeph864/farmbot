@@ -5,7 +5,7 @@
 
     let name;
     let depth;
-    let dist;
+    let min_dist;
     let plant = "radish";
     export let x1;
     export let y1;
@@ -14,7 +14,7 @@
     let jobCreated="";
 
       function  create() {
-        if(dist>=0){
+        if(min_dist>0){
             if(depth>=0) {
                 if (x1 <= x2) {
                     if (y1 <= y2) {
@@ -23,7 +23,7 @@
                             name,
                             plant,
                             depth,
-                            dist,
+                            min_dist,
                             working_area: {
                                 beg_pos: {
                                     x: x1,
@@ -61,7 +61,7 @@
             </tr>
             <tr>
                 <td>Plant distance (in mm):</td>
-                <td><input type = "number" bind:value={dist}></td>
+                <td><input type = "number" bind:value={min_dist}></td>
             </tr>
             <tr>
                 <td>Seeding depth (in mm):</td>
