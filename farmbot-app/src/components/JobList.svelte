@@ -38,11 +38,11 @@ function edit(id){
   {:then  data}
 
 
-<table id>
-  <caption>
+<table style="width:100%;"id>
+  <caption style="background-color: #b3d9b3">
     <th><p style="">Seeding jobs</p></th>
   </caption>
-  <thead>
+  <thead style="background-color: #b3d9b3">
   <tr>
       <th>{"Name"}</th>
       <th>{"Plant-Type"}</th>
@@ -59,9 +59,9 @@ function edit(id){
   {#each Object.values(data) as value}
     <tr>
       <td><p style="">{value.name}</p></td>
-      <td>{value.plant}</td>
+      <td>{value.plant_type}</td>
       <td>{value.depth}</td>
-      <td>{value.dist}</td>
+      <td>{value.min_dist}</td>
       <td>{value.working_area.width}</td>
       <td>{value.working_area.length}</td>
       <td><button on:click={execute(value.id)}>execute</button></td>
@@ -87,14 +87,30 @@ function edit(id){
         width: 100%;
     }
 
-    td, th {
+    th {
+        text-align: left;
+        padding: 6px;
+    }
+    td {
         border: 1px solid #dddddd;
         text-align: left;
         padding: 6px;
     }
 
     tr:nth-child(even) {
-        background-color: #dddddd;
+        background-color: #cbe1cb;
+    }
+    button{
+        background-color: #f5ffff;
+        border-color: grey;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+        user-select: none;
+    }
+    button:hover {
+        background-color: #e2ecec;
+        border-radius: 12px;
     }
 </style>
 

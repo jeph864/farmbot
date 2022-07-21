@@ -41,7 +41,7 @@
 <style>
   .container {
     border: 1px solid #c7c7c7;
-    background-color: #fbfbfb;
+    background-color: rgba(246, 244, 199, 0.85);
     border-radius: 16px;
     width: 420px;
 
@@ -50,7 +50,7 @@
   }
 
   .description:hover {
-    background-color: #f6f6f6;
+    background-color: #d5d3af;
     border-radius: 16px;
   }
 
@@ -65,4 +65,5 @@
     justify-content: center;
     padding: 16px;
   }
+
 </style>

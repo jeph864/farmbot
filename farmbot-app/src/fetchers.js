@@ -144,6 +144,6 @@ async function executeWateringJob(watering_job_id) {
 }
 
 
-export {createJob, searchJobs, executeJob, getStatus, createWateringJob, executeWateringJob}
 
-export {createJob, searchJobs,getJobs, getWateringJobs, executeJob, executeWateringJob, getStatus, getPlantPos}
+
+export {createJob, searchJobs,getJobs, getWateringJobs, createWateringJob, executeJob, executeWateringJob, getStatus, getPlantPos}

@@ -19,6 +19,8 @@
   let coords1 = spring({ x: 30, y: 30 } );
   let coords2 = spring({ x: 100, y: 200 } );
 
+  let selectedPlant;
+
   let plants
 
   async function gettingPlantPos(){
@@ -50,10 +52,11 @@
     <BotStatus />
   </div>
 
+
   <div class="field">
     <svg
       on:mousemove="{e => {coords.set({ x: e.offsetX, y: e.offsetY })}}"
-      on:mouseup="{e => {if (first){
+      on:mousedown="{e => {if (first){
         coords1.set({ x: e.offsetX, y: e.offsetY }), first=false}
         else{
           coords2.set({ x: e.offsetX, y: e.offsetY}), first=true}
@@ -62,7 +65,7 @@
     <circle cx={$coords.x} cy={$coords.y} r=5 />
     <circle cx={$coords1.x} cy={$coords1.y} r=10 id="circle1" />
     <circle cx={$coords2.x} cy={$coords2.y} r=10 id="circle2"/>
-    <rect x="{$coords1.x}" y={$coords1.y} width={$coords2.x-$coords1.x} height={$coords2.y-$coords1.y} style="fill:black;stroke:black;stroke-width:2;fill-opacity:0"/>
+    <rect x="{$coords1.x}" y={$coords1.y} width={$coords2.x-$coords1.x} height={$coords2.y-$coords1.y} style="fill:black;stroke:rgba(68,68,68,0.94);stroke-width:2;fill-opacity:0"/>
 
     {#await  plants}
     {:then  data}
@@ -100,6 +103,7 @@
 
 <style>
   .container {
+      width: 100%;
       padding-bottom: 8px;
     display: flex;
     justify-content: center;
@@ -114,19 +118,19 @@
       align-items: center;
   }
   .jobs{
-      padding-right: 20px;
       height: 402px;
       display: inline;
       justify-content: center;
       flex-direction: column;
       align-items: start;
       overflow-y: auto;
+      margin-right: 20px;
   }
   .field{
       border: 2px solid #c7c7c7;
       border-radius: 8px;
       box-shadow: rgba(0, 0, 0, 100) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-      background: rgba(110,69,19, 50);
+      background: rgba(110, 69, 19, 0.95);
       display: inline;
       justify-content: center;
       flex-direction: column;
@@ -146,7 +150,7 @@
       margin: 10px;
   }
   circle {
-      fill: #ff3e00;
+      fill: rgba(255, 62, 0, 0.7);
   }
   svg {
       width: 896px;
