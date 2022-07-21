@@ -203,6 +203,10 @@ app.post('/jobs/watering/execute', function(req, res, next){
     job_id = parseInt(req.query.id);
     watering_job.getJob(job_id)
       .then((job) => {
+        console.log(job)
+        if(!job || typeof  job === "undefined" || typeof job === null){
+          return Promise.reject("There is no job for the given ID")
+        }
         let event = {
           job_id : job.id,
           type: "watering",
@@ -213,6 +217,10 @@ app.post('/jobs/watering/execute', function(req, res, next){
       }).then((r) => {
 
       res.send("Job submitted");
+    }).catch( e=> {
+      console.log(e)
+      res.status(500);
+      res.send(e)
     })
   }
 

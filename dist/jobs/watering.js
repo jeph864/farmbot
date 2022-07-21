@@ -17,6 +17,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WateringJob = exports.WATERING_COLLECTION = void 0;
 var job_1 = require("./job");
+var queue_1 = require("./queue");
 exports.WATERING_COLLECTION = "watering_jobs";
 var WATERING_COLLECTION_SEQ = "watering_jobs_seq";
 var WateringJob = /** @class */ (function (_super) {
@@ -49,6 +50,25 @@ var WateringJob = /** @class */ (function (_super) {
             };
             return df;
         };
+        _this_1.calculateSteps = function (job) {
+            var pos = job.working_area.beg_pos;
+            var length = job.working_area.length;
+            var width = job.working_area.width;
+            var locations = [];
+            length = length + pos.x;
+            width = width + pos.y;
+            if (_this_1.safe_height > job.height)
+                job.height = _this_1.safe_height;
+            var height = job.height + _this_1.ground_level;
+            for (var i = pos.x + job.min_dist; i < length - job.min_dist; i = i + job.min_dist) {
+                for (var j = pos.y + job.min_dist; j < width - job.min_dist; j = j + job.min_dist) {
+                    locations.push({
+                        x: i, y: j, z: height
+                    });
+                }
+            }
+            return locations;
+        };
         // @ts-ignore
         _this_1.initParams = function (input) {
             input.working_area.length = input.working_area.end_pos.x - input.working_area.beg_pos.x;
@@ -70,6 +90,9 @@ var WateringJob = /** @class */ (function (_super) {
                 return _this.delay(5000);
             }).then(function (_) {
                 return _this.bot.writePin({ pin_mode: 0, pin_number: _this.pin_number, pin_value: 0 });
+            }).catch(function (e) {
+                console.log(e);
+                queue_1.EventQueue.busy = false;
             });
         };
         _this_1.afterUpdate = function (_, callback, data, update) {
@@ -86,9 +109,10 @@ var WateringJob = /** @class */ (function (_super) {
                     .then(function (result) {
                     if (result) {
                         var watering = result;
-                        watering.next = jobParams.next;
+                        watering.nextRunAt = jobParams.nextRunAt;
                         watering.amount = jobParams.amount;
-                        watering.name = jobParams.name;
+                        watering.interval = jobParams.interval;
+                        watering.height = jobParams.height;
                         watering.seeding_id = jobParams.seeding_id;
                         //@ts-ignore
                         var params = _this_1.initParams(watering);

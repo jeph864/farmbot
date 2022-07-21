@@ -23,10 +23,10 @@ function execute(id){
   executeJob(id);
   console.log(id);
 }
-  function edit(name){
-    jobName.Name = name;
-    //console.log(jobName.Name);
-  }
+
+function edit(id){
+  //TODO
+}
 
 </script>
 

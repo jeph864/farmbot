@@ -18,6 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SeedingJob = exports.SEEDING_COLLECTION = void 0;
 var job_1 = require("./job");
 var watering_1 = require("./watering");
+var queue_1 = require("./queue");
 exports.SEEDING_COLLECTION = "seeding_jobs";
 var SEEDING_COLLECTION_SEQ = "seeding_jobs_seq";
 var SeedingJob = /** @class */ (function (_super) {
@@ -96,6 +97,7 @@ var SeedingJob = /** @class */ (function (_super) {
             }).then(function (_) {
                 console.log({ x: dest.x, y: dest.y, z: dest.z + _this.safe_height, speed: speed });
             }).catch(function (e) {
+                queue_1.EventQueue.busy = false;
                 console.log(e);
             });
         };

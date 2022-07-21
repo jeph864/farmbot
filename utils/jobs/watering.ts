@@ -1,6 +1,7 @@
 import { Job,  } from "./job";
 import {JobParams, JobStep, Position, Seeding, Watering} from "./interfaces";
 import { Farmbot } from "farmbot";
+import { EventQueue } from "./queue";
 
 export const WATERING_COLLECTION = "watering_jobs";
 const WATERING_COLLECTION_SEQ = "watering_jobs_seq";
@@ -41,6 +42,26 @@ export class WateringJob extends Job {
     }
     return df;
   }
+
+  calculateSteps = (job) => {
+    const pos = job.working_area.beg_pos
+    let length = job.working_area.length
+    let width= job.working_area.width
+    let locations : Array<Position> = [];
+    length = length + pos.x
+    width = width + pos.y
+    if(this.safe_height > job.height) job.height = this.safe_height
+    let height = job.height + this.ground_level;
+
+    for(let i = pos.x+job.min_dist; i<length-job.min_dist; i = i+job.min_dist){
+      for(let j = pos.y+job.min_dist;j<width-job.min_dist; j = j+ job.min_dist){
+        locations.push({
+          x:i, y:j, z: height
+        })
+      }
+    }
+    return locations;
+  }
   // @ts-ignore
   initParams = (input: Watering) => {
     input.working_area.length = input.working_area.end_pos.x - input.working_area.beg_pos.x;
@@ -61,6 +82,9 @@ export class WateringJob extends Job {
         return _this.delay(5000);
       }).then(function(_){
         return _this.bot.writePin({pin_mode : 0, pin_number:_this.pin_number, pin_value:0})
+      }).catch( e => {
+        console.log(e);
+        EventQueue.busy = false;
       })
   };
   afterUpdate = (_, callback, data = null, update = false) => {
@@ -75,9 +99,10 @@ export class WateringJob extends Job {
         .then((result) => {
           if(result) {
             let watering = result;
-            watering.next = jobParams.next;
+            watering.nextRunAt = jobParams.nextRunAt;
             watering.amount = jobParams.amount;
-            watering.name = jobParams.name;
+            watering.interval = jobParams.interval;
+            watering.height = jobParams.height;
             watering.seeding_id = jobParams.seeding_id;
             //@ts-ignore
             const params = this.initParams(watering);
