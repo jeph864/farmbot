@@ -22,7 +22,6 @@ function execute(id){
 
   executeJob(id);
   console.log(id);
-  //TODO: execute "executeJob" from fetchers.js to pass the job to execute
 }
   function edit(name){
     jobName.Name = name;
@@ -41,10 +40,11 @@ function execute(id){
 <table style="width:100%;"id>
   <caption style="background-color: #b3d9b3">
     <th><p style="">Seeding jobs</p></th>
-    <br>
-    <button on:click={gettingJobs}>
+    <th>
+    <button style="background-color: #edfded" on:click={gettingJobs}>
       Refresh
     </button>
+    </th>
 
   </caption>
   <thead style="background-color: #b3d9b3">

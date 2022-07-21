@@ -42,6 +42,11 @@
   <table style="width:100%;" id>
     <caption style="background-color: #b3d9b3">
       <th><p style="">Watering jobs</p></th>
+      <th>
+        <button style="background-color: #edfded" on:click={gettingWateringJobs}>
+          Refresh
+        </button>
+      </th>
     </caption>
     <thead style="background-color: #b3d9b3">
     <tr>
@@ -60,9 +65,9 @@
         <td>{value.name}</td>
         <td>{value.plant_type}</td>
         <td>{value.next}</td>
-        <td>
+        <td style="width: 70px">
 
-          <ActiveJob active={value.active} y={x} />
+          <ActiveJob active={x} y={x} />
 
         </td>
         <td><button on:click={toggleJob(value.id, value.active)}>toggle job</button></td>

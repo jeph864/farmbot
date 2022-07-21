@@ -62,7 +62,7 @@
           coords2.set({ x: e.offsetX, y: e.offsetY}), first=true}
         }}"
     >
-    <circle cx={$coords.x} cy={$coords.y} r=5 />
+    <circle style="fill: rgba(220,128,51,0.76)" cx={$coords.x} cy={$coords.y} r=5 />
     <circle cx={$coords1.x} cy={$coords1.y} r=10 id="circle1" />
     <circle cx={$coords2.x} cy={$coords2.y} r=10 id="circle2"/>
     <rect x="{$coords1.x}" y={$coords1.y} width={$coords2.x-$coords1.x} height={$coords2.y-$coords1.y} style="fill:black;stroke:rgba(68,68,68,0.94);stroke-width:2;fill-opacity:0"/>

@@ -6,7 +6,7 @@
 
 
     //only example, need all the jobs from the database (names)
-    //TODO: het all the jobs
+    //TODO: get all the jobs
     let selected = '';
     let options = [];
 
@@ -115,19 +115,26 @@
 
 
 <ActionItem description="Edit a seeding job" >
+
+    <div class="container">
     {#await  names}
     {:then  nameData}
 
-        <div>
+        {#if selected==''}
+            select job:
+            {/if}
+
             <select bind:value={selected}>
-                {#each Object.values(nameData) as nameValue}<option {nameValue}>{nameValue.name}</option>{/each}
+                {#each Object.values(nameData) as nameValue}
+                    <option {nameValue}>{nameValue.name}</option>
+                {/each}
             </select>
+
             {#if selected!==''}
                 <button on:click={searchJob(selected)}>
                     Load Job Data
                 </button>
             {/if}
-        </div>
     {/await}
     <br/>
 
@@ -136,8 +143,9 @@
 
         {#await  job}
         {:then  editData}
-            <table id="myTable" border="0" cellpadding="3">
+
                 {#each Object.values(editData) as editValue}
+                    <table id="myTable" border="0" cellpadding="3">
                     <tr>
                         <td>ID of the job:</td>
                         <td><input type = "number" value={editValue.id} id="id" readonly></td>
@@ -150,12 +158,12 @@
 
                     <tr>
                         <td>Plant type:</td>
-                        <td><input value={editValue.plant} id="plant_type"></td>
+                        <td><input value={editValue.plant_type} id="plant_type"></td>
 
                     </tr>
                     <tr>
                         <td>Plant distance (in mm):</td>
-                        <td><input type = "number" value={editValue.dist} id="dist"></td>
+                        <td><input type = "number" value={editValue.min_dist} id="dist"></td>
 
 
 
@@ -172,9 +180,18 @@
                         <td>Working area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
                         <td>x1: <input type = "number" value={editValue.working_area.beg_pos.x} id="x1"><br /> y1: <input type = "number" value={editValue.working_area.beg_pos.y} id="y1"> <br /> x2: <input type = "number" value={editValue.working_area.end_pos.x} id="x2"> <br /> y2: <input type = "number" value={editValue.working_area.end_pos.y} id="y2"></td>
                     </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                        <button on:click={edit}>
+                            Update seeding job
+                        </button>
 
                 {/each}
-            </table>
+
+
         {/await}
         <!--{#await  job}
         {:then  editData}
@@ -182,11 +199,10 @@
 
             {/each}
         {/await}-->
-        <button on:click={edit}>
-            Update seeding job
-        </button>
+
 
         <br /> <p style="color: green;">{jobCreated}</p>
+    </div>
 
     </div>
 
@@ -197,6 +213,9 @@
         text-align: center;
         padding: 16px;
         margin: auto;
+    }
+    .container{
+        flex-direction: column;
     }
 
     #myTable {
