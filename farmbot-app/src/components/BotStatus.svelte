@@ -9,7 +9,6 @@
     while (true){
       status = await getStatus();
     if (status) {
-      console.log(status);
       state = status;
     } else throw  new Error("Error occurred")
   }
@@ -27,7 +26,7 @@
   {#await  state}
     <p> Still waiting</p>
   {:then  data}
-
+    current position of the bot:
     x: {data.x}
     y: {data.y}
     z: {data.z}

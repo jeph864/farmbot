@@ -103,6 +103,9 @@
     tr:nth-child(even) {
         background-color: #cbe1cb;
     }
+    thead tr th {
+        position:sticky; top:0; background: #b3d9b3;
+    }
     button{
         background-color: #f5ffff;
         border-color: grey;
