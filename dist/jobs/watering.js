@@ -49,6 +49,25 @@ var WateringJob = /** @class */ (function (_super) {
             };
             return df;
         };
+        _this_1.calculateSteps = function (job) {
+            var pos = job.working_area.beg_pos;
+            var length = job.working_area.length;
+            var width = job.working_area.width;
+            var locations = [];
+            length = length + pos.x;
+            width = width + pos.y;
+            if (_this_1.safe_height > job.height)
+                job.height = _this_1.safe_height;
+            var height = job.height + _this_1.ground_level;
+            for (var i = pos.x + job.min_dist; i < length - job.min_dist; i = i + job.min_dist) {
+                for (var j = pos.y + job.min_dist; j < width - job.min_dist; j = j + job.min_dist) {
+                    locations.push({
+                        x: i, y: j, z: height
+                    });
+                }
+            }
+            return locations;
+        };
         // @ts-ignore
         _this_1.initParams = function (input) {
             input.working_area.length = input.working_area.end_pos.x - input.working_area.beg_pos.x;

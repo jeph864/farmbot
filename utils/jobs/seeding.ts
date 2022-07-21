@@ -2,6 +2,7 @@ import { Job }  from "./job";
 import  {Position, Seeding, WorkingArea, JobStep, Stage} from "./interfaces";
 import { CSInteger, Farmbot, RpcError, RpcOk } from "farmbot";
 import { WateringJob } from "./watering";
+import { EventQueue } from "./queue";
 
 export interface SeedingStep extends  JobStep{
   tray_pos: Position;
@@ -96,6 +97,7 @@ export class SeedingJob extends  Job{
       }).then((_) => {
         console.log({x:dest.x, y:dest.y,z:dest.z +_this.safe_height, speed:speed})
      }).catch((e) => {
+       EventQueue.busy = false
        console.log(e)
      })
   };
