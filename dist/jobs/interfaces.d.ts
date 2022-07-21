@@ -23,6 +23,7 @@ export interface DelayedJob {
     type: string;
     q_pos: number;
 }
+export declare type EventTime = Date | "now" | "never";
 export interface JobParams {
     name: string;
     id: number;
@@ -32,6 +33,8 @@ export interface JobParams {
     from_seeding?: boolean;
     nextRunAt?: any;
     scheduled?: false;
+    lastStarted: EventTime;
+    lastFinished: EventTime;
 }
 export interface Seeding extends JobParams {
     name: string;
@@ -59,6 +62,7 @@ export interface Watering extends JobParams {
         running: boolean;
     };
     next: Date;
+    interval: number;
 }
 export interface JobStep {
 }

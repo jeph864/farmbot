@@ -35,6 +35,9 @@ var WateringJob = /** @class */ (function (_super) {
                 seeding_id: -1,
                 from_seeding: false,
                 scheduled: false,
+                lastStarted: "never",
+                lastFinished: "never",
+                interval: -1,
                 working_area: {
                     beg_pos: { x: 0, y: 0, z: 0 },
                     end_pos: { x: 0, y: 0, z: 0 },
@@ -77,42 +80,60 @@ var WateringJob = /** @class */ (function (_super) {
             callback(data);
         };
         _this_1.updateJob = function (jobParams, callback) {
-            var params = _this_1.initParams(jobParams);
-            var job = params;
-            var _this = _this_1;
-            _this_1.getJobSeq(function (seq) {
-                var _insert = false;
-                var filter = {};
-                if ((job.id == -1 && typeof job.from_seeding == "boolean" && job.from_seeding) || (job.id === -1 && !job.from_seeding) || typeof jobParams.id !== "number") {
-                    job.id = seq.next_id;
-                    _insert = true;
-                }
-                filter = { id: job.id };
-                if (job.seeding_id !== -1) {
-                    filter = { seeding_id: job.seeding_id };
-                    _insert = true;
-                }
-                _this.db.collection(_this_1.collection)
-                    .findOne(filter)
-                    .then(function (results) {
-                    if (results && results.seeding_id > -1) {
-                        job.id = results.id;
-                        filter = { id: results.id };
-                    }
-                    else {
-                    }
-                    _this.db.collection(_this_1.collection)
-                        .updateOne(filter, { $set: job }, { upsert: _insert })
-                        .then(function (_) {
-                        _this.setJobSeq(_insert)
-                            .then(function (_) {
-                            //@ts-ignore
-                            jobParams.seeding_id = job.id;
-                            callback(null, job);
+            if (typeof jobParams.seeding_id !== undefined) {
+                return _this_1.db.collection("seeding_jobs")
+                    .findOne({ id: jobParams.seeding_id })
+                    .then(function (result) {
+                    if (result) {
+                        var watering = result;
+                        watering.next = jobParams.next;
+                        watering.amount = jobParams.amount;
+                        watering.name = jobParams.name;
+                        watering.seeding_id = jobParams.seeding_id;
+                        //@ts-ignore
+                        var params = _this_1.initParams(watering);
+                        var job_2 = params;
+                        var _this_2 = _this_1;
+                        return _this_1.getJobSeq(function (seq) {
+                            var _insert = false;
+                            var filter = {};
+                            if ((job_2.id == -1 && typeof job_2.from_seeding == "boolean" && job_2.from_seeding) || (job_2.id === -1 && !job_2.from_seeding) || typeof jobParams.id !== "number") {
+                                job_2.id = seq.next_id;
+                                _insert = true;
+                            }
+                            filter = { id: job_2.id };
+                            if (job_2.seeding_id !== -1) {
+                                filter = { seeding_id: job_2.seeding_id };
+                                _insert = true;
+                            }
+                            return _this_2.db.collection(_this_1.collection)
+                                .findOne(filter)
+                                .then(function (results) {
+                                if (results && results.seeding_id > -1) {
+                                    job_2.id = results.id;
+                                    filter = { id: results.id };
+                                }
+                                else {
+                                }
+                                return _this_2.db.collection(_this_1.collection)
+                                    .updateOne(filter, { $set: job_2 }, { upsert: _insert })
+                                    .then(function (_) {
+                                    _this_2.setJobSeq(_insert)
+                                        .then(function (_) {
+                                        //@ts-ignore
+                                        jobParams.seeding_id = job_2.id;
+                                        callback(null, job_2);
+                                    });
+                                }).catch(function (e) { return callback(e, null); });
+                            })
+                                .catch(function (e) { console.error(e); });
                         });
-                    }).catch(function (e) { return callback(e, null); });
-                });
-            });
+                    }
+                }).catch(function (e) { return console.error(e); });
+            }
+            else {
+                return Promise.reject("No seeding ID was given foe the job");
+            }
         };
         _this_1.collection = exports.WATERING_COLLECTION;
         _this_1.collection_seq = WATERING_COLLECTION_SEQ;

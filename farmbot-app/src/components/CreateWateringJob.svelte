@@ -1,18 +1,44 @@
 <script>
     import ActionItem from "./ActionItem.svelte";
+    import { createWateringJob } from "../fetchers.js";
+    import { getJobs } from "../fetchers.js";
 
 
 
-    let plantType = "radish";
-    let amountOfWater = 100;
-    let height = 0;
-    let date;
+    let seeding_id;
+    let amount;
+    let height;
+    let next;
     let interval;
+
+    let selected;
+    let options = [];
+    let jobs;
+    let date;
+
+
+    async function gettingJobs(){
+        jobs = await getJobs();
+        if (jobs) return jobs;
+        else throw  new Error("Error occured")
+    }
+
+    jobs = gettingJobs();
+
 
 
     function create() {
-        //TODO: create watering job, send data to endpoint
-        console.log(date)
+
+        seeding_id = selected.id;
+        next = new Date(date)
+        console.log(next)
+        createWateringJob({
+            seeding_id,
+            amount,
+            height,
+            next
+            //interval,
+        })
     }
 
 
@@ -24,11 +50,24 @@
     <div>
         <table id="myTable" border="0" cellpadding="3">
             <tr>
+                {#await  jobs}
+                    <p> Still waiting</p>
+                {:then  data}
+
+                    <select bind:value={selected}>
+                        {#each Object.values(data) as value}
+                            <option {value}>{value.name}</option>
+                        {/each}
+                    </select>
+
+                {:catch error}
+                    <p>Got some error while processing</p>
+                {/await}
 
             </tr>
             <tr>
                 <td>Amount of water per plant (in ml):</td>
-                <td><input type = "number" bind:value={amountOfWater}></td>
+                <td><input type = "number" bind:value={amount}></td>
             </tr>
             <tr>
                 <td>Height (in mm):</td>
@@ -45,7 +84,7 @@
             </tr>
         </table>
         <button on:click={create}>
-            Create job
+            Create watering job
         </button>
 
     </div>

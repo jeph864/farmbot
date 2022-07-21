@@ -49,11 +49,11 @@ export class EventQueue {
       }
       //check if the event is scheduled
       return _this.db.collection(this.collection)
-        .findOne({job_id: event.job_id})
+        .findOne({$and:[{job_id: event.job_id}, {event_id: event.event_id}]})
         .then(r =>{
           if(r && args.single_event) {return  Promise.resolve("Empty")}
           else return _this.db.collection(this.collection)
-            .updateOne(filter, {$set: event}, {upsert: _insert})
+            .updateOne(filter, {$set: event}, {upsert: true})
             .then((_) => {
               return _this.setEventSeq(_insert)
             })

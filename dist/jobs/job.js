@@ -84,6 +84,7 @@ var Job = /** @class */ (function () {
             return locations;
         };
         this.executeJob = function (job_id, callback) {
+            var started = new Date();
             var _this = _this_1;
             return _this.getAllJobs({ id: job_id }, function (e, d) {
                 if (e) {
@@ -92,15 +93,23 @@ var Job = /** @class */ (function () {
                 var ready_job = d[0];
                 var steps = _this.calculateSteps(ready_job), step_count = steps.length;
                 _this.executeAllSteps(steps).then(function (_) {
-                    _this.removeFromQueue(ready_job.id)
-                        .then(function (data) {
-                        console.log(data);
-                        callback(null, "Finished running all job steps");
+                    return _this.updateLastRun(job_id, started)
+                        .then(function (_) {
+                        _this.removeFromQueue(ready_job.id)
+                            .then(function (data) {
+                            console.log(data);
+                            callback(null, "Finished running all job steps");
+                        });
                     });
                 }).catch(function (err) {
                     throw err;
                 });
             });
+        };
+        this.updateLastRun = function (job_id, date) {
+            var lastFinished = new Date();
+            return _this_1.db.collection(_this_1.collection)
+                .updateOne({ id: job_id }, { $set: { lastRun: date, lastFinished: lastFinished } });
         };
         this.createJob = function (jobParams, callback) {
             var params = _this_1.initParams(jobParams);
