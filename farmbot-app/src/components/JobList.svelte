@@ -58,9 +58,9 @@ function edit(id){
   {#each Object.values(data) as value}
     <tr>
       <td>{value.name}</td>
-      <td>{value.plant}</td>
+      <td>{value.plant_type}</td>
       <td>{value.depth}</td>
-      <td>{value.dist}</td>
+      <td>{value.min_dist}</td>
       <td>{value.working_area.width}</td>
       <td>{value.working_area.length}</td>
       <td><button on:click={execute(value.id)}>execute</button></td>

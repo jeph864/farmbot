@@ -6,7 +6,7 @@
     let name;
     let depth;
     let min_dist;
-    let plant = "radish";
+    let plant_type = "radish";
     export let x1;
     export let y1;
     export let x2;
@@ -21,7 +21,7 @@
 
                         createJob({
                             name,
-                            plant,
+                            plant_type,
                             depth,
                             min_dist,
                             working_area: {
@@ -57,7 +57,7 @@
             </tr>
             <tr>
                 <td>Plant type:</td>
-                <td><input bind:value={plant}></td>
+                <td><input bind:value={plant_type}></td>
             </tr>
             <tr>
                 <td>Plant distance (in mm):</td>
