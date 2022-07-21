@@ -86,9 +86,10 @@ var WateringJob = /** @class */ (function (_super) {
                     .then(function (result) {
                     if (result) {
                         var watering = result;
-                        watering.next = jobParams.next;
+                        watering.nextRunAt = jobParams.nextRunAt;
                         watering.amount = jobParams.amount;
-                        watering.name = jobParams.name;
+                        watering.interval = jobParams.interval;
+                        watering.height = jobParams.height;
                         watering.seeding_id = jobParams.seeding_id;
                         //@ts-ignore
                         var params = _this_1.initParams(watering);
