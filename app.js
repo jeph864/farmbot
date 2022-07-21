@@ -203,7 +203,6 @@ app.post('/jobs/watering/execute', function(req, res, next){
     job_id = parseInt(req.query.id);
     watering_job.getJob(job_id)
       .then((job) => {
-        console.log(job)
         if(!job || typeof  job === "undefined" || typeof job === null){
           return Promise.reject("There is no job for the given ID")
         }

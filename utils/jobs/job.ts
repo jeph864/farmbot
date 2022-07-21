@@ -101,7 +101,8 @@ export abstract class Job{
           .then((_) => {
             _this.removeFromQueue(ready_job.id)
               .then(function(data){
-                console.log(data)
+               // console.log(data)
+                data;
                 callback(null, "Finished running all job steps")
               })
           })
@@ -115,7 +116,7 @@ export abstract class Job{
   updateLastRun = (job_id, date) => {
     const lastFinished = new Date();
     return this.db.collection(this.collection)
-      .updateOne({id: job_id}, {$set: {lastRun: date, lastFinished: lastFinished}})
+      .updateOne({id: job_id}, {$set: {lastStarted: date, lastFinished: lastFinished}})
 }
   createJob = (jobParams: JobParams, callback) => {
     const params = this.initParams(jobParams);
