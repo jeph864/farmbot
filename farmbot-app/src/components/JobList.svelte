@@ -1,5 +1,5 @@
 <script>
-  import { executeJob, getJobs } from "../fetchers.js";
+  import { executeJob, getJobs , jobName} from "../fetchers.js";
 
 
   let jobs
@@ -24,10 +24,10 @@ function execute(id){
   console.log(id);
   //TODO: execute "executeJob" from fetchers.js to pass the job to execute
 }
-
-function edit(id){
-  //TODO
-}
+  function edit(name){
+    jobName.Name = name;
+    //console.log(jobName.Name);
+  }
 
 </script>
 
@@ -41,6 +41,11 @@ function edit(id){
 <table style="width:100%;"id>
   <caption style="background-color: #b3d9b3">
     <th><p style="">Seeding jobs</p></th>
+    <br>
+    <button on:click={gettingJobs}>
+      Refresh
+    </button>
+
   </caption>
   <thead style="background-color: #b3d9b3">
   <tr>

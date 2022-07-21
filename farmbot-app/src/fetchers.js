@@ -1,5 +1,14 @@
 const baseUrl = "http://localhost:3001";
 // const baseUrl = ""
+export const jobName = {
+  Name : '',
+  set setName(theName) {
+    this.Name = theName;
+  },
+  get getName() {
+    return this.Name;
+  }
+};
 
 async function createJob(job) {
   const url = `${baseUrl}/jobs/seeding/update`
@@ -48,16 +57,39 @@ async function getWateringJobs() {
 
 
 async function searchJobs(query) {
-  const url = `${baseUrl}/jobs/search/${query}`
+  //console.log("searching for "+query);
+  const url = `${baseUrl}/search?name=${query}`
   const res = await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json"
     },
   });
+
   return res.json();
 }
 
+async function updateJob(job,query) {
+  const url = `${baseUrl}/jobs/seeding/update?name=${query}`
+  //console.log(JSON.stringify(job))
+  const init = {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(job)
+  }
+  fetch(url, init).then((res) => {
+    console.log(res)
+    return res.json();
+  }).catch(err => {
+    console.error(err)
+  });
+
+
+}
 async function executeJob(job_id) {
   const url = `${baseUrl}/jobs/seeding/execute?id=${job_id}`
   const res = await fetch(url, {
@@ -144,6 +176,4 @@ async function executeWateringJob(watering_job_id) {
 }
 
 
-
-
-export {createJob, searchJobs,getJobs, getWateringJobs, createWateringJob, executeJob, executeWateringJob, getStatus, getPlantPos}
+export {createJob, searchJobs, executeJob, getStatus,getJobs, getWateringJobs,createWateringJob, executeWateringJob, updateJob, getPlantPos}
