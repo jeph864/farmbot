@@ -98,17 +98,9 @@ async function getStatus(){
 
 }
 
-<<<<<<< HEAD
-
-async function updateJob(job) {
-  const url = `${baseUrl}/jobs/seeding/update`
-
-  console.log(JSON.stringify(job))
-=======
 async function createWateringJob(watering_Job) {
   const url = `${baseUrl}/jobs/watering/update/`
   console.log(JSON.stringify(watering_Job))
->>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
   const init = {
     method: "POST",
     mode: "cors",
@@ -116,11 +108,7 @@ async function createWateringJob(watering_Job) {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
-<<<<<<< HEAD
-    body: JSON.stringify(job)
-=======
     body: JSON.stringify(watering_Job)
->>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
   }
   fetch(url, init).then((res) => {
     console.log(res)
@@ -130,9 +118,6 @@ async function createWateringJob(watering_Job) {
   });
 
 }
-<<<<<<< HEAD
-export {createJob, searchJobs, executeJob, getStatus,updateJob}
-=======
 
 async function executeWateringJob(watering_job_id) {
   const url = `${baseUrl}/jobs/watering/execute`
@@ -149,4 +134,3 @@ async function executeWateringJob(watering_job_id) {
 
 
 export {createJob, searchJobs, executeJob, getStatus, createWateringJob, executeWateringJob}
->>>>>>> 2fb75426a52714c89b4e31fd0d08bc65a543aa48
