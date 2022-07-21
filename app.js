@@ -131,6 +131,8 @@ app.post('/jobs/create/', function(req, res, next){
 });
 app.post('/jobs/seeding/update/', function(req, res, next){
   let params = req.body;
+  console.log("111111")
+  console.log(params);
   seeding_job.updateJob(params, function(e, r){
     if(e) throw  e;
     if(r)  res.json(r);

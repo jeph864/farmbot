@@ -1,8 +1,10 @@
+
 <script>
-  import { executeJob, getJobs } from "../fetchers.js";
+  import { executeJob, getJobs , jobName} from "../fetchers.js";
 
   let jobs
   let names
+  let id
 
   async function gettingJobs(){
     jobs = await getJobs();
@@ -24,8 +26,9 @@ function execute(id){
   //TODO: execute "executeJob" from fetchers.js to pass the job to execute
 }
 
-function edit(id){
-  //TODO
+function edit(name){
+    jobName.Name = name;
+  //console.log(jobName.Name);
 }
 
 </script>
@@ -40,6 +43,10 @@ function edit(id){
 <table id>
   <caption>
     <th><p style="">Seeding jobs</p></th>
+      <br>
+      <button on:click={gettingJobs}>
+          Refresh
+      </button>
   </caption>
   <thead>
   <tr>
@@ -64,7 +71,7 @@ function edit(id){
       <td>{value.working_area.width}</td>
       <td>{value.working_area.length}</td>
       <td><button on:click={execute(value.id)}>execute</button></td>
-      <td><button on:click={edit(value.id)}>edit</button></td>
+      <td><button on:click={edit(value.name)}>edit</button></td>
     </tr>
   {/each}
   </tbody>

@@ -1,6 +1,6 @@
 <script>
     import ActionItem from "./ActionItem.svelte";
-    import {updateJob, getJobs, searchJobs} from "../fetchers.js";
+    import {updateJob, getJobs, searchJobs, createJob,jobName} from "../fetchers.js";
 
 
 
@@ -10,7 +10,7 @@
     let selected = '';
     let options = [];
 
-    let name;
+    let name ;
     let id;
     let dist;
     let plant;
@@ -28,27 +28,56 @@
     }
     names = names();
 
-    function set(val)
-    {
-        dist = val;
-    }
     function edit() {
         //TODO: edit seeding job, send data to endpoint
         name = document.getElementById("name").value;
         dist = document.getElementById("dist").value;
         plant = document.getElementById("plant_type").value;
         depth = document.getElementById("depth").value;
-        x1 = document.getElementById("x1").value;
-        y1 = document.getElementById("y1").value;
-        x2 = document.getElementById("x2").value;
-        y2 = document.getElementById("y2").value;
-        id = document.getElementById("id").value;
+        x1 = parseInt(document.getElementById("x1").value);
+        y1 = parseInt(document.getElementById("y1").value);
+        x2 = parseInt(document.getElementById("x2").value);
+        y2 = parseInt(document.getElementById("y2").value);
+        id = parseInt(document.getElementById("id").value);
 
-        updateJob({
-            name,
-            plant,
+
+        if(dist>=0){
+            if(depth>=0) {
+                if (x1 <= x2) {
+                    if (y1 <= y2) {
+
+                        updateJob({
+                            id,
+                            depth,
+                            dist,
+                            name,
+                            plant,
+                            working_area: {
+                                beg_pos: {
+                                    x: x1,
+                                    y: y1
+                                },
+                                end_pos: {
+                                    x: x2,
+                                    y: y2
+                                }
+                            }
+                        });
+
+                        jobCreated="Seeding Job edited successfully!";
+
+                    }
+                    else { alert("y2 cannot be greater than y1"); }
+                } else { alert("x2 cannot be greater than x1"); }
+            } else{ alert("planting depth must be a positive number") }
+        } else{ alert("plant distance must be a positive number") }
+
+        /*updateJob({
+            id,
             depth,
             dist,
+            name,
+            plant,
             working_area: {
                 beg_pos: {
                     x: x1,
@@ -59,22 +88,23 @@
                     y: y2
                 }
             }
-        },id);
+        });*/
 
 
         //alert(document.getElementById("id").value);
-        jobCreated="Seeding Job edited successfully!"
+        //jobCreated="Seeding Job edited successfully!"
 
 
     }
-    export async function  searchJob(){
-        job = await searchJobs(selected);
-        if (job) return job;
-
-        /*{
-            const data = Object.values(job);
-            plant = data.plant;
+    export async function  searchJob(data){
+        /*if(jobName.Name!=='')
+        {
+            job = await searchJobs(jobName.Name);
+            if (job) return job;
+            else throw  new Error("Search error");
         }*/
+        job = await searchJobs(data);
+        if (job) return job;
         else throw  new Error("Search error");
     }
 
@@ -84,18 +114,19 @@
 
 
 
-<ActionItem description="Edit a seeding job">
-    {#await  names}
+<ActionItem description="Edit a seeding job" >
+   {#await  names}
     {:then  nameData}
 
     <div>
         <select bind:value={selected}>
             {#each Object.values(nameData) as nameValue}<option {nameValue}>{nameValue.name}</option>{/each}
         </select>
-
+        {#if selected!==''}
         <button on:click={searchJob(selected)}>
-            Select job
+            Load Job Data
         </button>
+            {/if}
     </div>
     {/await}
     <br/>
