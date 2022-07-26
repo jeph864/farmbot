@@ -38,6 +38,37 @@ node app.js
    - x: 990
    - y: 725
    - z: -430
+
+### Coordinates of the First toolbox
+
+Workflow to change tool:
+Move to the "in front waiting position" of the tool you want.
+
+Then move to the "tool parking position" (-109 mm in x-direction).
+
+Then go up to the "hovering over the tool position" (+50 mm in z-direction).
+
+Move to the "hovering over the tool position" of the next tool you want. (100 mm between the different boxes)
+
+Go down to the "tool parking position" (-50 mm in x-direction).
+
+Move to the "in front waiting position" (109 mm in x-direction).
+
+Do your next steps with the new tool.
+
+- in front "waiting" position
+  - 1: 169 | 243 | -357
+  - 2: 169 | 343 | -357
+  - 3: 169 | 443 | -357
+- tool "parking" position
+  - 1: 60 | 243 | -357
+  - 2: 60 | 343 | -357
+  - 3: 60 | 443 | -357
+- hovering over the tool position
+  - 1: 60 | 243 | -307
+  - 2: 60 | 343 | -307
+  - 3: 60 | 443 | -307
+
 ### Endpoints
 All request require the parameter  to be in the request body.
 
