@@ -1,7 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.config = void 0;
+exports.config = exports.setup = void 0;
 var dbConnect = require("../../utils/conn");
+/*export class Setup{
+  constructor() {
+  }
+  checkDatabase = () =>{
+  };
+  checkCollections = () => {};
+  checkAPI = () => {};
+  initializeUsers = () =>{};
+  initializeSettings = () => {};
+  initializeSchedulers = () => {};
+}*/
+function setup() {
+    dbConnect.connect()
+        .then(function (_) {
+        return;
+    }).catch(function (err) {
+        console.error(err);
+        process.exit();
+    });
+}
+exports.setup = setup;
 var Settings = /** @class */ (function () {
     function Settings(api, user) {
         var _this = this;

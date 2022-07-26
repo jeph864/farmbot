@@ -1,3 +1,4 @@
+export declare function setup(): void;
 declare class Settings {
     private config;
     private api;

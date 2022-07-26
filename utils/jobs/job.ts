@@ -104,13 +104,11 @@ export abstract class Job{
       }
       let ready_job = d[0];
       let steps = _this.calculateSteps(ready_job), step_count = steps.length;
-      console.log(steps[0])
       _this.executeAllSteps(steps).then(function(_){
         return _this.updateLastRun(job_id, started)
           .then((_) => {
             _this.removeFromQueue(ready_job.id)
               .then(function(data){
-               // console.log(data)
                 data;
                 callback(null, "Finished running all job steps")
               })

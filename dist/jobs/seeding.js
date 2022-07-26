@@ -69,8 +69,9 @@ var SeedingJob = /** @class */ (function (_super) {
         _this_1.plantSeed = function (bay_pos, dest, speed) {
             if (speed === void 0) { speed = 100; }
             var _this = _this_1;
+            var safety_position_z = _this_1.ground_level + _this_1.safe_height;
             dest = _this_1.getAbsolutePlantPosition(dest);
-            return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z + _this.safe_height, speed: speed })
+            return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: safety_position_z, speed: speed })
                 .then(function (_) {
                 return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z, speed: speed });
             })
@@ -79,12 +80,12 @@ var SeedingJob = /** @class */ (function (_super) {
                 return _this.bot.writePin({ pin_mode: 0, pin_number: _this.pin_number, pin_value: 1 });
             }).then(function (_) {
                 console.log("Wrote to pin: 1");
-                return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z + _this.safe_height, speed: speed });
+                return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: safety_position_z, speed: speed });
             }) /*.then((_) =>{
               return _this.bot.moveAbsolute({x:bay_pos.x, y:bay_pos.y,z:bay_pos.z + _this.safe_height, speed:speed})
             })*/
                 .then(function (_) {
-                return _this.bot.moveAbsolute({ x: dest.x, y: dest.y, z: bay_pos.z + _this.safe_height, speed: speed });
+                return _this.bot.moveAbsolute({ x: dest.x, y: dest.y, z: safety_position_z, speed: speed });
             }).then(function (_) {
                 return _this.bot.moveAbsolute({ x: dest.x, y: dest.y, z: dest.z, speed: speed });
             })
@@ -93,9 +94,9 @@ var SeedingJob = /** @class */ (function (_super) {
                 return _this.bot.writePin({ pin_mode: 0, pin_number: _this.pin_number, pin_value: 0 });
             }).then(function (_) {
                 console.log("Wrote to pin: 0");
-                return _this.bot.moveAbsolute({ x: dest.x, y: dest.y, z: dest.z + _this.safe_height, speed: speed });
+                return _this.bot.moveAbsolute({ x: dest.x, y: dest.y, z: safety_position_z, speed: speed });
             }).then(function (_) {
-                console.log({ x: dest.x, y: dest.y, z: dest.z + _this.safe_height, speed: speed });
+                console.log({ x: dest.x, y: dest.y, z: safety_position_z, speed: speed });
             }).catch(function (e) {
                 queue_1.EventQueue.busy = false;
                 console.log(e);
