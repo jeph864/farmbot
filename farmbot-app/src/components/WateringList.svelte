@@ -64,7 +64,7 @@
       <tr>
         <td>{value.name}</td>
         <td>{value.plant_type}</td>
-        <td>{value.next}</td>
+        <td>{value.nextRunAt.toString()}</td>
         <td style="width: 70px">
 
           <ActiveJob active={x} y={x} />

@@ -1,5 +1,5 @@
 <script>
-  import { executeJob, getJobs , jobName} from "../fetchers.js";
+    import {executeJob, getJobs, jobName} from "../fetchers.js";
 
 
   let jobs
