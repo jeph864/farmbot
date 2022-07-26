@@ -9,7 +9,6 @@
     while (true){
       status = await getStatus();
     if (status) {
-      console.log(status);
       state = status;
     } else throw  new Error("Error occurred")
   }
@@ -21,13 +20,13 @@
 
 </script>
 
-<ActionItem description="Status">
+<ActionItem description="Status of the bot">
 
 
   {#await  state}
     <p> Still waiting</p>
   {:then  data}
-
+    current position:
     x: {data.x}
     y: {data.y}
     z: {data.z}

@@ -64,7 +64,7 @@
       <tr>
         <td>{value.name}</td>
         <td>{value.plant_type}</td>
-        <td>{value.next}</td>
+        <td>{value.nextRunAt.toString()}</td>
         <td style="width: 70px">
 
           <ActiveJob active={x} y={x} />
@@ -102,6 +102,9 @@
 
     tr:nth-child(even) {
         background-color: #cbe1cb;
+    }
+    thead tr th {
+        position:sticky; top:0; background: #b3d9b3;
     }
     button{
         background-color: #f5ffff;
