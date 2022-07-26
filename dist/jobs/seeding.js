@@ -69,7 +69,7 @@ var SeedingJob = /** @class */ (function (_super) {
         _this_1.plantSeed = function (bay_pos, dest, speed) {
             if (speed === void 0) { speed = 100; }
             var _this = _this_1;
-            dest.z = dest.z + _this_1.ground_level;
+            dest = _this_1.getAbsolutePlantPosition(dest);
             return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z + _this.safe_height, speed: speed })
                 .then(function (_) {
                 return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z, speed: speed });
@@ -112,7 +112,7 @@ var SeedingJob = /** @class */ (function (_super) {
             })*/
         };
         _this_1.collection = exports.SEEDING_COLLECTION;
-        _this_1.tray_pos = { x: 990, y: 725, z: -468 };
+        _this_1.tray_pos = { x: 990, y: 725, z: -430 };
         _this_1.collection_seq = SEEDING_COLLECTION_SEQ;
         _this_1.config.pin_id = 30538;
         _this_1.watering_job = new watering_1.WateringJob(bot);

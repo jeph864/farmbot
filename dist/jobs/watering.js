@@ -109,7 +109,7 @@ var WateringJob = /** @class */ (function (_super) {
                     .then(function (result) {
                     if (result) {
                         var watering = result;
-                        watering.nextRunAt = jobParams.nextRunAt;
+                        watering.nextRunAt = new Date(jobParams.nextRunAt);
                         watering.amount = jobParams.amount;
                         watering.interval = jobParams.interval;
                         watering.height = jobParams.height;

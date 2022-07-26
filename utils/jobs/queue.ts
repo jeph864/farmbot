@@ -27,7 +27,7 @@ export class EventQueue {
     this.seeding = new SeedingJob(bot);
     this.watering = new WateringJob(bot);
     this.event_emitter = new EventEmitter();
-    this.interval = 10000;
+    this.interval = 100000;
     console.log("Successfully initialized the event queue and locks system")
   }
   add = (event : Event, args = {single_event: false}) => {
@@ -186,17 +186,12 @@ collectEvents = (reschedule = false) => {
     //collect the ready watering jobs and submit them
   const now = new Date();
   const next_10 = new Date(now.getTime() + this.interval);
-
+    reschedule;
+    //console.log({ nextRunAt: { '$gt': new Date(now), '$lt': new Date(next_10)}})
+    //console.log( {$and: [{ nextRunAt: { '$gt': new Date(now), '$lt': new Date(next_10)}}, {"status.active": true}]})
    let ready_filter = [
      {nextRunAt: 'now'},
-     {
-       $and: [
-         {nextRunAt: {$gt : now}},
-         {"status.active": true},
-         {"scheduled": reschedule}
-         /*{nextRunAt: {$lt : next_10}}*/
-       ]
-     }
+     {$and: [{ nextRunAt: { '$gt': new Date(now), '$lt': new Date(next_10)}}]}
    ]
   this.db.collection(WATERING_COLLECTION)
     .find({
