@@ -103,7 +103,7 @@
     </div>
 
     <button on:click={null}>
-      Set tooltip positions
+      Set toolbox positions
     </button>
 
   </div>
