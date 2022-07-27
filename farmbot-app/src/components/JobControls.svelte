@@ -5,6 +5,8 @@
   //import ExecuteWateringJob from "./ExecuteWateringJob.svelte";
   import EditSeedingJob from "./EditSeedingJob.svelte";
   import EditWateringJob from "./EditWateringJob.svelte";
+  import {updateTools} from "../fetchers.js";
+  import {getTools} from "../fetchers.js";
   import JobList from "./JobList.svelte";
   import { spring } from 'svelte/motion';
   import WateringList from "./WateringList.svelte";
@@ -23,12 +25,13 @@
 
   let plants
 
-  let selected_1, selected_2, selected_3, selected_4, selected_5, selected_6;
-  let selected = [selected_1, selected_2, selected_3, selected_4, selected_5, selected_6];
+  let selected_0, selected_1, selected_2, selected_3, selected_4, selected_5;
+  selected_0 = "Seeding"
+  let selected = [selected_0, selected_1, selected_2, selected_3, selected_4, selected_5];
   let options = [
-    '---',
-    'Seeding',
-    'Watering'
+    '',
+    'seeding',
+    'watering'
   ]
 
 
@@ -41,12 +44,61 @@
   plants=gettingPlantPos();
 
 
+
+
   function getField(){
     let element = document.getElementById('field');
     let position = element.getBoundingClientRect();
     l = position.left;
     t = position.top;
   }
+
+
+  function setPositions(){
+    //set here the different tools that are available and check if they are only selected once
+    if(nodoubles(tools, "seeding")){
+      if(nodoubles(tools, "watering")){
+
+      //let data= {selected}
+       updateTools(tools);
+
+      }
+      else { alert("Watering tool has to be selected exactly once!"); }
+    }
+    else { alert("Seeding tool has to be selected exactly once!"); }
+  }
+
+  export async function tools(){
+    tools = await getTools();
+    if (tools) return tools;
+    else throw  new Error("Error occured")
+  }
+  tools = tools();
+
+  function getPositions(){
+
+    console.log(tools)
+  }
+
+
+
+
+
+  function nodoubles (array, word){
+    let counter = 0;
+    for (const actual of array) {
+      if (actual == word) {
+        counter++;
+      }
+    }
+    if (counter ==1){
+      return true
+    }else{
+      return false
+    }
+
+  }
+
 
 </script>
 
@@ -66,43 +118,43 @@
 
 
     <div id="one">
-      <select bind:value={selected[0]}>
+      <select bind:value={tools[5]}>
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
 
     </div>
 
     <div id="two">
-      <select bind:value={selected[1]}>
+      <select bind:value={tools[4]}>
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
 
     <div id="three">
-      <select bind:value={selected[2]}>
+      <select bind:value={tools[3]}>
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
 
     <div id="four">
-      <select bind:value={selected[3]}>
+      <select bind:value={tools[2]}>
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
 
     <div id="five">
-      <select bind:value={selected[4]}>
+      <select bind:value={tools[1]}>
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
 
     <div id="six">
-      <select bind:value={selected[5]}>
+      <select bind:value={tools[0]}>
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
 
-    <button on:click={null}>
+    <button on:click={setPositions}>
       Set toolbox positions
     </button>
 
