@@ -5,6 +5,7 @@
     "declaration": true,
     "strict": true,
     "noUnusedLocals": false,
+    "esModuleInterop": true,
     "noUnusedParameters": true,
     "noImplicitAny": false,
     "allowUnreachableCode": false,

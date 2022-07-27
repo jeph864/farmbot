@@ -1,20 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.config = exports.setup = void 0;
-var dbConnect = require("../../utils/conn");
-/*export class Setup{
-  constructor() {
-  }
-  checkDatabase = () =>{
-  };
-  checkCollections = () => {};
-  checkAPI = () => {};
-  initializeUsers = () =>{};
-  initializeSettings = () => {};
-  initializeSchedulers = () => {};
-}*/
+exports.config = void 0;
+var api_1 = require("../setup/api");
 function setup() {
-    dbConnect.connect()
+    api_1.DBSetup.connect()
         .then(function (_) {
         return;
     }).catch(function (err) {
@@ -22,7 +11,6 @@ function setup() {
         process.exit();
     });
 }
-exports.setup = setup;
 var Settings = /** @class */ (function () {
     function Settings(api, user) {
         var _this = this;
@@ -38,7 +26,8 @@ var Settings = /** @class */ (function () {
             seeding: {
                 pin_number: 9,
                 pin_id: 30538
-            }
+            },
+            zlock: -460
         };
         this.getInitialSettings = function () {
             return _this.initial_params;
@@ -59,7 +48,7 @@ var Settings = /** @class */ (function () {
                 .findOne();
         };
         this.api = api;
-        this.db = dbConnect.getDatabase();
+        this.db = api_1.DBSetup.getDatabase();
         this.api_collection = "apiData";
         this.current_sess_user = user;
     }

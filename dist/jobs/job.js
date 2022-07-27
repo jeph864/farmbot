@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Job = void 0;
 var farmbot_1 = require("farmbot");
-var dbConnect = require("../../utils/conn");
+var api_1 = require("../setup/api");
 var DELAYED_JOBS = "delayed_jobs";
 var PLANT_COLLECTION = "plants";
 var Job = /** @class */ (function () {
@@ -74,8 +74,9 @@ var Job = /** @class */ (function () {
             var locations = [];
             length = length + pos.x;
             width = width + pos.y;
-            for (var i = pos.x + job.min_dist; i < length - job.min_dist; i = i + job.min_dist) {
-                for (var j = pos.y + job.min_dist; j < width - job.min_dist; j = j + job.min_dist) {
+            var min_dist_to_borders = Math.floor(job.min_dist / 2);
+            for (var i = pos.x + min_dist_to_borders; i <= length - min_dist_to_borders; i = i + job.min_dist) {
+                for (var j = pos.y + min_dist_to_borders; j <= width - min_dist_to_borders; j = j + job.min_dist) {
                     var location_1 = { x: i, y: j, z: job.depth };
                     locations.push(location_1);
                 }
@@ -238,14 +239,7 @@ var Job = /** @class */ (function () {
             });
         };
         this.removeFromQueue = function (job_id) {
-            return Promise.resolve("Queue depreacted: " + job_id);
-            /*let _this = this;
-            return this.db.collection(this.delayed_jobs)
-              .deleteOne({job_id : job_id})
-              .then(function(_){
-                return _this.db.collection(_this.collection)
-                  .updateMany({}, {$inc : {q_pos: -1}} )
-              })*/
+            return Promise.resolve("Queue function  deprecated: " + job_id);
         };
         this.writePin = function (value, pin_id, mode) {
             if (value === void 0) { value = 1; }
@@ -340,7 +334,7 @@ var Job = /** @class */ (function () {
         };
         this.bot = bot;
         this.config = config;
-        this.db = dbConnect.getDatabase();
+        this.db = api_1.DBSetup.getDatabase();
         this.collection = "";
         this.collection_seq = this.collection + "_seq";
         this.delayed_jobs = DELAYED_JOBS;

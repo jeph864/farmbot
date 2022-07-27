@@ -3,7 +3,8 @@ import {Event, EventStatus} from "./interfaces";
 import { SeedingJob , SEEDING_COLLECTION} from "./seeding";
 import { WateringJob, WATERING_COLLECTION } from "./watering";
 import { EventEmitter } from "events";
-import * as dbConnect from "../../utils/conn";
+//import * as dbConnect from "../../utils/conn";
+import { DBSetup } from "../setup/api";
 
 const EVENT_COLLECTION = "events";
 const EVENT_COLLECTION_SEQ = "events_seq";
@@ -21,7 +22,7 @@ export class EventQueue {
   private interval :number;
   constructor(bot) {
     this.queue = [];
-    this.db = dbConnect.getDatabase();
+    this.db = DBSetup.getDatabase();
     this.collection = EVENT_COLLECTION;
     this.collection_seq = EVENT_COLLECTION_SEQ;
     this.seeding = new SeedingJob(bot);
@@ -87,7 +88,6 @@ export class EventQueue {
   }
 
   setEventSeq = (set : boolean = true) => {
-
     return this.db.collection(this.collection_seq)
       .updateOne({}, {$inc : {next_id: set?1 : 0}})
   }

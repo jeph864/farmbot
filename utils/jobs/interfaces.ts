@@ -83,5 +83,6 @@ export interface Plant {
   location : Position;
   name: string;
   stage: PlantStage;
+  id: number;
 }
 export type Stage = "Not Planted"| "Planted"| "Watered"

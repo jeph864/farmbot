@@ -79,5 +79,6 @@ export interface Plant {
     location: Position;
     name: string;
     stage: PlantStage;
+    id: number;
 }
 export declare type Stage = "Not Planted" | "Planted" | "Watered";

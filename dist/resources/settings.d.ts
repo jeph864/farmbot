@@ -1,4 +1,3 @@
-export declare function setup(): void;
 declare class Settings {
     private config;
     private api;
@@ -24,6 +23,7 @@ declare class Settings {
             pin_number: number;
             pin_id: number;
         };
+        zlock: number;
     };
     getInitialSettings: () => {
         device_id: number;
@@ -42,6 +42,7 @@ declare class Settings {
             pin_number: number;
             pin_id: number;
         };
+        zlock: number;
     };
     getDevice: () => void;
     saveSettings: (settings: any) => any;

@@ -41,7 +41,8 @@ var interfaces_1 = require("./interfaces");
 var seeding_1 = require("./seeding");
 var watering_1 = require("./watering");
 var events_1 = require("events");
-var dbConnect = require("../../utils/conn");
+//import * as dbConnect from "../../utils/conn";
+var api_1 = require("../setup/api");
 var EVENT_COLLECTION = "events";
 var EVENT_COLLECTION_SEQ = "events_seq";
 var PLANTS_COLLECTION = "plant";
@@ -294,7 +295,7 @@ var EventQueue = /** @class */ (function () {
             return _this_1.event_emitter;
         };
         this.queue = [];
-        this.db = dbConnect.getDatabase();
+        this.db = api_1.DBSetup.getDatabase();
         this.collection = EVENT_COLLECTION;
         this.collection_seq = EVENT_COLLECTION_SEQ;
         this.seeding = new seeding_1.SeedingJob(bot);

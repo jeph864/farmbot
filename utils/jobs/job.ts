@@ -1,5 +1,5 @@
 import { CSInteger, Farmbot, NamedPin, RpcError, RpcOk, rpcRequest } from "farmbot";
-import * as dbConnect from "../../utils/conn"
+import {DBSetup} from "../setup/api";
 import { Db, MongoClient } from "mongodb";
 import {
   WorkingArea, Position, JobParams,
@@ -30,7 +30,7 @@ export abstract class Job{
   protected constructor(bot: Farmbot, config = {}) {
     this.bot = bot;
     this.config = config;
-    this.db = dbConnect.getDatabase();
+    this.db = DBSetup.getDatabase();
     this.collection = "";
     this.collection_seq = this.collection + "_seq"
     this.delayed_jobs = DELAYED_JOBS;
@@ -80,8 +80,9 @@ export abstract class Job{
     let locations : Array<Position> = [];
     length = length + pos.x
     width = width + pos.y
-    for(let i = pos.x+job.min_dist; i<length-job.min_dist; i = i+job.min_dist){
-      for(let j = pos.y+job.min_dist;j<width-job.min_dist; j = j+ job.min_dist){
+    const min_dist_to_borders = Math.floor(job.min_dist/2)
+    for(let i = pos.x+min_dist_to_borders; i<=length-min_dist_to_borders; i = i+job.min_dist){
+      for(let j = pos.y+min_dist_to_borders;j<=width-min_dist_to_borders; j = j+ job.min_dist){
         let location : Position = {x:i, y:j, z: job.depth}
         locations.push( location )
       }
@@ -209,7 +210,6 @@ export abstract class Job{
     }).catch(_ => {if (callback) callback(null)});
 }
  setJobSeq = (set : boolean = true) => {
-
    return this.db.collection(this.collection_seq)
     .updateOne({}, {$inc : {next_id: set?1 : 0}})
 }
@@ -244,14 +244,8 @@ export abstract class Job{
       });
   };
   removeFromQueue = (job_id : number) => {
-    return Promise.resolve("Queue depreacted: " + job_id);
-    /*let _this = this;
-    return this.db.collection(this.delayed_jobs)
-      .deleteOne({job_id : job_id})
-      .then(function(_){
-        return _this.db.collection(_this.collection)
-          .updateMany({}, {$inc : {q_pos: -1}} )
-      })*/
+    return Promise.resolve("Queue function  deprecated: " + job_id);
+
   };
   writePin = (value:number = 1, pin_id: number = this.config.pin_id, mode:number = 0) => {
     let args = {
@@ -285,7 +279,6 @@ export abstract class Job{
         .then(function(ack){
           results.push(ack)
         });
-
     }
     return results;
   }

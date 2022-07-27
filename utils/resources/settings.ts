@@ -1,19 +1,7 @@
 
-import * as dbConnect from "../../utils/conn";
-import {Position} from "../jobs/interfaces";
-/*export class Setup{
-  constructor() {
-  }
-  checkDatabase = () =>{
-  };
-  checkCollections = () => {};
-  checkAPI = () => {};
-  initializeUsers = () =>{};
-  initializeSettings = () => {};
-  initializeSchedulers = () => {};
-}*/
-export function setup(){
-  dbConnect.connect()
+import { DBSetup } from "../setup/api";
+ function setup(){
+  DBSetup.connect()
     .then(_ => {
       return
     }).catch(err => {
@@ -30,7 +18,7 @@ class Settings {
   private settings_collection;
   constructor(api, user) {
     this.api = api;
-    this.db = dbConnect.getDatabase();
+    this.db = DBSetup.getDatabase();
     this.api_collection = "apiData";
     this.current_sess_user = user;
 
@@ -48,7 +36,8 @@ class Settings {
     seeding: {
       pin_number: 9,
       pin_id: 30538
-    }
+    },
+    zlock: -460
   }
   getInitialSettings = () =>{
     return this.initial_params;
