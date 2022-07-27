@@ -1,7 +1,19 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.slots = exports.Slots = void 0;
 var api_1 = require("./api");
+var api_2 = require("./api");
 var SLOT_COLLECTION = "slots";
 var Slots = /** @class */ (function () {
     function Slots() {
@@ -36,7 +48,7 @@ var Slots = /** @class */ (function () {
         };
         this.update = function (slot) {
             return _this.db.collection(_this.collection)
-                .updateOne({ "slots.id": slot.id }, { $set: { "slots.$": slot } }, { upsert: true });
+                .updateOne({ id: slot.id }, { $set: slot }, { upsert: true });
         };
         this.updateManySlots = function (slots) {
             var insert = function (s) {
@@ -74,9 +86,16 @@ var Slots = /** @class */ (function () {
         };
         this.getLatestSlot = function () {
         };
+        this.move = function (slot_pos, speed) {
+            if (speed === void 0) { speed = 100; }
+            var dest = __assign({}, slot_pos);
+            return _this.bot.moveAbsolute({ x: dest.x - _this.safe_dist_to_bay, y: dest.y, z: dest.z, speed: speed });
+        };
         this.db = api_1.DBSetup.getDatabase();
+        this.bot = api_2.Api.getBot();
         this.collection = SLOT_COLLECTION;
         this.zero_locations = [{ x: 60, y: 243, z: -357 }, { x: 60, y: 860, z: -357 }];
+        this.safe_dist_to_bay = 169;
     }
     return Slots;
 }());
