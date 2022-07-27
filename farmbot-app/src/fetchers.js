@@ -1,4 +1,4 @@
-const baseUrl = "http://localhost:3001";
+const baseUrl = "http://localhost:3002";
 // const baseUrl = ""
 export const jobName = {
   Name : '',
@@ -177,4 +177,33 @@ async function executeWateringJob(watering_job_id) {
 }
 
 
-export {createJob, searchJobs, executeJob, getStatus,getJobs, getWateringJobs,createWateringJob, executeWateringJob, updateJob, getPlantPos}
+async function updateTools(data) {
+  console.log(data)
+  const url = `${baseUrl}/slots`
+  console.log(url)
+  const res = await fetch(url, {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      'Accept': 'application/json',
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({data : data})
+  });
+  return res.json();
+}
+
+
+async function getTools(){
+  const url = `${baseUrl}/slots`
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    },
+  });
+  return res.json();
+}
+
+
+export {createJob, updateTools, getTools, searchJobs, executeJob, getStatus,getJobs, getWateringJobs,createWateringJob, executeWateringJob, updateJob, getPlantPos}
