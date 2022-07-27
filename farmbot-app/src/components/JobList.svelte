@@ -1,5 +1,5 @@
 <script>
-  import { executeJob, getJobs , jobName} from "../fetchers.js";
+    import {executeJob, getJobs, jobName} from "../fetchers.js";
 
 
   let jobs
@@ -102,6 +102,9 @@ function edit(id){
         border: 1px solid #dddddd;
         text-align: left;
         padding: 6px;
+    }
+    thead tr th {
+        position:sticky; top:0; background: #b3d9b3;
     }
 
     tr:nth-child(even) {

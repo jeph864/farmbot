@@ -99,7 +99,7 @@ export class WateringJob extends Job {
         .then((result) => {
           if(result) {
             let watering = result;
-            watering.nextRunAt = jobParams.nextRunAt;
+            watering.nextRunAt = new Date(jobParams.nextRunAt);
             watering.amount = jobParams.amount;
             watering.interval = jobParams.interval;
             watering.height = jobParams.height;

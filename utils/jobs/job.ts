@@ -22,8 +22,10 @@ export abstract class Job{
   protected readonly delayed_jobs;
   protected   collection_seq;
   private plants;
-  protected safe_height;
-  protected ground_level ;
+  protected safe_height:number;
+  protected ground_level:number ;
+  private  readonly max_depth;
+  private readonly zlock: number
 
   protected constructor(bot: Farmbot, config = {}) {
     this.bot = bot;
@@ -34,7 +36,9 @@ export abstract class Job{
     this.delayed_jobs = DELAYED_JOBS;
     this.plants = PLANT_COLLECTION;
     this.safe_height = 80;
-    this.ground_level = -468;
+    this.ground_level = -430;
+    this.zlock = -460;
+    this.max_depth = 30;
     //initialize the seq collection
     this.getJobSeq((e) => {
       if(e) console.log("Successfully initialized " + this.collection_seq);
@@ -78,12 +82,17 @@ export abstract class Job{
     width = width + pos.y
     for(let i = pos.x+job.min_dist; i<length-job.min_dist; i = i+job.min_dist){
       for(let j = pos.y+job.min_dist;j<width-job.min_dist; j = j+ job.min_dist){
-        locations.push({
-          x:i, y:j, z: 0
-        })
+        let location : Position = {x:i, y:j, z: job.depth}
+        locations.push( location )
       }
     }
     return locations;
+  }
+  getAbsolutePlantPosition(pos: Position){
+    let absolute_pos_z = this.ground_level - pos.z;
+    if(absolute_pos_z <= this.zlock) pos.z = this.zlock +1;
+    else pos.z = absolute_pos_z
+    return pos;
   }
 
   executeJob = (job_id, callback) => {
@@ -95,13 +104,12 @@ export abstract class Job{
       }
       let ready_job = d[0];
       let steps = _this.calculateSteps(ready_job), step_count = steps.length;
-      console.log(steps[0])
       _this.executeAllSteps(steps).then(function(_){
         return _this.updateLastRun(job_id, started)
           .then((_) => {
             _this.removeFromQueue(ready_job.id)
               .then(function(data){
-                console.log(data)
+                data;
                 callback(null, "Finished running all job steps")
               })
           })
@@ -115,7 +123,7 @@ export abstract class Job{
   updateLastRun = (job_id, date) => {
     const lastFinished = new Date();
     return this.db.collection(this.collection)
-      .updateOne({id: job_id}, {$set: {lastRun: date, lastFinished: lastFinished}})
+      .updateOne({id: job_id}, {$set: {lastStarted: date, lastFinished: lastFinished}})
 }
   createJob = (jobParams: JobParams, callback) => {
     const params = this.initParams(jobParams);

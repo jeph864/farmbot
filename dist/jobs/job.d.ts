@@ -9,8 +9,10 @@ export declare abstract class Job {
     protected readonly delayed_jobs: any;
     protected collection_seq: any;
     private plants;
-    protected safe_height: any;
-    protected ground_level: any;
+    protected safe_height: number;
+    protected ground_level: number;
+    private readonly max_depth;
+    private readonly zlock;
     protected constructor(bot: Farmbot, config?: {});
     getConfig: () => any;
     setConfig: () => void;
@@ -22,6 +24,7 @@ export declare abstract class Job {
     minPos: (pos1: Position, pos2: Position) => Position;
     maxPos: (pos1: Position, pos2: Position) => Position;
     calculateSteps: (job: any) => Position[];
+    getAbsolutePlantPosition(pos: Position): Position;
     executeJob: (job_id: any, callback: any) => Promise<any>;
     updateLastRun: (job_id: any, date: any) => Promise<import("mongodb").UpdateResult>;
     createJob: (jobParams: JobParams, callback: any) => void;

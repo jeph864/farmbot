@@ -19,7 +19,7 @@ export class SeedingJob extends  Job{
   constructor(bot: Farmbot, config:any = {}) {
     super(bot, config);
     this.collection = SEEDING_COLLECTION;
-    this.tray_pos = {x:990, y:725, z: -468}
+    this.tray_pos = {x:990, y:725, z: -430}
     this.collection_seq = SEEDING_COLLECTION_SEQ;
     this.config.pin_id = 30538;
     this.watering_job = new WateringJob(bot);
@@ -69,8 +69,9 @@ export class SeedingJob extends  Job{
   };
  plantSeed = (bay_pos: Position, dest: Position, speed:number = 100) => {
     let _this = this;
-    dest.z = dest.z + this.ground_level ;
-   return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z + _this.safe_height, speed: speed })
+    let safety_position_z = this.ground_level+ this.safe_height;
+   dest = this.getAbsolutePlantPosition(dest);
+   return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: safety_position_z, speed: speed })
      .then(function(_){
        return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z, speed: speed });
      })
@@ -79,12 +80,12 @@ export class SeedingJob extends  Job{
         return _this.bot.writePin({pin_mode : 0, pin_number:_this.pin_number, pin_value:1})
       }).then(function(_){
         console.log("Wrote to pin: 1");
-        return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: bay_pos.z + _this.safe_height, speed: speed })
+        return _this.bot.moveAbsolute({ x: bay_pos.x, y: bay_pos.y, z: safety_position_z, speed: speed })
       })/*.then((_) =>{
         return _this.bot.moveAbsolute({x:bay_pos.x, y:bay_pos.y,z:bay_pos.z + _this.safe_height, speed:speed})
       })*/
       .then((_) =>{
-      return _this.bot.moveAbsolute({x:dest.x, y:dest.y,z:bay_pos.z + _this.safe_height , speed:speed})
+      return _this.bot.moveAbsolute({x:dest.x, y:dest.y,z:safety_position_z, speed:speed})
       }).then((_) => {
         return _this.bot.moveAbsolute({x:dest.x, y:dest.y,z:dest.z, speed:speed})
       })
@@ -93,9 +94,9 @@ export class SeedingJob extends  Job{
         return _this.bot.writePin({pin_mode : 0, pin_number:_this.pin_number, pin_value:0})
       }).then(function(_){
         console.log("Wrote to pin: 0");
-        return _this.bot.moveAbsolute({x:dest.x, y:dest.y,z:dest.z +_this.safe_height, speed:speed});
+        return _this.bot.moveAbsolute({x:dest.x, y:dest.y,z:safety_position_z, speed:speed});
       }).then((_) => {
-        console.log({x:dest.x, y:dest.y,z:dest.z +_this.safe_height, speed:speed})
+        console.log({x:dest.x, y:dest.y,z:safety_position_z, speed:speed})
      }).catch((e) => {
        EventQueue.busy = false
        console.log(e)

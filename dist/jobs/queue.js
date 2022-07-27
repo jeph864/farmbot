@@ -119,6 +119,7 @@ var EventQueue = /** @class */ (function () {
         };
         this.runReadyEvents = function () {
             var ready_events = [];
+            var _future_ = "now";
             var filter = { time: "now", status: interfaces_1.EventStatus.NotRunning };
             var _this = _this_1;
             return _this_1.db.collection(_this_1.collection).find(filter)
@@ -260,16 +261,12 @@ var EventQueue = /** @class */ (function () {
             //collect the ready watering jobs and submit them
             var now = new Date();
             var next_10 = new Date(now.getTime() + _this_1.interval);
+            reschedule;
+            //console.log({ nextRunAt: { '$gt': new Date(now), '$lt': new Date(next_10)}})
+            //console.log( {$and: [{ nextRunAt: { '$gt': new Date(now), '$lt': new Date(next_10)}}, {"status.active": true}]})
             var ready_filter = [
                 { nextRunAt: 'now' },
-                {
-                    $and: [
-                        { nextRunAt: { $gt: now } },
-                        { "status.active": true },
-                        { "scheduled": reschedule }
-                        /*{nextRunAt: {$lt : next_10}}*/
-                    ]
-                }
+                { $and: [{ nextRunAt: { '$gt': new Date(now), '$lt': new Date(next_10) } }] }
             ];
             _this_1.db.collection(watering_1.WATERING_COLLECTION)
                 .find({
@@ -303,7 +300,7 @@ var EventQueue = /** @class */ (function () {
         this.seeding = new seeding_1.SeedingJob(bot);
         this.watering = new watering_1.WateringJob(bot);
         this.event_emitter = new events_1.EventEmitter();
-        this.interval = 10000;
+        this.interval = 100000;
         console.log("Successfully initialized the event queue and locks system");
     }
     EventQueue.busy = false;

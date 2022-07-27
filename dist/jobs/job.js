@@ -76,9 +76,8 @@ var Job = /** @class */ (function () {
             width = width + pos.y;
             for (var i = pos.x + job.min_dist; i < length - job.min_dist; i = i + job.min_dist) {
                 for (var j = pos.y + job.min_dist; j < width - job.min_dist; j = j + job.min_dist) {
-                    locations.push({
-                        x: i, y: j, z: 0
-                    });
+                    var location_1 = { x: i, y: j, z: job.depth };
+                    locations.push(location_1);
                 }
             }
             return locations;
@@ -97,7 +96,7 @@ var Job = /** @class */ (function () {
                         .then(function (_) {
                         _this.removeFromQueue(ready_job.id)
                             .then(function (data) {
-                            console.log(data);
+                            data;
                             callback(null, "Finished running all job steps");
                         });
                     });
@@ -109,7 +108,7 @@ var Job = /** @class */ (function () {
         this.updateLastRun = function (job_id, date) {
             var lastFinished = new Date();
             return _this_1.db.collection(_this_1.collection)
-                .updateOne({ id: job_id }, { $set: { lastRun: date, lastFinished: lastFinished } });
+                .updateOne({ id: job_id }, { $set: { lastStarted: date, lastFinished: lastFinished } });
         };
         this.createJob = function (jobParams, callback) {
             var params = _this_1.initParams(jobParams);
@@ -347,13 +346,23 @@ var Job = /** @class */ (function () {
         this.delayed_jobs = DELAYED_JOBS;
         this.plants = PLANT_COLLECTION;
         this.safe_height = 80;
-        this.ground_level = -468;
+        this.ground_level = -430;
+        this.zlock = -460;
+        this.max_depth = 30;
         //initialize the seq collection
         this.getJobSeq(function (e) {
             if (e)
                 console.log("Successfully initialized " + _this_1.collection_seq);
         });
     }
+    Job.prototype.getAbsolutePlantPosition = function (pos) {
+        var absolute_pos_z = this.ground_level - pos.z;
+        if (absolute_pos_z <= this.zlock)
+            pos.z = this.zlock + 1;
+        else
+            pos.z = absolute_pos_z;
+        return pos;
+    };
     return Job;
 }());
 exports.Job = Job;

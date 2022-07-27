@@ -12,8 +12,8 @@
 
     let name ;
     let id;
-    let dist;
-    let plant;
+    let min_dist;
+    let plant_type;
     let depth;
     export let x1;
     export let y1;
@@ -31,9 +31,9 @@
     function edit() {
         //TODO: edit seeding job, send data to endpoint
         name = document.getElementById("name").value;
-        dist = document.getElementById("dist").value;
-        plant = document.getElementById("plant_type").value;
-        depth = document.getElementById("depth").value;
+        min_dist = parseInt(document.getElementById("dist").value);
+        plant_type = document.getElementById("plant_type").value;
+        depth = parseInt(document.getElementById("depth").value);
         x1 = parseInt(document.getElementById("x1").value);
         y1 = parseInt(document.getElementById("y1").value);
         x2 = parseInt(document.getElementById("x2").value);
@@ -41,7 +41,7 @@
         id = parseInt(document.getElementById("id").value);
 
 
-        if(dist>=0){
+        if(min_dist>=0){
             if(depth>=0) {
                 if (x1 <= x2) {
                     if (y1 <= y2) {
@@ -49,9 +49,9 @@
                         updateJob({
                             id,
                             depth,
-                            dist,
+                            min_dist,
                             name,
-                            plant,
+                            plant_type,
                             working_area: {
                                 beg_pos: {
                                     x: x1,

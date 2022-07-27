@@ -41,8 +41,8 @@
                         //location.reload();
 
                     }
-                    else { alert("y2 cannot be greater than y1"); }
-                } else { alert("x2 cannot be greater than x1"); }
+                    else { alert("y1 cannot be greater than y2"); }
+                } else { alert("x1 cannot be greater than x2"); }
             } else{ alert("planting depth must be a positive number") }
         } else{ alert("plant distance must be a positive number") }
 

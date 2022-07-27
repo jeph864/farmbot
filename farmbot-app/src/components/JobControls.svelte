@@ -19,6 +19,7 @@
   let coords1 = spring({ x: 30, y: 30 } );
   let coords2 = spring({ x: 100, y: 200 } );
 
+
   let plants
 
   let selected_1, selected_2, selected_3, selected_4, selected_5, selected_6;
@@ -299,7 +300,6 @@
   }
   circle {
       fill: rgba(255, 62, 0, 0.7);
-
   }
   svg {
       width: 896px;

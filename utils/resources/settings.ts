@@ -1,7 +1,26 @@
 
 import * as dbConnect from "../../utils/conn";
 import {Position} from "../jobs/interfaces";
-
+/*export class Setup{
+  constructor() {
+  }
+  checkDatabase = () =>{
+  };
+  checkCollections = () => {};
+  checkAPI = () => {};
+  initializeUsers = () =>{};
+  initializeSettings = () => {};
+  initializeSchedulers = () => {};
+}*/
+export function setup(){
+  dbConnect.connect()
+    .then(_ => {
+      return
+    }).catch(err => {
+    console.error(err);
+    process.exit();
+  })
+}
 class Settings {
   private config;
   private api ;
