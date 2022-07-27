@@ -23,6 +23,15 @@
 
   let plants
 
+  let selected_1, selected_2, selected_3, selected_4, selected_5, selected_6;
+  let selected = [selected_1, selected_2, selected_3, selected_4, selected_5, selected_6];
+  let options = [
+    '---',
+    'Seeding',
+    'Watering'
+  ]
+
+
   async function gettingPlantPos(){
     plants = await getPlantPos();
     if (plants) return plants;
@@ -51,6 +60,56 @@
     <!-- <ExecuteWateringJob />  -->
     <BotStatus />
   </div>
+
+
+  <div class="wrapper">
+
+
+    <div id="one">
+      <select bind:value={selected[0]}>
+        {#each options as value}<option {value}>{value}</option>{/each}
+      </select>
+
+    </div>
+
+    <div id="two">
+      <select bind:value={selected[1]}>
+        {#each options as value}<option {value}>{value}</option>{/each}
+      </select>
+    </div>
+
+    <div id="three">
+      <select bind:value={selected[2]}>
+        {#each options as value}<option {value}>{value}</option>{/each}
+      </select>
+    </div>
+
+    <div id="four">
+      <select bind:value={selected[3]}>
+        {#each options as value}<option {value}>{value}</option>{/each}
+      </select>
+    </div>
+
+    <div id="five">
+      <select bind:value={selected[4]}>
+        {#each options as value}<option {value}>{value}</option>{/each}
+      </select>
+    </div>
+
+    <div id="six">
+      <select bind:value={selected[5]}>
+        {#each options as value}<option {value}>{value}</option>{/each}
+      </select>
+    </div>
+
+    <button on:click={null}>
+      Set toolbox positions
+    </button>
+
+  </div>
+
+
+
 
 
   <div class="field">
@@ -111,6 +170,11 @@
     align-items: start;
       overflow-x: auto;
   }
+  .wrapper {
+    width: 7%;
+    display: flex;
+    flex-direction: column;
+  }
   .container2 {
       display: flex;
       justify-content: center;
@@ -155,6 +219,24 @@
   svg {
       width: 896px;
       height: 402px;
+  }
+  select {
+    border-radius: 6px;
+    background-color: #f8f7e5;
+    font-size: 15px;
+    border: #dddddd;
+    padding: 3px;
+  }
+  button{
+    background-color: #f8f7e5;
+    border-color: grey;
+    border-radius: 8px;
+    padding: 3px;
+    font-size: 14px;
+  }
+  button:hover {
+    background-color: #eae9d4;
+    border-radius: 12px;
   }
 
 </style>
