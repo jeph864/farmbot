@@ -15,10 +15,10 @@
     let dist;
     let plant;
     let depth;
-    let x1;
-    let y1;
-    let x2;
-    let y2;
+    export let x1;
+    export let y1;
+    export let x2;
+    export let y2;
     let jobCreated=""
     export let job;
     export async function names(){
