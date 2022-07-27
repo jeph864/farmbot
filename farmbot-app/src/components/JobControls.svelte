@@ -8,7 +8,7 @@
   import JobList from "./JobList.svelte";
   import { spring } from 'svelte/motion';
   import WateringList from "./WateringList.svelte";
-  import { getJobs, getPlantPos } from "../fetchers.js";
+  import { getUnsafeAreas, getPlantPos } from "../fetchers.js";
 
   export let l=0;
   export let t=0;
@@ -18,8 +18,6 @@
   let coords = spring({ x: 0, y: 0 } );
   let coords1 = spring({ x: 30, y: 30 } );
   let coords2 = spring({ x: 100, y: 200 } );
-
-  let selectedPlant;
 
   let plants
 
@@ -39,6 +37,16 @@
   }
 
   plants=gettingPlantPos();
+
+
+  let unsafeAreas;
+  async function gettingUnsafeAreas(){
+    unsafeAreas = await getUnsafeAreas();
+    if (unsafeAreas) return unsafeAreas;
+    else throw  new Error("Error occurred")
+  }
+
+  unsafeAreas=gettingUnsafeAreas();
 
 
   function getField(){
@@ -79,6 +87,14 @@
   function handleMouseOutR(e) {
     colourRG = 'green';
     colourRR = 'red';
+    mouseOnPlant=false;
+  }
+
+  function handleMouseOverU(e) {
+    mouseOnPlant=true;
+  }
+
+  function handleMouseOutU(e) {
     mouseOnPlant=false;
   }
 
@@ -194,6 +210,18 @@
     {:catch error}
     {/await}
 
+      {#await unsafeAreas}
+      {:then  data}
+
+        {#each Object.values(data) as area}
+
+              <rect on:mouseover={handleMouseOverU} on:mouseout={handleMouseOutU} class="unsafe" x={area.beg_pos.x/3} y={area.beg_pos.y/3} width={(area.end_pos.x-area.beg_pos.x)/3} height={(area.end_pos.y-area.beg_pos.y)/3}>{area.name}</rect>
+              <text on:mouseover={handleMouseOverU} on:mouseout={handleMouseOutU} x={(area.beg_pos.x/3)+10} y={(area.beg_pos.y/3)+((area.end_pos.y-area.beg_pos.y)/6)+5}>{area.name}</text>
+
+        {/each}
+      {:catch error}
+      {/await}
+
     </svg>
 
 
@@ -294,6 +322,13 @@
   button:hover {
     background-color: #eae9d4;
     border-radius: 12px;
+  }
+  .unsafe{
+      fill: rgba(203, 5, 5, 0.81);
+      text-decoration-color: #00CC00;
+      align-content: center;
+      rx: 6px;
+      ry: 6px;
   }
 
 </style>

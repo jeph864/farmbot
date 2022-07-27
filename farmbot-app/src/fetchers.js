@@ -150,6 +150,27 @@ async function getPlantPos(){
   return plants
 }
 
+async function getUnsafeAreas(){
+  //TODO create fetcher to get the unsafe areas
+
+  //for test purpose:  -> delete after fetcher is implemented
+  let area1 = {
+    beg_pos :{
+      x: 1000,
+      y: 600,
+      z: 0
+    },
+    end_pos :{
+      x: 1300,
+      y: 800,
+      z: 0
+    },
+    name: "seed tray"
+  }
+  let unsafeAreas=[area1]
+  return unsafeAreas
+}
+
 async function createWateringJob(watering_Job) {
   const url = `${baseUrl}/jobs/watering/update/`
   console.log(JSON.stringify(watering_Job))
@@ -186,4 +207,4 @@ async function executeWateringJob(watering_job_id) {
 }
 
 
-export {createJob, searchJobs, executeJob, getStatus,getJobs, getWateringJobs,createWateringJob, executeWateringJob, updateJob, getPlantPos}
+export {getUnsafeAreas, createJob, searchJobs, executeJob, getStatus,getJobs, getWateringJobs,createWateringJob, executeWateringJob, updateJob, getPlantPos}

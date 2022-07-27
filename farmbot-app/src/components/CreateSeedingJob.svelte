@@ -37,6 +37,8 @@
                         })
 
                         jobCreated="Seeding Job created successfully!"
+                        //this can be used to automatically reload the whole page
+                        //location.reload();
 
                     }
                     else { alert("y2 cannot be greater than y1"); }
