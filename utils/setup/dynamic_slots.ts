@@ -1,7 +1,9 @@
 
 import { DBSetup } from "./api";
+import {Api} from "./api";
 import { Db } from "mongodb";
 import { Position } from "../jobs/interfaces";
+import { Farmbot } from "farmbot";
 
 const SLOT_COLLECTION = "slots"
 export interface  SlotModel{
@@ -13,12 +15,16 @@ export interface  SlotModel{
 
 export class Slots {
   private db: Db;
+  private readonly  bot: Farmbot
   private readonly zero_locations: Array<Position>;
   private  readonly collection;
+  private  safe_dist_to_bay : number;
   constructor() {
     this.db = DBSetup.getDatabase();
+    this.bot = Api.getBot();
     this.collection = SLOT_COLLECTION;
     this.zero_locations = [ { x: 60, y:243, z:-357},  { x: 60, y:860, z:-357}];
+    this.safe_dist_to_bay = 169;
   }
   init = () => {
     const slots :Array<SlotModel> = [];
@@ -52,12 +58,17 @@ export class Slots {
     return this.db.collection(this.collection)
       .updateOne({id: slot.id}, {$set: slot}, {upsert: true})
 }
-  updateAllSlots = (slots)=>{
-    return this.db.collection(this.collection)
-      .updateMany({}, {$set: {slots: slots}}, {upsert: true})
-      .then(_ => {
-        return Promise.resolve(slots)
-      }).catch(e => Promise.reject(e))
+  updateManySlots = (slots)=>{
+    const insert  =  (s) => {
+      return Promise.all(s.map((slot) => {
+        return this.db.collection(this.collection)
+          .updateOne({id: slot.id}, {$set: slot})
+      }))
+    }
+    slots = slots.filter((slot) => {
+      return typeof slot !== "undefined" || slot!.type !== ""
+    })
+    return insert(slots)
 }
 insertInitSlots = () => {
     const slots: Array<SlotModel> = this.init();
@@ -72,9 +83,18 @@ insertInitSlots = () => {
       .find()
       .toArray()
       .then(res => {
-        if(res.length > 0) return Promise.resolve(res as unknown)
+        if(res.length > 0) return Promise.resolve(res as Array<unknown>)
         else return this.insertInitSlots();
       })
+  };
+  retire = () => {}
+  pick =() => {
+  }
+  getLatestSlot = () => {
+  }
+  move  = (slot_pos: Position, speed = 100) => {
+    const dest = {...slot_pos}
+    return this.bot.moveAbsolute({x: dest.x-this.safe_dist_to_bay, y: dest.y, z:dest.z, speed : speed})
   }
 }
 export const  slots = new Slots();

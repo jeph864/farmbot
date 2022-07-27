@@ -44,7 +44,7 @@ export declare abstract class Job {
     write: (pin_number: any, value: any, pin_mode?: number) => Promise<RpcOk | RpcError>;
     getJob: (job_id: any) => Promise<import("mongodb").WithId<import("bson").Document> | null>;
     getAllJobs: (filter: {}, callback: any) => Promise<any>;
-    getAll: (filter: {}) => Promise<import("mongodb").WithId<import("bson").Document>[]>;
+    getAll: (filter?: any) => Promise<import("mongodb").WithId<import("bson").Document>[]>;
     delay: (t: any) => Promise<unknown>;
     getStatus: () => void;
     deleteJob: () => void;

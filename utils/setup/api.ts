@@ -11,9 +11,9 @@ const MONGO_URL: string = process.env.MONGO_URI !;
 const client = new MongoClient(MONGO_URL);
 let dbConnection;
 export let  status_message;
-export let seeding_jobs;
-export let watering_jobs;
-export let event_queue;
+export let seeding_jobs: SeedingJob;
+export let watering_jobs: WateringJob;
+export let event_queue: EventQueue;
 export const FAKE_USER = 0;
 export const REAL_USER = 1;
 

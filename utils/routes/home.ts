@@ -1,5 +1,5 @@
 import express from "express"
-import {EventStatus} from "../jobs/interfaces";
+import { EventDate, EventStatus } from "../jobs/interfaces";
 import {
   seeding_jobs,
   watering_jobs,
@@ -138,7 +138,7 @@ router.post('/jobs/watering/execute', function(req, res, _){
   if(!req.query.id){
     const dest_location = req.body.dest;
     const tray_location = req.body.tray_pos;
-    seeding_jobs.plantSeed(tray_location, dest_location)
+    watering_jobs.doWatering(dest_location)
       .then(_ => {
         res.send("Finished Planting step");
       }).catch(_ => res.send("Couldn't finish the watering job successfully"))
@@ -153,7 +153,7 @@ router.post('/jobs/watering/execute', function(req, res, _){
           job_id : job.id,
           type: "watering",
           status: EventStatus.NotRunning,
-          time: "now"
+          time: "now" as EventDate
         }
         return event_queue.add(event, {single_event: true});
       }).then((_) => {
@@ -181,10 +181,10 @@ router.post('/jobs/seeding/execute', function(req, res, _){
     seeding_jobs.getJob(job_id)
       .then((job) => {
         let event = {
-          job_id : job.id,
+          job_id : job!.id,
           type: "seeding",
           status: EventStatus.NotRunning,
-          time: "now"
+          time: "now" as EventDate
         }
         return event_queue.add(event, {single_event: true});
       }).then((_) => {
@@ -198,16 +198,23 @@ router.get('/slots/', (_, res) => {
   const slots = new Slots();
   slots.findSlots()
     .then(data => {
-      res.json(data)
+      res.json(data!.map((value) => {
+        // @ts-ignore
+        return value.type
+      }))
     }).catch( e => {
       console.error(e);
       res.send(e)
   })
 })
-router.post('/slots/', (_, res) => {
-  slots.findSlots()
+router.post('/slots/', (req, res) => {
+  let job_types = req.body.data;
+  job_types = job_types.map((t, index) => {
+    return {type: t, id: index}
+  })
+  const slots = new Slots();
+  slots.updateManySlots(job_types)
     .then(data => {
-      console.log(data)
       res.json(data)
     }).catch( e => {
     console.error(e);

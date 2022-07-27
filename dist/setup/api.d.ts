@@ -1,8 +1,11 @@
 import { Farmbot } from "farmbot";
+import { SeedingJob } from "../jobs/seeding";
+import { WateringJob } from "../jobs/watering";
+import { EventQueue } from "../jobs/queue";
 export declare let status_message: any;
-export declare let seeding_jobs: any;
-export declare let watering_jobs: any;
-export declare let event_queue: any;
+export declare let seeding_jobs: SeedingJob;
+export declare let watering_jobs: WateringJob;
+export declare let event_queue: EventQueue;
 export declare const FAKE_USER = 0;
 export declare const REAL_USER = 1;
 export declare let bot: Farmbot;

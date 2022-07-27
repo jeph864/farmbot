@@ -67,7 +67,7 @@ export interface Watering extends JobParams {
 export interface JobStep {
 }
 export interface Event {
-    name: string;
+    name?: string;
     event_id?: number;
     job_id?: number;
     type: string;

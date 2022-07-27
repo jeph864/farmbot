@@ -131,7 +131,7 @@ router.post('/jobs/watering/execute', function (req, res, _) {
     if (!req.query.id) {
         var dest_location = req.body.dest;
         var tray_location = req.body.tray_pos;
-        api_1.seeding_jobs.plantSeed(tray_location, dest_location)
+        api_1.watering_jobs.doWatering(dest_location)
             .then(function (_) {
             res.send("Finished Planting step");
         }).catch(function (_) { return res.send("Couldn't finish the watering job successfully"); });
@@ -189,16 +189,23 @@ router.get('/slots/', function (_, res) {
     var slots = new dynamic_slots_1.Slots();
     slots.findSlots()
         .then(function (data) {
-        res.json(data);
+        res.json(data.map(function (value) {
+            // @ts-ignore
+            return value.type;
+        }));
     }).catch(function (e) {
         console.error(e);
         res.send(e);
     });
 });
-router.post('/slots/', function (_, res) {
-    dynamic_slots_1.slots.findSlots()
+router.post('/slots/', function (req, res) {
+    var job_types = req.body.data;
+    job_types = job_types.map(function (t, index) {
+        return { type: t, id: index };
+    });
+    var slots = new dynamic_slots_1.Slots();
+    slots.updateManySlots(job_types)
         .then(function (data) {
-        console.log(data);
         res.json(data);
     }).catch(function (e) {
         console.error(e);

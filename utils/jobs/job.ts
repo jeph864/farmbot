@@ -301,7 +301,7 @@ getJob = (job_id) => {
       .find(filter).toArray().then( res => callback(null, res))
       .catch(err => callback(err, null));
   };
-  getAll = (filter: {}) => {
+  getAll = (filter:any = {}) => {
     //console.log("Collection: ${this.collection}")
     return this.db.collection(this.collection)
       .find(filter).toArray()

@@ -12,8 +12,11 @@ export declare class Slots {
     constructor();
     init: () => SlotModel[];
     update: (slot: any) => Promise<import("mongodb").UpdateResult>;
-    updateAllSlots: (slots: any) => Promise<any>;
+    updateManySlots: (slots: any) => Promise<any[]>;
     insertInitSlots: () => Promise<SlotModel[]>;
-    findSlots: () => Promise<unknown>;
+    findSlots: () => Promise<unknown[]>;
+    retire: () => void;
+    pick: () => void;
+    getLatestSlot: () => void;
 }
 export declare const slots: Slots;

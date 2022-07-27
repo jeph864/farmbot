@@ -36,14 +36,19 @@ var Slots = /** @class */ (function () {
         };
         this.update = function (slot) {
             return _this.db.collection(_this.collection)
-                .updateOne({ id: slot.id }, { $set: slot }, { upsert: true });
+                .updateOne({ "slots.id": slot.id }, { $set: { "slots.$": slot } }, { upsert: true });
         };
-        this.updateAllSlots = function (slots) {
-            return _this.db.collection(_this.collection)
-                .updateMany({}, { $set: { slots: slots } }, { upsert: true })
-                .then(function (_) {
-                return Promise.resolve(slots);
-            }).catch(function (e) { return Promise.reject(e); });
+        this.updateManySlots = function (slots) {
+            var insert = function (s) {
+                return Promise.all(s.map(function (slot) {
+                    return _this.db.collection(_this.collection)
+                        .updateOne({ id: slot.id }, { $set: slot });
+                }));
+            };
+            slots = slots.filter(function (slot) {
+                return typeof slot !== "undefined" || slot.type !== "";
+            });
+            return insert(slots);
         };
         this.insertInitSlots = function () {
             var slots = _this.init();
@@ -63,6 +68,11 @@ var Slots = /** @class */ (function () {
                 else
                     return _this.insertInitSlots();
             });
+        };
+        this.retire = function () { };
+        this.pick = function () {
+        };
+        this.getLatestSlot = function () {
         };
         this.db = api_1.DBSetup.getDatabase();
         this.collection = SLOT_COLLECTION;

@@ -312,6 +312,7 @@ var Job = /** @class */ (function () {
                 .catch(function (err) { return callback(err, null); });
         };
         this.getAll = function (filter) {
+            if (filter === void 0) { filter = {}; }
             //console.log("Collection: ${this.collection}")
             return _this_1.db.collection(_this_1.collection)
                 .find(filter).toArray();
