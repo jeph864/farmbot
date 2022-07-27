@@ -40,7 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setup = exports.DBSetup = exports.Api = exports.Users = exports.bot = exports.REAL_USER = exports.FAKE_USER = exports.event_queue = exports.watering_jobs = exports.seeding_jobs = exports.status_message = void 0;
+exports.setup = exports.DBSetup = exports.Api = exports.Users = exports.bot = exports.REAL_USER = exports.FAKE_USER = exports.slots_container = exports.event_queue = exports.watering_jobs = exports.seeding_jobs = exports.status_message = void 0;
 var mongodb_1 = require("mongodb");
 var axios_1 = __importDefault(require("axios"));
 var farmbot_1 = require("farmbot");
@@ -48,6 +48,7 @@ var seeding_1 = require("../jobs/seeding");
 var watering_1 = require("../jobs/watering");
 var queue_1 = require("../jobs/queue");
 var scheduler_1 = require("../jobs/scheduler");
+var dynamic_slots_1 = require("./dynamic_slots");
 var MONGO_URL = process.env.MONGO_URI;
 var client = new mongodb_1.MongoClient(MONGO_URL);
 var dbConnection;
@@ -221,6 +222,8 @@ function setup(args) {
         console.log("Initializing the Jobs");
         exports.seeding_jobs = new seeding_1.SeedingJob(exports.bot);
         exports.watering_jobs = new watering_1.WateringJob(exports.bot);
+        //slots
+        exports.slots_container = new dynamic_slots_1.Slots(exports.DBSetup.getDatabase());
         exports.event_queue = new queue_1.EventQueue(exports.bot);
         //schedulers
         var dbase = exports.DBSetup.getDatabase();

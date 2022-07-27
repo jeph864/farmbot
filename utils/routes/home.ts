@@ -6,11 +6,12 @@ import {
   event_queue,
   status_message,
   bot,
+  slots_container,
   SetupArgs,
   setup,
-  FAKE_USER
-} from "../setup/api"
-import { Slots, slots } from "../setup/dynamic_slots";
+  FAKE_USER, DBSetup
+} from "../setup/api";
+import { Slots } from "../setup/dynamic_slots";
 
 const router = express.Router();
 
@@ -195,13 +196,17 @@ router.post('/jobs/seeding/execute', function(req, res, _){
 
 })
 router.get('/slots/', (_, res) => {
-  const slots = new Slots();
+  const slots = new Slots(DBSetup.getDatabase());
   slots.findSlots()
     .then(data => {
-      res.json(data!.map((value) => {
+      let  d = data!.map((value) => {
         // @ts-ignore
         return value.type
-      }))
+      })
+      d = d.filter((item) => {
+        return !(item == null)
+      })
+      res.json(d);
     }).catch( e => {
       console.error(e);
       res.send(e)
@@ -212,11 +217,41 @@ router.post('/slots/', (req, res) => {
   job_types = job_types.map((t, index) => {
     return {type: t, id: index}
   })
-  const slots = new Slots();
+  const slots = new Slots(DBSetup.getDatabase());
   slots.updateManySlots(job_types)
     .then(data => {
       res.json(data)
     }).catch( e => {
+    console.error(e);
+    res.send(e)
+  })
+})
+router.post('/slots/release', (req, res) => {
+  const dest  = req.body
+  slots_container.retire("seeding")
+    .then((_ => {
+      res.send("Move to the slot bay")
+    })).catch(e => {
+      console.error(e);
+      res.send(e)
+    })
+})
+router.post('/slots/pickup', (req, res) => {
+  const dest  = req.body
+  slots_container.pick("seeding")
+    .then((_ => {
+      res.send("picked  up")
+    })).catch(e => {
+    console.error(e);
+    res.send(e)
+  })
+})
+router.get('/slots/right', (req, res) => {
+  const job_type  = req.query.type as string
+  slots_container.getRightSlot(job_type)
+    .then((_ => {
+      res.send("picked  up")
+    })).catch(e => {
     console.error(e);
     res.send(e)
   })

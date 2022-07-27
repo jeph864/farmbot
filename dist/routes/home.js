@@ -186,13 +186,17 @@ router.post('/jobs/seeding/execute', function (req, res, _) {
     }
 });
 router.get('/slots/', function (_, res) {
-    var slots = new dynamic_slots_1.Slots();
+    var slots = new dynamic_slots_1.Slots(api_1.DBSetup.getDatabase());
     slots.findSlots()
         .then(function (data) {
-        res.json(data.map(function (value) {
+        var d = data.map(function (value) {
             // @ts-ignore
             return value.type;
-        }));
+        });
+        d = d.filter(function (item) {
+            return !(item == null);
+        });
+        res.json(d);
     }).catch(function (e) {
         console.error(e);
         res.send(e);
@@ -203,11 +207,41 @@ router.post('/slots/', function (req, res) {
     job_types = job_types.map(function (t, index) {
         return { type: t, id: index };
     });
-    var slots = new dynamic_slots_1.Slots();
+    var slots = new dynamic_slots_1.Slots(api_1.DBSetup.getDatabase());
     slots.updateManySlots(job_types)
         .then(function (data) {
         res.json(data);
     }).catch(function (e) {
+        console.error(e);
+        res.send(e);
+    });
+});
+router.post('/slots/release', function (req, res) {
+    var dest = req.body;
+    api_1.slots_container.retire("seeding")
+        .then((function (_) {
+        res.send("Move to the slot bay");
+    })).catch(function (e) {
+        console.error(e);
+        res.send(e);
+    });
+});
+router.post('/slots/pickup', function (req, res) {
+    var dest = req.body;
+    api_1.slots_container.pick("seeding")
+        .then((function (_) {
+        res.send("picked  up");
+    })).catch(function (e) {
+        console.error(e);
+        res.send(e);
+    });
+});
+router.get('/slots/right', function (req, res) {
+    var job_type = req.query.type;
+    api_1.slots_container.getRightSlot(job_type)
+        .then((function (_) {
+        res.send("picked  up");
+    })).catch(function (e) {
         console.error(e);
         res.send(e);
     });

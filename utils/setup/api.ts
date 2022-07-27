@@ -5,6 +5,7 @@ import { SeedingJob } from "../jobs/seeding";
 import { WateringJob } from "../jobs/watering";
 import { EventQueue } from "../jobs/queue";
 import { Scheduler } from "../jobs/scheduler";
+import { Slots } from "./dynamic_slots";
 
 const MONGO_URL: string = process.env.MONGO_URI !;
 
@@ -14,6 +15,7 @@ export let  status_message;
 export let seeding_jobs: SeedingJob;
 export let watering_jobs: WateringJob;
 export let event_queue: EventQueue;
+export let slots_container: Slots
 export const FAKE_USER = 0;
 export const REAL_USER = 1;
 
@@ -204,6 +206,8 @@ export function setup(args: SetupArgs) {
       console.log("Initializing the Jobs")
       seeding_jobs = new SeedingJob(bot);
       watering_jobs = new WateringJob(bot);
+      //slots
+      slots_container = new Slots(DBSetup.getDatabase());
       event_queue = new EventQueue(bot);
       //schedulers
       const dbase = DBSetup.getDatabase();
