@@ -196,19 +196,19 @@
       <svg
         on:mouseover="{coords1.set({ x: coordinates.x1/3, y: coordinates.y1/3 })}" on:mouseover="{coords2.set({ x: coordinates.x2/3, y: coordinates.y2/3 })}"
         on:mousemove="{e => {coords.set({ x: e.offsetX, y: e.offsetY })}}"
-        on:mousedown="{e => {if (first){
+        on:mousedown="{e => {if (first && !mouseOnPlant){
         coords1.set({ x: e.offsetX, y: e.offsetY });
         coordinates.x1 = e.offsetX*3;
         coordinates.y1 = e.offsetY*3;
         first=false;
       }
-        else{
+        else{if(!mouseOnPlant){
           coords2.set({ x: e.offsetX, y: e.offsetY});
           coordinates.x2 = e.offsetX*3;
           coordinates.y2 = e.offsetY*3;
           first=true;
         }
-        }}"
+        }}}"
 
       >
 
