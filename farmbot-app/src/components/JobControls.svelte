@@ -2,13 +2,13 @@
   import CreateSeedingJob from "./CreateSeedingJob.svelte";
   import BotStatus from "./BotStatus.svelte";
   import CreateWateringJob from "./CreateWateringJob.svelte";
-  //import ExecuteWateringJob from "./ExecuteWateringJob.svelte";
   import EditSeedingJob from "./EditSeedingJob.svelte";
   import EditWateringJob from "./EditWateringJob.svelte";
   import JobList from "./JobList.svelte";
   import { spring } from 'svelte/motion';
   import WateringList from "./WateringList.svelte";
   import { getJobs, getPlantPos } from "../fetchers.js";
+  import {coordinates} from "../store.js";
 
   export let l=0;
   export let t=0;
@@ -47,6 +47,12 @@
     l = position.left;
     t = position.top;
   }
+  function setData(x1,y1,x2,y2) {
+    coordinates.x1= x1;
+    coordinates.y1= y1;
+    coordinates.x2= x2;
+    coordinates.y2= y2;
+  }
 
 </script>
 
@@ -54,7 +60,7 @@
 
   <div class="jobs">
     <CreateSeedingJob x1={$coords1.x*3} y1={$coords1.y*3} x2={$coords2.x*3} y2={$coords2.y*3} />
-    <EditSeedingJob x11={$coords1.x*3} y11={$coords1.y*3} x22={$coords2.x*3} y22={$coords2.y*3}/>
+    <EditSeedingJob x1={$coords1.x*3} y1={$coords1.y*3} x2={$coords2.x*3} y2={$coords2.y*3} />
     <CreateWateringJob />
     <EditWateringJob />
     <!-- <ExecuteWateringJob />  -->
@@ -108,19 +114,26 @@
 
   </div>
 
-
-
-
-
   <div class="field">
-    <svg
-      on:mousemove="{e => {coords.set({ x: e.offsetX, y: e.offsetY })}}"
-      on:mousedown="{e => {if (first){
-        coords1.set({ x: e.offsetX, y: e.offsetY }), first=false}
+      <svg
+        on:mouseover="{coords1.set({ x: coordinates.x1/3, y: coordinates.y1/3 })}" on:mouseover="{coords2.set({ x: coordinates.x2/3, y: coordinates.y2/3 })}"
+        on:mousemove="{e => {coords.set({ x: e.offsetX, y: e.offsetY })}}"
+        on:mousedown="{e => {if (first){
+        coords1.set({ x: e.offsetX, y: e.offsetY });
+        coordinates.x1 = e.offsetX*3;
+        coordinates.y1 = e.offsetY*3;
+        first=false;
+      }
         else{
-          coords2.set({ x: e.offsetX, y: e.offsetY}), first=true}
+          coords2.set({ x: e.offsetX, y: e.offsetY});
+          coordinates.x2 = e.offsetX*3;
+          coordinates.y2 = e.offsetY*3;
+          first=true;
+        }
         }}"
-    >
+
+      >
+
       <circle style="fill: rgba(220,128,51,0.76)" cx={$coords.x} cy={$coords.y} r=5 />
       <circle cx={$coords1.x} cy={$coords1.y} r=10 id="circle1" />
       <circle cx={$coords2.x} cy={$coords2.y} r=10 id="circle2"/>

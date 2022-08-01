@@ -1,7 +1,7 @@
 <script>
     import ActionItem from "./ActionItem.svelte";
     import {updateJob, getJobs, searchJobs, createJob} from "../fetchers.js";
-    import {jobName} from "../store.js";
+    import {jobName,coordinates} from "../store.js";
 
     //TODO: get all the jobs
 
@@ -10,19 +10,37 @@
     let min_dist;
     let plant_type;
     let depth;
-    export let x11;
-    export let y11;
-    export let x22;
-    export let y22;
+    export let x1;
+    export let y1;
+    export let x2;
+    export let y2;
     let jobCreated=""
     export let job;
-    function setData(x11Data,y11Data,x22Data,y22Data)
+    function setData(x1Data,y1Data,x2Data,y2Data)
     {
-        x11 = x11Data;
-        y11 = y11Data;
-        x22 = x22Data;
-        y22 = y22Data;
-
+        x1 = x1Data;
+        y1 = y1Data;
+        x2 = x2Data;
+        y2 = y2Data;
+        coordinates.x1 = x1Data;
+        coordinates.y1 = y1Data;
+        coordinates.x2 = x2Data;
+        coordinates.y2 = y2Data;
+    }
+    function refresh()
+    {
+        name = document.getElementById("name").value;
+        min_dist = parseInt(document.getElementById("dist").value);
+        plant_type = document.getElementById("plant_type").value;
+        depth = parseInt(document.getElementById("depth").value);
+        x1 = parseInt(document.getElementById("x1").value);
+        y1 = parseInt(document.getElementById("y1").value);
+        x2 = parseInt(document.getElementById("x2").value);
+        y2 = parseInt(document.getElementById("y2").value);
+        coordinates.x1 = document.getElementById("x1").value;
+        coordinates.y1 = document.getElementById("y1").value;
+        coordinates.x2 = document.getElementById("x2").value;
+        coordinates.y2 = document.getElementById("y2").value;
     }
     export async function names(){
         names = await getJobs();
@@ -34,29 +52,20 @@
     function edit() {
         //TODO: edit seeding job, send data to endpoint
         name = document.getElementById("name").value;
-
-        min_dist = document.getElementById("dist").value;
-        plant_type = document.getElementById("plant_type").value;
-        depth = document.getElementById("depth").value;
-        x11 = parseInt(document.getElementById("x1").value);
-        y11 = parseInt(document.getElementById("y1").value);
-        x22 = parseInt(document.getElementById("x2").value);
-        y22 = parseInt(document.getElementById("y2").value);
-
-          min_dist = parseInt(document.getElementById("dist").value);
+        min_dist = parseInt(document.getElementById("dist").value);
         plant_type = document.getElementById("plant_type").value;
         depth = parseInt(document.getElementById("depth").value);
-        x11 = parseInt(document.getElementById("x1").value);
-        y11 = parseInt(document.getElementById("y1").value);
-        x22 = parseInt(document.getElementById("x2").value);
-        y22 = parseInt(document.getElementById("y2").value);
+        x1 = parseInt(document.getElementById("x1").value);
+        y1 = parseInt(document.getElementById("y1").value);
+        x2 = parseInt(document.getElementById("x2").value);
+        y2 = parseInt(document.getElementById("y2").value);
         id = parseInt(document.getElementById("id").value);
 
 
         if(min_dist>=0){
             if(depth>=0) {
-                if (x11 <= x22) {
-                    if (y11 <= y22) {
+                if (x1 <= x2) {
+                    if (y1 <= y2) {
 
                         updateJob({
                             id,
@@ -66,16 +75,17 @@
                             plant_type,
                             working_area: {
                                 beg_pos: {
-                                    x: x11,
-                                    y: y11
+                                    x: x1,
+                                    y: y1
                                 },
                                 end_pos: {
-                                    x: x22,
-                                    y: y22
+                                    x: x2,
+                                    y: y2
                                 }
                             }
                         });
                         jobCreated = "Job Update Successful"
+                        alert("Job Update Successful");
                     }
                     else { alert("y2 cannot be greater than y1"); }
                 } else { alert("x2 cannot be greater than x1"); }
@@ -140,20 +150,23 @@
                         </tr>
                         <tr>
                             <td>Working area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
-                            <td use = {setData(editValue.working_area.beg_pos.x,editValue.working_area.beg_pos.y,editValue.working_area.end_pos.x,editValue.working_area.end_pos.y)}>x1: <input type = "number" value={x11} id="x1"><br /> y1: <input type = "number" value={y11} id="y1"> <br /> x2: <input type = "number" value={x22} id="x2"> <br /> y2: <input type = "number" value={y22} id="y2"></td>
+                            <td use = {setData(editValue.working_area.beg_pos.x,editValue.working_area.beg_pos.y,editValue.working_area.end_pos.x,editValue.working_area.end_pos.y)}>x1: <input  type = "number" value={x1} id="x1"><br /> y1: <input type = "number" value={y1} id="y1"> <br /> x2: <input type = "number" value={x2} id="x2"> <br /> y2: <input type = "number" value={y2} id="y2"></td>
+
                         </tr>
                         <tr>
                             <td></td>
                             <td></td>
                         </tr>
                     </table>
+
+                    <button on:click={refresh}>
+                        Refresh
+                    </button>
                     <button on:click={edit}>
                         Update seeding job
                     </button>
 
                 {/each}
-
-
             {/await}
 
 
