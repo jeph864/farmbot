@@ -7,7 +7,6 @@
   import JobList from "./JobList.svelte";
   import { spring } from 'svelte/motion';
   import WateringList from "./WateringList.svelte";
-  import { getJobs, getPlantPos } from "../fetchers.js";
   import {coordinates} from "../store.js";
   import { getUnsafeAreas, getPlantPos } from "../fetchers.js";
   import CreateUnsafeZone from "./CreateUnsafeZone.svelte";
