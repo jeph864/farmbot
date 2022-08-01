@@ -144,7 +144,7 @@ async function getPlantPos(){
       z: 0
     },
     name: "apple",
-    stage: "planted"
+    stage: "planned"
   }
   let plants=[plant1,plant2,plant3]
   return plants
@@ -167,7 +167,20 @@ async function getUnsafeAreas(){
     },
     name: "seed tray"
   }
-  let unsafeAreas=[area1]
+  let area2 = {
+    beg_pos :{
+      x: 1600,
+      y: 200,
+      z: 0
+    },
+    end_pos :{
+      x: 1700,
+      y: 300,
+      z: 0
+    },
+    name: "obstacle"
+  }
+  let unsafeAreas=[area1,area2]
   return unsafeAreas
 }
 

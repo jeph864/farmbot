@@ -9,6 +9,8 @@
   import { spring } from 'svelte/motion';
   import WateringList from "./WateringList.svelte";
   import { getUnsafeAreas, getPlantPos } from "../fetchers.js";
+  import CreateUnsafeZone from "./CreateUnsafeZone.svelte";
+  import DeleteUnsafeZone from "./DeleteUnsafeZone.svelte";
 
   export let l=0;
   export let t=0;
@@ -91,6 +93,17 @@
     mouseOnPlant=false;
   }
 
+  let colourUP='rgba(143, 188, 143, 0.68)'
+  function handleMouseOverUP(e) {
+    colourUP = 'rgba(79,107,79,0.96)';
+    mouseOnPlant=true;
+  }
+
+  function handleMouseOutUP(e) {
+    colourUP = 'rgba(143, 188, 143, 0.68)';
+    mouseOnPlant=false;
+  }
+
   function handleMouseOverU(e) {
     mouseOnPlant=true;
   }
@@ -108,6 +121,8 @@
     <EditSeedingJob x1={$coords1.x*3} y1={$coords1.y*3} x2={$coords2.x*3} y2={$coords2.y*3}/>
     <CreateWateringJob />
     <EditWateringJob />
+    <CreateUnsafeZone x1={$coords1.x*3} y1={$coords1.y*3} x2={$coords2.x*3} y2={$coords2.y*3} />
+    <DeleteUnsafeZone />
     <!-- <ExecuteWateringJob />  -->
     <BotStatus />
   </div>
@@ -204,7 +219,7 @@
                 {/if}-->
               {/if}
             {:else}
-              <circle style="fill: darkseagreen; opacity: 0.5" cx={plant.location.x/3} cy={plant.location.y/3} r=8 />
+              <circle on:mouseover={handleMouseOverUP} on:mouseout={handleMouseOutUP} on:click={() => clickPlants(plant.name+", but it is not planted yet")} style="fill: {colourUP}" cx={plant.location.x/3} cy={plant.location.y/3} r=8 />
             {/if}
 
       {/each}
