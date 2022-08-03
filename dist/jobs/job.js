@@ -105,7 +105,6 @@ var Job = /** @class */ (function () {
                 locations = locations.filter(function (item) {
                     return !isUnsafe(item, results);
                 });
-                console.log("Safe Locations: " + locations.length);
                 return Promise.resolve(locations);
             });
         };
@@ -117,7 +116,10 @@ var Job = /** @class */ (function () {
                     callback(e, null);
                 }
                 var ready_job = d[0];
-                return _this.calculateSteps(ready_job)
+                return api_1.slots_container.getRightSlot(_this.type_name)
+                    .then(function (_) {
+                    return _this.calculateSteps(ready_job);
+                })
                     .then(function (steps) {
                     return _this.executeAllSteps(steps)
                         .then(function (_) {
@@ -374,6 +376,7 @@ var Job = /** @class */ (function () {
         this.ground_level = -430;
         this.zlock = -460;
         this.max_depth = 30;
+        this.type_name = "job";
         //initialize the seq collection
         this.getJobSeq(function (e) {
             if (e)

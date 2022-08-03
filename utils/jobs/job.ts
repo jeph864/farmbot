@@ -1,5 +1,5 @@
 import { CSInteger, Farmbot, NamedPin, RpcError, RpcOk, rpcRequest } from "farmbot";
-import {DBSetup, unsafe_locations} from "../setup/api";
+import {DBSetup, unsafe_locations, slots_container} from "../setup/api";
 import { Db, MongoClient } from "mongodb";
 import {
   WorkingArea, Position, JobParams,
@@ -26,6 +26,7 @@ export abstract class Job{
   protected ground_level:number ;
   private  readonly max_depth;
   private readonly zlock: number
+  protected type_name : string;
 
   protected constructor(bot: Farmbot, config = {}) {
     this.bot = bot;
@@ -39,6 +40,7 @@ export abstract class Job{
     this.ground_level = -430;
     this.zlock = -460;
     this.max_depth = 30;
+    this.type_name = "job"
     //initialize the seq collection
     this.getJobSeq((e) => {
       if(e) console.log("Successfully initialized " + this.collection_seq);
@@ -108,7 +110,6 @@ export abstract class Job{
         locations = locations.filter((item) => {
           return !isUnsafe(item, results)
         })
-        console.log("Safe Locations: " + locations.length)
         return Promise.resolve(locations)
       })
   }
@@ -127,7 +128,10 @@ export abstract class Job{
         callback(e, null);
       }
       let ready_job = d[0];
-      return _this.calculateSteps(ready_job)
+      return slots_container.getRightSlot(_this.type_name)
+        .then(_ => {
+          return _this.calculateSteps(ready_job)
+        })
         .then(steps => {
           return _this.executeAllSteps(steps)
             .then(function(_){

@@ -120,8 +120,7 @@ insertInitSlots = () => {
         if(results.length < 0) return Promise.reject("No Slot with the given job type/ slot ID")
         //@ts-ignore
         const slot: SlotModel = results[0];
-        console.log("Slot not yet found")
-        if (slot.id == slot_id && job_type !== "default") return Promise.resolve(results as unknown)
+        if (slot.id == slot_id && job_type == slot.type) return Promise.resolve(results as unknown)
         console.log("found the slot")
         console.log(slot)
         return _this.releaseSlot(slot);
@@ -200,7 +199,7 @@ insertInitSlots = () => {
         if(slot == -1){
           return _this.pick(job_type)
         }else{
-          return _this.retire("default", slot)
+          return _this.retire(job_type, slot)
             .then(_ => {
               return _this.pick(job_type, slot);
             })

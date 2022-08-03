@@ -15,6 +15,7 @@ export class WateringJob extends Job {
     this.collection_seq = WATERING_COLLECTION_SEQ
     this.pin_number = 8;
     config.pin_id = 30536;
+    this.type_name = "watering";
   }
 
   private getDefaultParams  =  () => {
@@ -150,7 +151,6 @@ export class WateringJob extends Job {
     }else{
       return Promise.reject("No seeding ID was given foe the job")
     }
-
   };
 
 }

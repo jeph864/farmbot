@@ -164,6 +164,7 @@ var WateringJob = /** @class */ (function (_super) {
         _this_1.collection_seq = WATERING_COLLECTION_SEQ;
         _this_1.pin_number = 8;
         config.pin_id = 30536;
+        _this_1.type_name = "watering";
         return _this_1;
     }
     return WateringJob;

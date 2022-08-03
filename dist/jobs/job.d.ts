@@ -13,6 +13,7 @@ export declare abstract class Job {
     protected ground_level: number;
     private readonly max_depth;
     private readonly zlock;
+    protected type_name: string;
     protected constructor(bot: Farmbot, config?: {});
     getConfig: () => any;
     setConfig: () => void;

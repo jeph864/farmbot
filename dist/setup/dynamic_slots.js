@@ -104,8 +104,7 @@ var Slots = /** @class */ (function () {
                     return Promise.reject("No Slot with the given job type/ slot ID");
                 //@ts-ignore
                 var slot = results[0];
-                console.log("Slot not yet found");
-                if (slot.id == slot_id && job_type !== "default")
+                if (slot.id == slot_id && job_type == slot.type)
                     return Promise.resolve(results);
                 console.log("found the slot");
                 console.log(slot);
@@ -190,7 +189,7 @@ var Slots = /** @class */ (function () {
                     return _this.pick(job_type);
                 }
                 else {
-                    return _this.retire("default", slot)
+                    return _this.retire(job_type, slot)
                         .then(function (_) {
                         return _this.pick(job_type, slot);
                     });

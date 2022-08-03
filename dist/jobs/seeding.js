@@ -118,6 +118,7 @@ var SeedingJob = /** @class */ (function (_super) {
         _this_1.config.pin_id = 30538;
         _this_1.watering_job = new watering_1.WateringJob(bot);
         _this_1.pin_number = 9;
+        _this_1.type_name = "seeding";
         return _this_1;
     }
     return SeedingJob;

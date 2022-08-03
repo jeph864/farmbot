@@ -24,6 +24,7 @@ export class SeedingJob extends  Job{
     this.config.pin_id = 30538;
     this.watering_job = new WateringJob(bot);
     this.pin_number = 9;
+    this.type_name = "seeding"
   }
 
 
