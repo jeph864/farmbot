@@ -1,5 +1,8 @@
 <script>
-    import {executeJob, getJobs, jobName} from "../fetchers.js";
+
+  import { executeJob, getJobs} from "../fetchers.js";
+  import {jobName} from "../store.js";
+
 
 
   let jobs
@@ -13,20 +16,21 @@
   jobs = gettingJobs();
 
 
-export async function onUpdate(){
-  jobs = undefined;
-  jobs = gettingJobs();
-}
+  export async function onUpdate(){
+    jobs = undefined;
+    jobs = gettingJobs();
+  }
 
-function execute(id){
+  function execute(id){
 
-  executeJob(id);
-  console.log(id);
-}
+    executeJob(id);
+    console.log(id);
+  }
 
-function edit(id){
-  //TODO
-}
+  function edit(name){
+    //TODO
+    jobName.Name = name;
+  }
 
 </script>
 
@@ -34,53 +38,55 @@ function edit(id){
 
 {#await  jobs}
   <p> Still waiting</p>
-  {:then  data}
+{:then  data}
 
 
-<table style="width:100%;"id>
-  <caption style="background-color: #b3d9b3">
-    <th><p style="">Seeding jobs</p></th>
-    <th>
-    <button style="background-color: #edfded" on:click={gettingJobs}>
-      Refresh
-    </button>
-    </th>
+  <table style="width:100%;"id>
+    <caption style="background-color: #b3d9b3">
+      <th><p style="">Seeding jobs</p></th>
+      <th>
+        <button style="background-color: #edfded" on:click={gettingJobs}>
+          Refresh
+        </button>
+      </th>
 
-  </caption>
-  <thead style="background-color: #b3d9b3">
-  <tr>
+    </caption>
+    <thead style="background-color: #b3d9b3">
+    <tr>
       <th>{"Name"}</th>
       <th>{"Plant-Type"}</th>
       <th>{"Planting depth"}</th>
       <th>{"Plant distance"}</th>
       <th>{"Area width"}</th>
       <th>{"Area length"}</th>
-    <th>{"execute job"}</th>
-  </tr>
-  </thead>
-  <tbody>
-
-  {#each Object.values(data) as value}
-    <tr>
-      <td><p style="">{value.name}</p></td>
-      <td>{value.plant_type}</td>
-      <td>{value.depth}</td>
-      <td>{value.min_dist}</td>
-      <td>{value.working_area.width}</td>
-      <td>{value.working_area.length}</td>
-      <td><button on:click={execute(value.id)}>execute</button></td>
+      <th>{"execute job"}</th>
+      <th>{"choose job to edit"}</th>
     </tr>
-  {/each}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+
+    {#each Object.values(data) as value}
+      <tr>
+        <td><p style="">{value.name}</p></td>
+        <td>{value.plant_type}</td>
+        <td>{value.depth}</td>
+        <td>{value.min_dist}</td>
+        <td>{value.working_area.width}</td>
+        <td>{value.working_area.length}</td>
+        <td><button on:click={execute(value.id)}>execute</button></td>
+        <td><button on:click={edit(value.name)}>Edit</button></td>
+      </tr>
+    {/each}
+    </tbody>
+  </table>
 
 
 
 
 
-    {:catch error}
-      <p>Got some error while processing</p>
-    {/await}
+{:catch error}
+  <p>Got some error while processing</p>
+{/await}
 
 
 
@@ -88,6 +94,10 @@ function edit(id){
     table {
         border-collapse: collapse;
         width: 100%;
+    }
+
+    thead tr th {
+        position:sticky; top:0; background: #b3d9b3;
     }
 
     th {
@@ -98,9 +108,6 @@ function edit(id){
         border: 1px solid #dddddd;
         text-align: left;
         padding: 6px;
-    }
-    thead tr th {
-        position:sticky; top:0; background: #b3d9b3;
     }
 
     tr:nth-child(even) {
@@ -119,5 +126,6 @@ function edit(id){
         background-color: #e2ecec;
         border-radius: 12px;
     }
+
 </style>
 

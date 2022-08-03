@@ -28,6 +28,12 @@ Run the server as follows:
 node app.js
 ```
 
+
+### Approximate Watering conversion
+
+- Water tap 180 degrees open
+  - 4,5 seconds -> 250ml
+
 ### Coordinates of the Farmbot
 
 - Soil
