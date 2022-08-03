@@ -1,6 +1,7 @@
 <script>
   import ActionItem from "./ActionItem.svelte";
   import { coordinates } from "../store.js";
+  import { createUnsafeArea } from "../fetchers.js";
 
 
     let name;
@@ -19,6 +20,25 @@
   }
 
     function  create() {
+      if (x1 <= x2) {
+        if (y1 <= y2) {
+            createUnsafeArea({
+              name,
+              location: {
+                beg: {
+                  x: x1,
+                  y: y1
+                },
+                end: {
+                  x: x2,
+                  y: y2
+                },
+                height
+              }
+            })
+          zoneCreated="Unsafe area created successfully!"
+        }else { alert("y1 cannot be greater than y2"); }
+      } else { alert("x1 cannot be greater than x2"); }
 
     }
 
@@ -48,20 +68,12 @@
         <td>&ensp;</td>
         <td>&ensp;</td>
       </tr>
-     <!-- <tr>
-        <td>Height:</td>
-        <td><input type = "number" bind:value={height}></td>
-      </tr>
-      <tr>
-        <td>&ensp;</td>
-        <td>&ensp;</td>
-      </tr>-->
     </table>
-    <button on:click={create}>
-      Create unsafe zone
-    </button>
     <button on:click={show}>
       show area
+    </button>
+    <button on:click={create}>
+      Create unsafe zone
     </button>
     <br /> <p style="color: green;">{zoneCreated}</p>
   </div>

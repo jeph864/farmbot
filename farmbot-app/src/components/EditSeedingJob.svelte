@@ -101,10 +101,6 @@
     job = searchJob();
 
 
-    function show(){
-        refresh();
-    }
-
 </script>
 
 
@@ -161,15 +157,11 @@
                             <td></td>
                         </tr>
                     </table>
-
-                    <button on:click={refresh}>
-                        Refresh
+                    <button on:click={refresh()}>
+                        show area
                     </button>
                     <button on:click={edit}>
                         Update seeding job
-                    </button>
-                    <button on:click={show}>
-                        show area
                     </button>
 
                 {/each}

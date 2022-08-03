@@ -90,11 +90,11 @@
                 <td>&ensp;</td>
             </tr>
         </table>
-        <button on:click={create}>
-            Create job
-        </button>
         <button on:click={show}>
             show area
+        </button>
+        <button on:click={create}>
+            Create job
         </button>
         <br /> <p style="color: green;">{jobCreated}</p>
     </div>

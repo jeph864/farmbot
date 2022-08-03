@@ -118,7 +118,7 @@ async function getStatus(){
 async function getPlantPos(){
   //TODO: create fetcher for getting plant positions
 
-  //for test purpose:  -> delete after fetcher is implemented
+  //for test purpose:  -> delete this after fetcher is implemented
   let plant1 = {
     location:{
       x: 2000,
@@ -155,33 +155,43 @@ async function getUnsafeAreas(){
 
   //for test purpose:  -> delete after fetcher is implemented
   let area1 = {
-    beg_pos :{
-      x: 1000,
-      y: 600,
-      z: 0
+    name: "seed tray",
+    location:{
+      beg :{
+        x: 1000,
+        y: 600
+      },
+      end : {
+        x: 1300,
+        y: 800
+      }
     },
-    end_pos :{
-      x: 1300,
-      y: 800,
-      z: 0
-    },
-    name: "seed tray"
+    height:0
   }
   let area2 = {
-    beg_pos :{
-      x: 1600,
-      y: 200,
-      z: 0
+    name: "obstacle",
+    location:{
+      beg :{
+        x: 1600,
+        y: 200
+      },
+      end : {
+        x: 1850,
+        y: 300
+      }
     },
-    end_pos :{
-      x: 1700,
-      y: 300,
-      z: 0
-    },
-    name: "obstacle"
+    height: 0
   }
   let unsafeAreas=[area1,area2]
   return unsafeAreas
+}
+
+async function createUnsafeArea(unsafe_area){
+  //TODO
+}
+
+async function deleteUnsafeArea(unsafe_area){
+  //TODO
 }
 
 async function createWateringJob(watering_Job) {
@@ -249,4 +259,4 @@ async function getTools(){
 }
 
 
-export {createJob, updateTools, getTools, searchJobs, executeJob, getStatus,getJobs, getWateringJobs,createWateringJob, executeWateringJob, updateJob, getPlantPos, getUnsafeAreas}
+export {deleteUnsafeArea, createUnsafeArea, createJob, updateTools, getTools, searchJobs, executeJob, getStatus,getJobs, getWateringJobs,createWateringJob, executeWateringJob, updateJob, getPlantPos, getUnsafeAreas}

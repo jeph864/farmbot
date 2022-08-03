@@ -23,6 +23,11 @@
   let coords1 = spring({ x: 30, y: 30 } );
   let coords2 = spring({ x: 100, y: 200 } );
 
+  coordinates.x1= $coords1.x*3;
+  coordinates.y1= $coords1.y*3;
+  coordinates.x2= $coords2.x*3;
+  coordinates.y2= $coords2.y*3;
+
 
   let plants
 
@@ -176,16 +181,16 @@
     <CreateSeedingJob x1={$coords1.x*3} y1={$coords1.y*3} x2={$coords2.x*3} y2={$coords2.y*3} />
     <EditSeedingJob x1={$coords1.x*3} y1={$coords1.y*3} x2={$coords2.x*3} y2={$coords2.y*3} />
     <CreateWateringJob />
-    <EditWateringJob />
+    <!-- <EditWateringJob /> -->
     <CreateUnsafeZone x1={$coords1.x*3} y1={$coords1.y*3} x2={$coords2.x*3} y2={$coords2.y*3} />
     <DeleteUnsafeZone />
-    <!-- <ExecuteWateringJob />  -->
     <BotStatus />
   </div>
 
 
   <div class="wrapper">
 
+    <p style="font-weight: bold">Toolbox: </p>
 
     <div id="one">
       <select bind:value={tools[5]} style="background-color: rgba(238, 236, 193, 0.85);">
@@ -247,15 +252,15 @@
         on:mouseover="{coords1.set({ x: coordinates.x1/3, y: coordinates.y1/3 })}" on:mouseover="{coords2.set({ x: coordinates.x2/3, y: coordinates.y2/3 })}"
         on:mousemove="{e => {coords.set({ x: e.offsetX, y: e.offsetY })}}"
         on:mousedown="{e => {if (first && !mouseOnPlant){
-        coords1.set({ x: e.offsetX, y: e.offsetY });
+        coords1.set({ x: e.offsetX, y: 402-e.offsetY });
         coordinates.x1 = e.offsetX*3;
-        coordinates.y1 = e.offsetY*3;
+        coordinates.y1 = (402-e.offsetY)*3;
         first=false;
       }
         else{if(!mouseOnPlant){
-          coords2.set({ x: e.offsetX, y: e.offsetY});
+          coords2.set({ x: e.offsetX, y: 402-e.offsetY});
           coordinates.x2 = e.offsetX*3;
-          coordinates.y2 = e.offsetY*3;
+          coordinates.y2 = (402-e.offsetY)*3;
           first=true;
         }
         }}}"
@@ -263,9 +268,9 @@
       >
 
       <circle style="fill: rgba(220,128,51,0.76)" cx={$coords.x} cy={$coords.y} r=5 />
-      <circle cx={$coords1.x} cy={$coords1.y} r=10 id="circle1" />
-      <circle cx={$coords2.x} cy={$coords2.y} r=10 id="circle2"/>
-      <rect x="{$coords1.x}" y={$coords1.y} width={$coords2.x-$coords1.x} height={$coords2.y-$coords1.y} style="fill:black;stroke:rgba(68,68,68,0.94);stroke-width:2;fill-opacity:0"/>
+      <circle cx={$coords1.x} cy={402-$coords1.y} r=10 id="circle1" />
+      <circle cx={$coords2.x} cy={402-$coords2.y} r=10 id="circle2"/>
+      <rect x="{$coords1.x}" y={402-$coords1.y-($coords2.y-$coords1.y)} width={$coords2.x-$coords1.x} height={($coords2.y-$coords1.y)} style="fill:black;stroke:rgba(68,68,68,0.94);stroke-width:2;fill-opacity:0"/>
 
 
     {#await  plants}
@@ -275,16 +280,16 @@
 
             {#if plant.stage === "planted"}
               {#if plant.name === "radish"}
-                <circle on:mouseover={handleMouseOverR} on:mouseout={handleMouseOutR} on:click={() => clickPlants('radish')} style="fill:{colourRG}" cx={plant.location.x/3} cy={plant.location.y/3} r=10 />
-                <circle on:mouseover={handleMouseOverR} on:mouseout={handleMouseOutR} on:click={() => clickPlants('radish')} style="fill:{colourRR}" cx={plant.location.x/3} cy={plant.location.y/3+8} r=6 />
+                <circle on:mouseover={handleMouseOverR} on:mouseout={handleMouseOutR} on:click={() => clickPlants('radish')} style="fill:{colourRG}" cx={plant.location.x/3} cy={402-plant.location.y/3} r=10 />
+                <circle on:mouseover={handleMouseOverR} on:mouseout={handleMouseOutR} on:click={() => clickPlants('radish')} style="fill:{colourRR}" cx={plant.location.x/3} cy={402-plant.location.y/3+8} r=6 />
                 {:else} <!-- maybe more types later:  {#if plant.name === "lettuce"} -->
-                  <circle on:mouseover={handleMouseOverL} on:mouseout={handleMouseOutL} on:click={() => clickPlants(plant.name)} style="fill:{colourL}" cx={plant.location.x/3} cy={plant.location.y/3} r=12 />
+                  <circle on:mouseover={handleMouseOverL} on:mouseout={handleMouseOutL} on:click={() => clickPlants(plant.name)} style="fill:{colourL}" cx={plant.location.x/3} cy={402-plant.location.y/3} r=12 />
                 <!--  {:else} --><!-- default case
                     <circle on:click={() => clickPlants(plant.name)} style="fill:green" cx={plant.location.x/3} cy={plant.location.y/3} r=10 />
                 {/if}-->
               {/if}
             {:else}
-              <circle on:mouseover={handleMouseOverUP} on:mouseout={handleMouseOutUP} on:click={() => clickPlants(plant.name+", but it is not planted yet")} style="fill: {colourUP}" cx={plant.location.x/3} cy={plant.location.y/3} r=8 />
+              <circle on:mouseover={handleMouseOverUP} on:mouseout={handleMouseOutUP} on:click={() => clickPlants(plant.name+", but it is not planted yet")} style="fill: {colourUP}" cx={plant.location.x/3} cy={402-plant.location.y/3} r=8 />
             {/if}
 
       {/each}
@@ -296,8 +301,8 @@
 
         {#each Object.values(data) as area}
 
-              <rect on:mouseover={handleMouseOverU} on:mouseout={handleMouseOutU} class="unsafe" x={area.beg_pos.x/3} y={area.beg_pos.y/3} width={(area.end_pos.x-area.beg_pos.x)/3} height={(area.end_pos.y-area.beg_pos.y)/3}>{area.name}</rect>
-              <text on:mouseover={handleMouseOverU} on:mouseout={handleMouseOutU} x={(area.beg_pos.x/3)+10} y={(area.beg_pos.y/3)+((area.end_pos.y-area.beg_pos.y)/6)+5}>{area.name}</text>
+              <rect on:mouseover={handleMouseOverU} on:mouseout={handleMouseOutU} class="unsafe" x={area.location.beg.x/3} y={402-(area.location.beg.y/3)-((area.location.end.y-area.location.beg.y)/3)} width={(area.location.end.x-area.location.beg.x)/3} height={(area.location.end.y-area.location.beg.y)/3}>{area.name}</rect>
+              <text on:mouseover={handleMouseOverU} on:mouseout={handleMouseOutU} x={(area.location.beg.x/3)+10} y={(402-(area.location.beg.y/3))-((area.location.end.y-area.location.beg.y)/6)+5}>{area.name}</text>
 
         {/each}
       {:catch error}
@@ -332,7 +337,7 @@
     justify-content: center;
     flex-direction: row;
     align-items: start;
-      overflow-x: auto;
+
   }
   .wrapper {
     width: 7%;
@@ -347,13 +352,15 @@
       align-items: center;
   }
   .jobs{
+      width: 440px;
       height: 402px;
       display: inline;
       justify-content: center;
       flex-direction: column;
       align-items: start;
       overflow-y: auto;
-      margin-right: 20px;
+      margin-right: 5px;
+      overflow-x: hidden;
   }
   .field{
       border: 2px solid #c7c7c7;
@@ -384,6 +391,7 @@
   svg {
       width: 896px;
       height: 402px;
+      overflow-x: auto;
   }
   select {
     border-radius: 6px;
@@ -409,6 +417,10 @@
       align-content: center;
       rx: 6px;
       ry: 6px;
+  }
+  select{
+      border-radius: 16px;
+      box-shadow: rgba(50, 50, 93, 0.15) 0px 2px 5px -1px, rgba(0, 0, 0, 0.2) 0px 1px 3px -1px;
   }
 
 </style>

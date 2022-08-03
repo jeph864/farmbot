@@ -27,7 +27,6 @@
   }
 
   function execute(id){
-    //TODO: execute watering job
     executeWateringJob(id);
   }
 
@@ -67,10 +66,10 @@
         <td>{value.nextRunAt.toString()}</td>
         <td style="width: 70px">
 
-          <ActiveJob active={x} y={x} />
+          <ActiveJob active={x} />
 
         </td>
-        <td><button on:click={toggleJob(value.id, value.active)}>toggle job</button></td>
+        <td><button on:click={toggleJob(value.id, x)}>toggle job</button></td>
         <td><button on:click={execute(value.id)}>execute now</button></td>
       </tr>
     {/each}
