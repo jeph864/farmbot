@@ -150,44 +150,36 @@ async function getPlantPos(){
   return plants
 }
 
-async function getUnsafeAreas(){
-  //TODO create fetcher to get the unsafe areas
-
-  //for test purpose:  -> delete after fetcher is implemented
-  let area1 = {
-    name: "seed tray",
-    location:{
-      beg :{
-        x: 1000,
-        y: 600
-      },
-      end : {
-        x: 1300,
-        y: 800
-      }
+async function getUnsafeAreas() {
+  const url = `${baseUrl}/unsafelocation/`
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
     },
-    height:0
-  }
-  let area2 = {
-    name: "obstacle",
-    location:{
-      beg :{
-        x: 1600,
-        y: 200
-      },
-      end : {
-        x: 1850,
-        y: 300
-      }
-    },
-    height: 0
-  }
-  let unsafeAreas=[area1,area2]
-  return unsafeAreas
+  });
+  return res.json();
 }
 
-async function createUnsafeArea(unsafe_area){
-  //TODO
+async function createUnsafeArea(unsafe_area) {
+  const url = `${baseUrl}/unsafelocation/`
+  console.log(JSON.stringify(unsafe_area))
+  const init = {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(unsafe_area)
+  }
+  fetch(url, init).then((res) => {
+    console.log(res)
+    return res.json();
+  }).catch(err => {
+    console.error(err)
+  });
+
 }
 
 async function deleteUnsafeArea(unsafe_area){
