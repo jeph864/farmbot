@@ -188,43 +188,44 @@
 
 
     <div id="one">
-      <select bind:value={tools[5]}>
+      <select bind:value={tools[5]} style="background-color: rgba(238, 236, 193, 0.85);">
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
 
     </div>
 
     <div id="two">
-      <select bind:value={tools[4]}>
+      <select bind:value={tools[4]} style="background-color: rgba(238, 236, 193, 0.85);">
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
 
     <div id="three">
-      <select bind:value={tools[3]}>
+      <select bind:value={tools[3]} style="background-color: rgba(238, 236, 193, 0.85);">
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
     <br />
     <div id="four">
-      <select bind:value={tools[2]}>
+      <select bind:value={tools[2]} style="background-color: rgba(238, 236, 193, 0.85);">
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
 
     <div id="five">
-      <select bind:value={tools[1]}>
+      <select bind:value={tools[1]} style="background-color: rgba(238, 236, 193, 0.85);">
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
 
     <div id="six">
-      <select bind:value={tools[0]}>
+      <select bind:value={tools[0]} style="background-color: rgba(238, 236, 193, 0.85);">
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
 
-    <button on:click={setPositions}>
+    <br />
+    <button on:click={setPositions} style="background-color: rgba(238, 236, 193, 0.85);">
       Set toolbox positions
     </button>
 
