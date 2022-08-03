@@ -3,7 +3,6 @@
     import {updateJob, getJobs, searchJobs, createJob} from "../fetchers.js";
     import {jobName,coordinates} from "../store.js";
 
-    //TODO: get all the jobs
 
     let name ;
     let id;
@@ -50,7 +49,6 @@
     names = names();
 
     function edit() {
-        //TODO: edit seeding job, send data to endpoint
         name = document.getElementById("name").value;
         min_dist = parseInt(document.getElementById("dist").value);
         plant_type = document.getElementById("plant_type").value;
@@ -101,6 +99,11 @@
     }
 
     job = searchJob();
+
+
+    function show(){
+        refresh();
+    }
 
 </script>
 
@@ -164,6 +167,9 @@
                     </button>
                     <button on:click={edit}>
                         Update seeding job
+                    </button>
+                    <button on:click={show}>
+                        show area
                     </button>
 
                 {/each}

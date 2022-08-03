@@ -1,5 +1,6 @@
 <script>
   import ActionItem from "./ActionItem.svelte";
+  import { coordinates } from "../store.js";
 
 
     let name;
@@ -9,6 +10,13 @@
     export let y2;
     let zoneCreated="";
     let height;
+
+  function show(){
+    coordinates.x1=x1;
+    coordinates.y1=y1;
+    coordinates.x2=x2;
+    coordinates.y2=y2;
+  }
 
     function  create() {
 
@@ -21,12 +29,20 @@
   <div>
     <table id="myTable" border="0" cellpadding="3">
       <tr>
-        <td>Name of the zone:</td>
+        <td>Name of the zone: </td>
         <td><input bind:value={name}></td>
       </tr>
       <tr>
         <td>Unsafe area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
         <td>x1: <input type = "number" bind:value={x1}><br /> y1: <input type = "number" bind:value={y1}> <br /> x2: <input type = "number" bind:value={x2}> <br /> y2: <input type = "number" bind:value={y2}></td>
+      </tr>
+      <tr>
+        <td>&ensp;</td>
+        <td>&ensp;</td>
+      </tr>
+      <tr>
+        <td>Height: </td>
+        <td><input type = "number" bind:value={height}></td>
       </tr>
       <tr>
         <td>&ensp;</td>
@@ -43,6 +59,9 @@
     </table>
     <button on:click={create}>
       Create unsafe zone
+    </button>
+    <button on:click={show}>
+      show area
     </button>
     <br /> <p style="color: green;">{zoneCreated}</p>
   </div>
