@@ -79,12 +79,20 @@ var Users = /** @class */ (function () {
             return _this.getClientUser(username)
                 .then(function (res) {
                 return _this.db.collection(API_DATA_COLLECTION)
-                    .updateOne({ username: res.username }, { $set: { username: res.username, data: data } });
+                    .updateOne({ username: res.username }, { $set: { username: res.username, data: data } }, { upsert: true });
             });
         };
         this.getApiData = function (username) {
             return _this.db.collection(API_DATA_COLLECTION)
-                .findOne({ username: username });
+                .findOne({ username: username })
+                .then(function (r) {
+                if (r) {
+                    return Promise.resolve(r);
+                }
+                else {
+                    return Promise.reject();
+                }
+            });
         };
         this.db = exports.DBSetup.getDatabase();
     }
@@ -194,7 +202,11 @@ function setup(args) {
             console.log("Fetching API data ");
             exports.bot = exports.Api.getBot();
             return exports.Api.token(user[args.fallback_user].username, user[args.fallback_user].password);
-        }).then(function (_) {
+        }).then(function (data) {
+            console.log(data.data);
+            return users.saveApiDate(args.username, data.data);
+        }).then(function (_r) {
+            console.log(_r);
             return users.getApiData(args.username);
         });
     };

@@ -81,6 +81,7 @@ var Job = /** @class */ (function () {
                     locations.push(location_1);
                 }
             }
+            console.log(locations);
             return locations;
         };
         this.executeJob = function (job_id, callback) {
@@ -91,8 +92,10 @@ var Job = /** @class */ (function () {
                     callback(e, null);
                 }
                 var ready_job = d[0];
+                console.log("----", ready_job.plant_type);
+                //let ready_job_plantType = ready_job_info.plant_type;
                 var steps = _this.calculateSteps(ready_job), step_count = steps.length;
-                _this.executeAllSteps(steps).then(function (_) {
+                _this.executeAllSteps(steps, ready_job.plant_type).then(function (_) {
                     return _this.updateLastRun(job_id, started)
                         .then(function (_) {
                         _this.removeFromQueue(ready_job.id)
@@ -267,7 +270,7 @@ var Job = /** @class */ (function () {
                 { kind: "update_resource", args: args, body: body }
             ]));
         };
-        this.executeAllSteps = function (items) { return __awaiter(_this_1, void 0, void 0, function () {
+        this.executeAllSteps = function (items, plant_type) { return __awaiter(_this_1, void 0, void 0, function () {
             var _this, results, _i, items_1, item, r;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -279,7 +282,7 @@ var Job = /** @class */ (function () {
                     case 1:
                         if (!(_i < items_1.length)) return [3 /*break*/, 4];
                         item = items_1[_i];
-                        return [4 /*yield*/, _this.runStep(item)
+                        return [4 /*yield*/, _this.runStep(item, plant_type)
                                 .then(function (ack) {
                                 results.push(ack);
                             })];
@@ -328,10 +331,6 @@ var Job = /** @class */ (function () {
             _this_1.db.collection(_this_1.delayed_jobs)
                 .find().toArray().then(function (res) { return callback(null, res); })
                 .catch(function (err) { return callback(err, null); });
-        };
-        this.updatePlant = function (plant) {
-            return _this_1.db.collection(_this_1.plants)
-                .updateOne({ $and: [{ x: plant.location.x }, { y: plant.location.y }, { z: plant.location.z }] }, { $set: plant }, { upsert: true });
         };
         this.bot = bot;
         this.config = config;

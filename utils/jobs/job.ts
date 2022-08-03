@@ -62,7 +62,7 @@ export abstract class Job{
   }
 
   abstract initParams (jobParams: JobParams) : JobParams
-  abstract runStep (args: JobStep);
+  abstract runStep (args: JobStep, plant_type);
 
   //abstract  executeJob (job_id : number, callback) : void;
   minPos = (pos1: Position, pos2: Position) => {
@@ -87,6 +87,7 @@ export abstract class Job{
         locations.push( location )
       }
     }
+    console.log(locations)
     return locations;
   }
   getAbsolutePlantPosition(pos: Position){
@@ -104,8 +105,11 @@ export abstract class Job{
         callback(e, null);
       }
       let ready_job = d[0];
+      console.log("----",ready_job.plant_type);
+
+      //let ready_job_plantType = ready_job_info.plant_type;
       let steps = _this.calculateSteps(ready_job), step_count = steps.length;
-      _this.executeAllSteps(steps).then(function(_){
+      _this.executeAllSteps(steps, ready_job.plant_type).then(function(_){
         return _this.updateLastRun(job_id, started)
           .then((_) => {
             _this.removeFromQueue(ready_job.id)
@@ -271,11 +275,11 @@ export abstract class Job{
       { kind: "update_resource", args: args, body: body}
     ]));
   };
-  executeAllSteps = async (items) => {
+  executeAllSteps = async (items, plant_type) => {
     let _this = this;
     let results : Array<RpcOk|RpcError>= [];
     for(let item of items){
-      let r = await _this.runStep(item)
+      let r = await _this.runStep(item, plant_type)
         .then(function(ack){
           results.push(ack)
         });
@@ -318,8 +322,8 @@ getJob = (job_id) => {
       .find().toArray().then(res => callback(null, res))
       .catch(err => callback(err, null));
   };
-  updatePlant = (plant :Plant) => {
-    return this.db.collection(this.plants)
-      .updateOne({$and: [{x: plant.location.x}, {y:plant.location.y}, {z:plant.location.z}]},{$set: plant}, {upsert: true})
-  };
+/*updatePlant = (plant :Plant) => {
+  return this.db.collection(this.plants)
+    .updateOne({$and: [{x: plant.location.x}, {y:plant.location.y}, {z:plant.location.z}]},{$set: plant}, {upsert: true})
+};*/
 };

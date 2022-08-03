@@ -70,13 +70,21 @@ export class Users{
         return this.db.collection(API_DATA_COLLECTION)
           .updateOne(
             {username: res!.username},
-            {$set: { username: res!.username, data: data}}
+            {$set: { username: res!.username, data: data}},
+            {upsert : true}
           )
       })
   }
   getApiData = (username: string) => {
     return this.db.collection(API_DATA_COLLECTION)
       .findOne({username: username})
+      .then( r => {
+        if (r) {
+          return Promise.resolve(r)
+        }else{
+          return Promise.reject()
+        }
+      })
   }
 }
 
@@ -178,7 +186,11 @@ export function setup(args: SetupArgs) {
         console.log("Fetching API data ")
         bot = Api.getBot();
         return Api.token(user[args.fallback_user].username, user[args.fallback_user].password)
-      }).then(_ => {
+      }).then(data => {
+        console.log(data.data)
+        return users.saveApiDate(args.username, data.data)
+      }).then(_r => {
+        console.log(_r)
         return users.getApiData(args.username)
       })
   }

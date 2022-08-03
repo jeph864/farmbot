@@ -1,4 +1,3 @@
-import { PlantStage } from "farmbot";
 export declare enum EventStatus {
     Running = 0,
     NotRunning = 1,
@@ -76,9 +75,8 @@ export interface Event {
     additional_args?: any;
 }
 export interface Plant {
-    location: Position;
-    name: string;
-    stage: PlantStage;
-    id: number;
+    plant_type: string;
+    x_coord: number;
+    y_coord: number;
 }
 export declare type Stage = "Not Planted" | "Planted" | "Watered";

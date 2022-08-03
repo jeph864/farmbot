@@ -1,6 +1,6 @@
 import { CSInteger, Farmbot, RpcError, RpcOk } from "farmbot";
 import { Db } from "mongodb";
-import { WorkingArea, Position, JobParams, JobStep, Plant } from "./interfaces";
+import { WorkingArea, Position, JobParams, JobStep } from "./interfaces";
 export declare abstract class Job {
     protected readonly bot: Farmbot;
     protected config: any;
@@ -20,7 +20,7 @@ export declare abstract class Job {
     protected df_position: Position;
     protected df_working_area: WorkingArea;
     abstract initParams(jobParams: JobParams): JobParams;
-    abstract runStep(args: JobStep): any;
+    abstract runStep(args: JobStep, plant_type: any): any;
     minPos: (pos1: Position, pos2: Position) => Position;
     maxPos: (pos1: Position, pos2: Position) => Position;
     calculateSteps: (job: any) => Position[];
@@ -39,7 +39,7 @@ export declare abstract class Job {
     writePin: (value?: number, pin_id?: number, mode?: number) => Promise<RpcOk | RpcError>;
     move: (dest: Position, speed: CSInteger) => Promise<RpcOk | RpcError>;
     markAs: (args: any, body: any) => Promise<RpcOk | RpcError>;
-    executeAllSteps: (items: any) => Promise<(RpcOk | RpcError)[]>;
+    executeAllSteps: (items: any, plant_type: any) => Promise<(RpcOk | RpcError)[]>;
     convertMl: (duration: number) => number;
     write: (pin_number: any, value: any, pin_mode?: number) => Promise<RpcOk | RpcError>;
     getJob: (job_id: any) => Promise<import("mongodb").WithId<import("bson").Document> | null>;
@@ -51,5 +51,4 @@ export declare abstract class Job {
     lock: () => void;
     unlock: () => void;
     getDelayedJobs: (callback: any) => void;
-    updatePlant: (plant: Plant) => Promise<import("mongodb").UpdateResult>;
 }
