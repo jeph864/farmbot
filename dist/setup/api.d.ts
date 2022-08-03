@@ -3,6 +3,8 @@ import { SeedingJob } from "../jobs/seeding";
 import { WateringJob } from "../jobs/watering";
 import { EventQueue } from "../jobs/queue";
 import { Slots } from "./dynamic_slots";
+import { UnsafeLocation } from "./unsafe_locations";
+export declare let unsafe_locations: UnsafeLocation;
 export declare let status_message: any;
 export declare let seeding_jobs: SeedingJob;
 export declare let watering_jobs: WateringJob;

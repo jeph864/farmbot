@@ -1,6 +1,7 @@
 import express from "express"
 import { EventDate, EventStatus } from "../jobs/interfaces";
 import {
+  unsafe_locations,
   seeding_jobs,
   watering_jobs,
   event_queue,
@@ -12,6 +13,7 @@ import {
   FAKE_USER, DBSetup
 } from "../setup/api";
 import { Slots } from "../setup/dynamic_slots";
+import { UnsafeLocation } from "../setup/unsafe_locations";
 
 const router = express.Router();
 
@@ -113,7 +115,9 @@ router.get('/status', function(__, res, _){
 router.post('/steps', (req, res, _) => {
   const job = req.body;
   const steps = seeding_jobs.calculateSteps(job);
+
   let r = {
+    //@ts-ignore
     count: steps.length,
     data: steps
   }
@@ -147,6 +151,7 @@ router.post('/jobs/watering/execute', function(req, res, _){
     job_id = parseInt(req.query.id as string);
     watering_jobs.getJob(job_id)
       .then((job) => {
+        console.log("Executing Job")
         if(!job || typeof  job === "undefined" || typeof job === null){
           return Promise.reject("There is no job for the given ID")
         }
@@ -272,6 +277,39 @@ router.post('/move', function(req,res, _){
         res.send("Moved successfully")
       }).catch(_ => {res.send("Failed to move")})
   }
+})
+router.post('/unsafelocation', (req, res, _) => {
+  const area = req.body;
+  unsafe_locations.save(area)
+    .then(_ => {
+      res.send("saved successfully")
+    }).catch(e => {console.error(e); res.send("Failed")})
+})
+router.get('/unsafelocation', (__, res, _) => {
+  unsafe_locations.get()
+    .then(unsafeLocResult => {
+      res.json(unsafeLocResult)
+    }).catch( e => {
+      console.error(e)
+    res.status(400)
+    res.send("An error has occurred")
+  })
+})
+router.get('/unsafe/remove', (__, res, _) => {
+  console.log("Unsafe check")
+  seeding_jobs.getJob(1)
+    .then(results => {
+      if (results) {
+        seeding_jobs.calculateSteps(results)
+          .then( locations => {
+            console.log(locations)
+            res.json({'locs': locations.length})
+          })
+      }
+    }).catch( e => {
+      console.error(e)
+    res.send("Failed to remove unsafe locations")
+    })
 })
 
 

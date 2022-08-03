@@ -60,14 +60,15 @@ var WateringJob = /** @class */ (function (_super) {
             if (_this_1.safe_height > job.height)
                 job.height = _this_1.safe_height;
             var height = job.height + _this_1.ground_level;
-            for (var i = pos.x + job.min_dist; i < length - job.min_dist; i = i + job.min_dist) {
-                for (var j = pos.y + job.min_dist; j < width - job.min_dist; j = j + job.min_dist) {
-                    locations.push({
-                        x: i, y: j, z: height
-                    });
+            var min_dist_to_borders = Math.floor(job.min_dist / 2);
+            for (var i = pos.x + min_dist_to_borders; i <= length - min_dist_to_borders; i = i + job.min_dist) {
+                for (var j = pos.y + min_dist_to_borders; j <= width - min_dist_to_borders; j = j + job.min_dist) {
+                    var location_1 = { x: i, y: j, z: height };
+                    locations.push(location_1);
                 }
             }
-            return locations;
+            console.log("Locations: " + locations.length);
+            return _this_1.removeUnsafeLocations(locations);
         };
         // @ts-ignore
         _this_1.initParams = function (input) {

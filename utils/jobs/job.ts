@@ -1,5 +1,5 @@
 import { CSInteger, Farmbot, NamedPin, RpcError, RpcOk, rpcRequest } from "farmbot";
-import {DBSetup} from "../setup/api";
+import {DBSetup, unsafe_locations} from "../setup/api";
 import { Db, MongoClient } from "mongodb";
 import {
   WorkingArea, Position, JobParams,
@@ -87,7 +87,30 @@ export abstract class Job{
         locations.push( location )
       }
     }
-    return locations;
+    console.log("Locations: "+ locations.length)
+    return  this.removeUnsafeLocations(locations);
+  }
+  removeUnsafeLocations = (locations, radius = 0) => {
+    const  isInVicinity = (point:Position, location, radius = 0) =>{
+      return ( point.x >= location.location.beg.x - radius &&  point.x <= location.location.end.x + radius) &&
+        ( point.y >= location.location.beg.y - radius &&  point.y <= location.location.end.y + radius)
+    }
+    const isUnsafe = (point, locations) => {
+      for (const loc of  locations){
+        if(isInVicinity(point, loc, radius)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return unsafe_locations.get()
+      .then(results => {
+        locations = locations.filter((item) => {
+          return !isUnsafe(item, results)
+        })
+        console.log("Safe Locations: " + locations.length)
+        return Promise.resolve(locations)
+      })
   }
   getAbsolutePlantPosition(pos: Position){
     let absolute_pos_z = this.ground_level - pos.z;
@@ -104,19 +127,22 @@ export abstract class Job{
         callback(e, null);
       }
       let ready_job = d[0];
-      let steps = _this.calculateSteps(ready_job), step_count = steps.length;
-      _this.executeAllSteps(steps).then(function(_){
-        return _this.updateLastRun(job_id, started)
-          .then((_) => {
-            _this.removeFromQueue(ready_job.id)
-              .then(function(data){
-                data;
-                callback(null, "Finished running all job steps")
+      return _this.calculateSteps(ready_job)
+        .then(steps => {
+          return _this.executeAllSteps(steps)
+            .then(function(_){
+            return _this.updateLastRun(job_id, started)
+              .then((_) => {
+                return _this.removeFromQueue(ready_job.id)
+                  .then(function(data){
+                    data;
+                    callback(null, "Finished running all job steps")
+                  })
               })
           })
 
-
-      }).catch(function(err){
+        })
+      .catch(function(err){
         throw err;
       })
     })

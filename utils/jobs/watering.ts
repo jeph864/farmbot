@@ -52,15 +52,15 @@ export class WateringJob extends Job {
     width = width + pos.y
     if(this.safe_height > job.height) job.height = this.safe_height
     let height = job.height + this.ground_level;
-
-    for(let i = pos.x+job.min_dist; i<length-job.min_dist; i = i+job.min_dist){
-      for(let j = pos.y+job.min_dist;j<width-job.min_dist; j = j+ job.min_dist){
-        locations.push({
-          x:i, y:j, z: height
-        })
+    const min_dist_to_borders = Math.floor(job.min_dist/2)
+    for(let i = pos.x+min_dist_to_borders; i<=length-min_dist_to_borders; i = i+job.min_dist){
+      for(let j = pos.y+min_dist_to_borders;j<=width-min_dist_to_borders; j = j+ job.min_dist){
+        let location : Position = { x:i, y:j, z: height}
+        locations.push( location )
       }
     }
-    return locations;
+    console.log("Locations: "+locations.length)
+    return this.removeUnsafeLocations(locations);
   }
   // @ts-ignore
   initParams = (input: Watering) => {

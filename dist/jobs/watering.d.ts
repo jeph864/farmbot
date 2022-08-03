@@ -6,7 +6,7 @@ export declare class WateringJob extends Job {
     private pin_number;
     constructor(bot: Farmbot, config?: any);
     private getDefaultParams;
-    calculateSteps: (job: any) => Position[];
+    calculateSteps: (job: any) => Promise<any>;
     initParams: (input: Watering) => Watering;
     runStep: (dest: any) => Promise<void | import("farmbot").RpcOk | import("farmbot").RpcError>;
     doWatering: (dest: Position, speed?: number) => Promise<void | import("farmbot").RpcOk | import("farmbot").RpcError>;

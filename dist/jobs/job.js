@@ -81,7 +81,33 @@ var Job = /** @class */ (function () {
                     locations.push(location_1);
                 }
             }
-            return locations;
+            console.log("Locations: " + locations.length);
+            return _this_1.removeUnsafeLocations(locations);
+        };
+        this.removeUnsafeLocations = function (locations, radius) {
+            if (radius === void 0) { radius = 0; }
+            var isInVicinity = function (point, location, radius) {
+                if (radius === void 0) { radius = 0; }
+                return (point.x >= location.location.beg.x - radius && point.x <= location.location.end.x + radius) &&
+                    (point.y >= location.location.beg.y - radius && point.y <= location.location.end.y + radius);
+            };
+            var isUnsafe = function (point, locations) {
+                for (var _i = 0, locations_1 = locations; _i < locations_1.length; _i++) {
+                    var loc = locations_1[_i];
+                    if (isInVicinity(point, loc, radius)) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            return api_1.unsafe_locations.get()
+                .then(function (results) {
+                locations = locations.filter(function (item) {
+                    return !isUnsafe(item, results);
+                });
+                console.log("Safe Locations: " + locations.length);
+                return Promise.resolve(locations);
+            });
         };
         this.executeJob = function (job_id, callback) {
             var started = new Date();
@@ -91,17 +117,21 @@ var Job = /** @class */ (function () {
                     callback(e, null);
                 }
                 var ready_job = d[0];
-                var steps = _this.calculateSteps(ready_job), step_count = steps.length;
-                _this.executeAllSteps(steps).then(function (_) {
-                    return _this.updateLastRun(job_id, started)
+                return _this.calculateSteps(ready_job)
+                    .then(function (steps) {
+                    return _this.executeAllSteps(steps)
                         .then(function (_) {
-                        _this.removeFromQueue(ready_job.id)
-                            .then(function (data) {
-                            data;
-                            callback(null, "Finished running all job steps");
+                        return _this.updateLastRun(job_id, started)
+                            .then(function (_) {
+                            return _this.removeFromQueue(ready_job.id)
+                                .then(function (data) {
+                                data;
+                                callback(null, "Finished running all job steps");
+                            });
                         });
                     });
-                }).catch(function (err) {
+                })
+                    .catch(function (err) {
                     throw err;
                 });
             });

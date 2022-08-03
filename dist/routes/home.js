@@ -107,6 +107,7 @@ router.post('/steps', function (req, res, _) {
     var job = req.body;
     var steps = api_1.seeding_jobs.calculateSteps(job);
     var r = {
+        //@ts-ignore
         count: steps.length,
         data: steps
     };
@@ -140,6 +141,7 @@ router.post('/jobs/watering/execute', function (req, res, _) {
         job_id = parseInt(req.query.id);
         api_1.watering_jobs.getJob(job_id)
             .then(function (job) {
+            console.log("Executing Job");
             if (!job || typeof job === "undefined" || typeof job === null) {
                 return Promise.reject("There is no job for the given ID");
             }
@@ -263,6 +265,39 @@ router.post('/move', function (req, res, _) {
             res.send("Moved successfully");
         }).catch(function (_) { res.send("Failed to move"); });
     }
+});
+router.post('/unsafelocation', function (req, res, _) {
+    var area = req.body;
+    api_1.unsafe_locations.save(area)
+        .then(function (_) {
+        res.send("saved successfully");
+    }).catch(function (e) { console.error(e); res.send("Failed"); });
+});
+router.get('/unsafelocation', function (__, res, _) {
+    api_1.unsafe_locations.get()
+        .then(function (unsafeLocResult) {
+        res.json(unsafeLocResult);
+    }).catch(function (e) {
+        console.error(e);
+        res.status(400);
+        res.send("An error has occurred");
+    });
+});
+router.get('/unsafe/remove', function (__, res, _) {
+    console.log("Unsafe check");
+    api_1.seeding_jobs.getJob(1)
+        .then(function (results) {
+        if (results) {
+            api_1.seeding_jobs.calculateSteps(results)
+                .then(function (locations) {
+                console.log(locations);
+                res.json({ 'locs': locations.length });
+            });
+        }
+    }).catch(function (e) {
+        console.error(e);
+        res.send("Failed to remove unsafe locations");
+    });
 });
 exports.indexrouter = router;
 //module.exports = router;

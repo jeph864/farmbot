@@ -6,11 +6,13 @@ import { WateringJob } from "../jobs/watering";
 import { EventQueue } from "../jobs/queue";
 import { Scheduler } from "../jobs/scheduler";
 import { Slots } from "./dynamic_slots";
+import { UnsafeLocation } from "./unsafe_locations";
 
 const MONGO_URL: string = process.env.MONGO_URI !;
 
 const client = new MongoClient(MONGO_URL);
 let dbConnection;
+export let unsafe_locations: UnsafeLocation;
 export let  status_message;
 export let seeding_jobs: SeedingJob;
 export let watering_jobs: WateringJob;
@@ -204,6 +206,7 @@ export function setup(args: SetupArgs) {
         }
       })
       console.log("Initializing the Jobs")
+      unsafe_locations = new UnsafeLocation({db: DBSetup.getDatabase()})
       seeding_jobs = new SeedingJob(bot);
       watering_jobs = new WateringJob(bot);
       //slots

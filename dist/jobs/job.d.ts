@@ -23,7 +23,8 @@ export declare abstract class Job {
     abstract runStep(args: JobStep): any;
     minPos: (pos1: Position, pos2: Position) => Position;
     maxPos: (pos1: Position, pos2: Position) => Position;
-    calculateSteps: (job: any) => Position[];
+    calculateSteps: (job: any) => Promise<any>;
+    removeUnsafeLocations: (locations: any, radius?: number) => Promise<any>;
     getAbsolutePlantPosition(pos: Position): Position;
     executeJob: (job_id: any, callback: any) => Promise<any>;
     updateLastRun: (job_id: any, date: any) => Promise<import("mongodb").UpdateResult>;

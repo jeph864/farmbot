@@ -86,3 +86,7 @@ export interface Plant {
   id: number;
 }
 export type Stage = "Not Planted"| "Planted"| "Watered"
+export interface Vec2{
+  x: number;
+  y: number;
+}
