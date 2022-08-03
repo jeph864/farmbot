@@ -187,6 +187,24 @@ router.post('/jobs/seeding/execute', function (req, res, _) {
         });
     }
 });
+router.get('/jobs/watering/activate', function (req, res) {
+    if (typeof req.query.status === "undefined" || typeof req.query.id === "undefined") {
+        res.status(405);
+        res.send("No status/ job ID was supplied");
+    }
+    // @ts-ignore
+    var status = parseInt(req.query.status);
+    // @ts-ignore
+    var id = parseInt(req.query.id);
+    api_1.watering_jobs.update({ id: id }, { scheduled: Boolean(status) })
+        .then(function (data) {
+        res.json(data);
+    }).catch(function (e) {
+        console.log(e);
+        res.status(405);
+        res.send("An error has occurred");
+    });
+});
 router.get('/slots/', function (_, res) {
     var slots = new dynamic_slots_1.Slots(api_1.DBSetup.getDatabase());
     slots.findSlots()

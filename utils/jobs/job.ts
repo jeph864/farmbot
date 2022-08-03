@@ -362,6 +362,15 @@ getJob = (job_id) => {
       .find().toArray().then(res => callback(null, res))
       .catch(err => callback(err, null));
   };
+  update = (filter = {}, set, upsert = false) => {
+    let _this = this;
+    return this.db.collection(this.collection)
+      .updateOne(filter, {$set : set}, {upsert: upsert})
+      .then( _ => {
+        return _this.db.collection(this.collection)
+          .findOne(filter)
+      })
+  }
   updatePlant = (plant :Plant) => {
     return this.db.collection(this.plants)
       .updateOne({$and: [{x: plant.location.x}, {y:plant.location.y}, {z:plant.location.z}]},{$set: plant}, {upsert: true})

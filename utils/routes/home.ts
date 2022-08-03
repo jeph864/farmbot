@@ -200,6 +200,24 @@ router.post('/jobs/seeding/execute', function(req, res, _){
   }
 
 })
+router.get('/jobs/watering/activate', (req, res) => {
+  if(typeof  req.query.status === "undefined" || typeof  req.query.id === "undefined" ) {
+     res.status(405);
+     res.send("No status/ job ID was supplied")
+  }
+  // @ts-ignore
+  let status = parseInt(req.query.status);
+  // @ts-ignore
+  const id = parseInt(req.query.id)
+  watering_jobs.update({id: id}, {scheduled: Boolean(status)})
+    .then(data => {
+      res.json(data)
+    }).catch( e => {
+      console.log(e);
+      res.status(405)
+    res.send("An error has occurred")
+  })
+})
 router.get('/slots/', (_, res) => {
   const slots = new Slots(DBSetup.getDatabase());
   slots.findSlots()

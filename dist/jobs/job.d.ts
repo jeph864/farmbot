@@ -54,5 +54,6 @@ export declare abstract class Job {
     lock: () => void;
     unlock: () => void;
     getDelayedJobs: (callback: any) => void;
+    update: (filter: {} | undefined, set: any, upsert?: boolean) => Promise<import("mongodb").WithId<import("bson").Document> | null>;
     updatePlant: (plant: Plant) => Promise<import("mongodb").UpdateResult>;
 }

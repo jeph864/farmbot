@@ -375,6 +375,17 @@ var Job = /** @class */ (function () {
                 .find().toArray().then(function (res) { return callback(null, res); })
                 .catch(function (err) { return callback(err, null); });
         };
+        this.update = function (filter, set, upsert) {
+            if (filter === void 0) { filter = {}; }
+            if (upsert === void 0) { upsert = false; }
+            var _this = _this_1;
+            return _this_1.db.collection(_this_1.collection)
+                .updateOne(filter, { $set: set }, { upsert: upsert })
+                .then(function (_) {
+                return _this.db.collection(_this_1.collection)
+                    .findOne(filter);
+            });
+        };
         this.updatePlant = function (plant) {
             return _this_1.db.collection(_this_1.plants)
                 .updateOne({ $and: [{ x: plant.location.x }, { y: plant.location.y }, { z: plant.location.z }] }, { $set: plant }, { upsert: true });
