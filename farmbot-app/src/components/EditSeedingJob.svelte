@@ -1,26 +1,46 @@
 <script>
     import ActionItem from "./ActionItem.svelte";
-    import {updateJob, getJobs, searchJobs, createJob,jobName} from "../fetchers.js";
+    import {updateJob, getJobs, searchJobs, createJob} from "../fetchers.js";
+    import {jobName,coordinates} from "../store.js";
 
-
-
-
-    //only example, need all the jobs from the database (names)
-    //TODO: get all the jobs
-    let selected = '';
-    let options = [];
 
     let name ;
     let id;
     let min_dist;
     let plant_type;
     let depth;
-    let x1;
-    let y1;
-    let x2;
-    let y2;
+    export let x1;
+    export let y1;
+    export let x2;
+    export let y2;
     let jobCreated=""
     export let job;
+    function setData(x1Data,y1Data,x2Data,y2Data)
+    {
+        x1 = x1Data;
+        y1 = y1Data;
+        x2 = x2Data;
+        y2 = y2Data;
+        coordinates.x1 = x1Data;
+        coordinates.y1 = y1Data;
+        coordinates.x2 = x2Data;
+        coordinates.y2 = y2Data;
+    }
+    function refresh()
+    {
+        name = document.getElementById("name").value;
+        min_dist = parseInt(document.getElementById("dist").value);
+        plant_type = document.getElementById("plant_type").value;
+        depth = parseInt(document.getElementById("depth").value);
+        x1 = parseInt(document.getElementById("x1").value);
+        y1 = parseInt(document.getElementById("y1").value);
+        x2 = parseInt(document.getElementById("x2").value);
+        y2 = parseInt(document.getElementById("y2").value);
+        coordinates.x1 = document.getElementById("x1").value;
+        coordinates.y1 = document.getElementById("y1").value;
+        coordinates.x2 = document.getElementById("x2").value;
+        coordinates.y2 = document.getElementById("y2").value;
+    }
     export async function names(){
         names = await getJobs();
         if (names) return names;
@@ -29,7 +49,6 @@
     names = names();
 
     function edit() {
-        //TODO: edit seeding job, send data to endpoint
         name = document.getElementById("name").value;
         min_dist = parseInt(document.getElementById("dist").value);
         plant_type = document.getElementById("plant_type").value;
@@ -63,52 +82,28 @@
                                 }
                             }
                         });
-
-                        jobCreated="Seeding Job edited successfully!";
-
+                        jobCreated = "Job Update Successful"
+                        alert("Job Update Successful");
                     }
                     else { alert("y2 cannot be greater than y1"); }
                 } else { alert("x2 cannot be greater than x1"); }
             } else{ alert("planting depth must be a positive number") }
         } else{ alert("plant distance must be a positive number") }
-
-        /*updateJob({
-            id,
-            depth,
-            dist,
-            name,
-            plant,
-            working_area: {
-                beg_pos: {
-                    x: x1,
-                    y: y1
-                },
-                end_pos: {
-                    x: x2,
-                    y: y2
-                }
-            }
-        });*/
-
-
-        //alert(document.getElementById("id").value);
-        //jobCreated="Seeding Job edited successfully!"
-
-
     }
     export async function  searchJob(data){
-        /*if(jobName.Name!=='')
-        {
-            job = await searchJobs(jobName.Name);
-            if (job) return job;
-            else throw  new Error("Search error");
-        }*/
         job = await searchJobs(data);
-        if (job) return job;
+        if (job){
+            return job;
+        }
         else throw  new Error("Search error");
     }
 
     job = searchJob();
+
+
+    function show(){
+        refresh();
+    }
 
 </script>
 
@@ -117,93 +112,73 @@
 <ActionItem description="Edit a seeding job" >
 
     <div class="container">
-    {#await  names}
-    {:then  nameData}
 
-        {#if selected==''}
-            select job: &ensp;
-            {/if}
+        {#if jobName.Name!==''}
+            <p use = {searchJob(jobName.Name)}></p>
+        {/if}
 
-            <select bind:value={selected}>
-                {#each Object.values(nameData) as nameValue}
-                    <option {nameValue}>{nameValue.name}</option>
-                {/each}
-            </select>
+        <div>
 
-            {#if selected!==''}
-
-                <button on:click={searchJob(selected)}>
-                    Load Job Data
-                </button>
-            {/if}
-    {/await}
-    <br/>
-
-
-    <div>
-
-        {#await  job}
-        {:then  editData}
+            {#await  job}
+            {:then  editData}
 
                 {#each Object.values(editData) as editValue}
                     <table id="myTable" border="0" cellpadding="3">
-                    <tr>
-                        <td>ID of the job:</td>
-                        <td><input type = "number" value={editValue.id} id="id" readonly></td>
-                    </tr>
-                    <tr>
-                        <td>Name of the job:</td>
-                        <td><input value={editValue.name} id="name"></td>
-                    </tr>
+                        <tr>
+                            <td>ID of the job:</td>
+                            <td><input type = "number" value={editValue.id} id="id" readonly></td>
+                        </tr>
+                        <tr>
+                            <td>Name of the job:</td>
+                            <td><input value={editValue.name} id="name"></td>
+                        </tr>
 
 
-                    <tr>
-                        <td>Plant type:</td>
-                        <td><input value={editValue.plant_type} id="plant_type"></td>
+                        <tr>
+                            <td>Plant type:</td>
+                            <td><input value={editValue.plant_type} id="plant_type"></td>
 
-                    </tr>
-                    <tr>
-                        <td>Plant distance (in mm):</td>
-                        <td><input type = "number" value={editValue.min_dist} id="dist"></td>
+                        </tr>
+                        <tr>
+                            <td>Plant distance (in mm):</td>
+                            <td><input type = "number" value={editValue.min_dist} id="dist"></td>
+                        </tr>
+                        <tr>
+                            <td>Seeding depth (in mm):</td>
+                            <td><input type = "number" value={editValue.depth} id="depth"></td>
+                        </tr>
+                        <tr>
+                            <td>&ensp;</td>
+                            <td>&ensp;</td>
+                        </tr>
+                        <tr>
+                            <td>Working area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
+                            <td use = {setData(editValue.working_area.beg_pos.x,editValue.working_area.beg_pos.y,editValue.working_area.end_pos.x,editValue.working_area.end_pos.y)}>x1: <input  type = "number" value={x1} id="x1"><br /> y1: <input type = "number" value={y1} id="y1"> <br /> x2: <input type = "number" value={x2} id="x2"> <br /> y2: <input type = "number" value={y2} id="y2"></td>
 
-
-
-                    </tr>
-                    <tr>
-                        <td>Seeding depth (in mm):</td>
-                        <td><input type = "number" value={editValue.depth} id="depth"></td>
-                    </tr>
-                    <tr>
-                        <td>&ensp;</td>
-                        <td>&ensp;</td>
-                    </tr>
-                    <tr>
-                        <td>Working area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
-                        <td>x1: <input type = "number" value={editValue.working_area.beg_pos.x} id="x1"><br /> y1: <input type = "number" value={editValue.working_area.beg_pos.y} id="y1"> <br /> x2: <input type = "number" value={editValue.working_area.end_pos.x} id="x2"> <br /> y2: <input type = "number" value={editValue.working_area.end_pos.y} id="y2"></td>
-                    </tr>
+                        </tr>
                         <tr>
                             <td></td>
                             <td></td>
                         </tr>
                     </table>
-                        <button on:click={edit}>
-                            Update seeding job
-                        </button>
+
+                    <button on:click={refresh}>
+                        Refresh
+                    </button>
+                    <button on:click={edit}>
+                        Update seeding job
+                    </button>
+                    <button on:click={show}>
+                        show area
+                    </button>
 
                 {/each}
+            {/await}
 
 
-        {/await}
-        <!--{#await  job}
-        {:then  editData}
-            {#each Object.values(editData) as editValue}
 
-            {/each}
-        {/await}-->
-
-
-        <br /> <p style="color: green;">{jobCreated}</p>
-    </div>
+            <br /> <p style="color: green;">{jobCreated}</p>
+        </div>
 
     </div>
 
@@ -230,9 +205,9 @@
         font-size: 14px;
     }
     button:hover {
-         background-color: #eae9d4;
-         border-radius: 12px;
-     }
+        background-color: #eae9d4;
+        border-radius: 12px;
+    }
 
     input{
         border-radius: 6px;

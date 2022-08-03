@@ -2,6 +2,7 @@
     import ActionItem from "./ActionItem.svelte";
     import onUpdate from "./JobList.svelte";
     import { createJob } from "../fetchers.js";
+    import {coordinates} from "../store.js";
 
     let name;
     let depth;
@@ -12,6 +13,13 @@
     export let x2;
     export let y2;
     let jobCreated="";
+
+    function show(){
+        coordinates.x1=x1;
+        coordinates.y1=y1;
+        coordinates.x2=x2;
+        coordinates.y2=y2;
+    }
 
       function  create() {
         if(min_dist>0){
@@ -37,6 +45,8 @@
                         })
 
                         jobCreated="Seeding Job created successfully!"
+                        //this can be used to automatically reload the whole page
+                        //location.reload();
 
                     }
                     else { alert("y1 cannot be greater than y2"); }
@@ -82,6 +92,9 @@
         </table>
         <button on:click={create}>
             Create job
+        </button>
+        <button on:click={show}>
+            show area
         </button>
         <br /> <p style="color: green;">{jobCreated}</p>
     </div>
