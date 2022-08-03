@@ -204,6 +204,11 @@ router.get('/slots/', (_, res) => {
   const slots = new Slots(DBSetup.getDatabase());
   slots.findSlots()
     .then(data => {
+      let latest = data.at(-1)
+      if(latest) {
+        // @ts-ignore
+        latest = latest.extra.latestSlot
+      }
       let  d = data!.map((value) => {
         // @ts-ignore
         return value.type
@@ -211,6 +216,7 @@ router.get('/slots/', (_, res) => {
       d = d.filter((item) => {
         return !(item == null)
       })
+      d.push(latest)
       res.json(d);
     }).catch( e => {
       console.error(e);

@@ -60,7 +60,6 @@ export class WateringJob extends Job {
         locations.push( location )
       }
     }
-    console.log("Locations: "+locations.length)
     return this.removeUnsafeLocations(locations);
   }
   // @ts-ignore

@@ -28,7 +28,7 @@ export declare abstract class Job {
     removeUnsafeLocations: (locations: any, radius?: number) => Promise<any>;
     getAbsolutePlantPosition(pos: Position): Position;
     executeJob: (job_id: any, callback: any) => Promise<any>;
-    updateLastRun: (job_id: any, date: any) => Promise<import("mongodb").UpdateResult>;
+    updateLastRun: (job_id: any, date: any, interval?: number) => Promise<import("mongodb").UpdateResult>;
     createJob: (jobParams: JobParams, callback: any) => void;
     updateJob: (jobParams: JobParams, callback: any, args?: {
         update_after: boolean;
@@ -48,6 +48,7 @@ export declare abstract class Job {
     getAllJobs: (filter: {}, callback: any) => Promise<any>;
     getAll: (filter?: any) => Promise<import("mongodb").WithId<import("bson").Document>[]>;
     delay: (t: any) => Promise<unknown>;
+    __addHours: (hours: any, date: Date) => any;
     getStatus: () => void;
     deleteJob: () => void;
     lock: () => void;

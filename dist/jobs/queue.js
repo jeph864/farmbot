@@ -68,7 +68,7 @@ var EventQueue = /** @class */ (function () {
                 }
                 //check if the event is scheduled
                 return _this.db.collection(_this_1.collection)
-                    .findOne({ $and: [{ job_id: event.job_id }, { event_id: event.event_id }] })
+                    .findOne(filter)
                     .then(function (r) {
                     if (r && args.single_event) {
                         return Promise.resolve("Empty");
@@ -223,7 +223,8 @@ var EventQueue = /** @class */ (function () {
                                                 name: item.name,
                                                 job_id: item.id,
                                                 type: type,
-                                                time: item.nextRunAt
+                                                time: "now",
+                                                status: interfaces_1.EventStatus.NotRunning
                                             };
                                             return [4 /*yield*/, this_1.add(event_2, { single_event: true }).then(function (_) {
                                                     item.scheduled = true;

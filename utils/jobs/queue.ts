@@ -50,7 +50,7 @@ export class EventQueue {
       }
       //check if the event is scheduled
       return _this.db.collection(this.collection)
-        .findOne({$and:[{job_id: event.job_id}, {event_id: event.event_id}]})
+        .findOne(filter)
         .then(r =>{
           if(r && args.single_event) {return  Promise.resolve("Empty")}
           else return _this.db.collection(this.collection)
@@ -166,12 +166,14 @@ collectEvents = (reschedule = false) => {
 
   const addJobsToEventsQueue = async (res, type, handler) => {
     for(let item of res){
-      let event = {
+      let event: Event = {
         name: item.name,
         job_id: item.id,
         type: type,
-        time: item.nextRunAt
+        time: "now",
+        status: EventStatus.NotRunning
       }
+
       await this.add(event, {single_event: true}).then(_=>{
         item.scheduled = true;
         if (handler ) return handler.updateJob(item, (e, s) =>{

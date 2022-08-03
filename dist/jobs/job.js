@@ -138,10 +138,15 @@ var Job = /** @class */ (function () {
                 });
             });
         };
-        this.updateLastRun = function (job_id, date) {
+        this.updateLastRun = function (job_id, date, interval) {
+            if (interval === void 0) { interval = -1; }
             var lastFinished = new Date();
+            if (interval == 0) {
+                interval = 2;
+            }
+            var nextRun = _this_1.__addHours(interval, lastFinished);
             return _this_1.db.collection(_this_1.collection)
-                .updateOne({ id: job_id }, { $set: { lastStarted: date, lastFinished: lastFinished } });
+                .updateOne({ id: job_id }, { $set: { lastStarted: date, lastFinished: lastFinished, nextRunAt: nextRun } });
         };
         this.createJob = function (jobParams, callback) {
             var params = _this_1.initParams(jobParams);
@@ -351,6 +356,15 @@ var Job = /** @class */ (function () {
         };
         this.delay = function (t) {
             return new Promise(function (resolve) { return setTimeout(resolve, t); });
+        };
+        this.__addHours = function (hours, date) {
+            //@ts-ignore
+            Date.prototype.addHours = function (h) {
+                this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+                return this;
+            };
+            //@ts-ignore
+            return date.addHours(hours);
         };
         this.getStatus = function () { };
         this.deleteJob = function () { };

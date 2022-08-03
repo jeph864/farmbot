@@ -67,7 +67,6 @@ var WateringJob = /** @class */ (function (_super) {
                     locations.push(location_1);
                 }
             }
-            console.log("Locations: " + locations.length);
             return _this_1.removeUnsafeLocations(locations);
         };
         // @ts-ignore

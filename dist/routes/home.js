@@ -191,6 +191,11 @@ router.get('/slots/', function (_, res) {
     var slots = new dynamic_slots_1.Slots(api_1.DBSetup.getDatabase());
     slots.findSlots()
         .then(function (data) {
+        var latest = data.at(-1);
+        if (latest) {
+            // @ts-ignore
+            latest = latest.extra.latestSlot;
+        }
         var d = data.map(function (value) {
             // @ts-ignore
             return value.type;
@@ -198,6 +203,7 @@ router.get('/slots/', function (_, res) {
         d = d.filter(function (item) {
             return !(item == null);
         });
+        d.push(latest);
         res.json(d);
     }).catch(function (e) {
         console.error(e);

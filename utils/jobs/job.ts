@@ -151,10 +151,14 @@ export abstract class Job{
       })
     })
   };
-  updateLastRun = (job_id, date) => {
+  updateLastRun = (job_id, date, interval  = -1) => {
     const lastFinished = new Date();
+    if(interval == 0){
+      interval = 2;
+    }
+    let nextRun =  this.__addHours(interval, lastFinished)
     return this.db.collection(this.collection)
-      .updateOne({id: job_id}, {$set: {lastStarted: date, lastFinished: lastFinished}})
+      .updateOne({id: job_id}, {$set: {lastStarted: date, lastFinished: lastFinished, nextRunAt: nextRun }})
 }
   createJob = (jobParams: JobParams, callback) => {
     const params = this.initParams(jobParams);
@@ -338,6 +342,16 @@ getJob = (job_id) => {
   };
   delay = (t) => {
     return new Promise(resolve => setTimeout(resolve, t))
+  }
+  __addHours = (hours, date: Date) => {
+    //@ts-ignore
+    Date.prototype.addHours = function(h) {
+      this.setTime(this.getTime() + (h*60*60*1000));
+      return this;
+    }
+    //@ts-ignore
+    return date.addHours(hours);
+
   }
   getStatus = () => {};
   deleteJob = () => {};
