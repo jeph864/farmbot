@@ -37,9 +37,9 @@ export abstract class Job{
     this.delayed_jobs = DELAYED_JOBS;
     this.plants = PLANT_COLLECTION;
     this.safe_height = 80;
-    this.ground_level = -430;
-    this.zlock = -460;
-    this.max_depth = 30;
+    this.ground_level = -310;
+    this.zlock = -327;
+    this.max_depth = 25;
     this.type_name = "job"
     //initialize the seq collection
     this.getJobSeq((e) => {
@@ -82,6 +82,7 @@ export abstract class Job{
     let locations : Array<Position> = [];
     length = length + pos.x
     width = width + pos.y
+    job.depth = Math.min(job.depth, this.max_depth);
     const min_dist_to_borders = Math.floor(job.min_dist/2)
     for(let i = pos.x+min_dist_to_borders; i<=length-min_dist_to_borders; i = i+job.min_dist){
       for(let j = pos.y+min_dist_to_borders;j<=width-min_dist_to_borders; j = j+ job.min_dist){

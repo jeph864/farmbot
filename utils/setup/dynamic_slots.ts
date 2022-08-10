@@ -33,7 +33,7 @@ export class Slots {
     this.db = database
     this.bot = Api.getBot();
     this.collection = SLOT_COLLECTION;
-    this.zero_locations = [ { x: 60, y:243, z:-357},  { x: 60, y:860, z:-357}];
+    this.zero_locations = [ { x: 60, y:243, z:-237},  { x: 60, y:883, z:-237}];
     this.safe_dist_to_bay = 109;
     this.safe_height = 50;
   }
@@ -55,10 +55,10 @@ export class Slots {
       slots.push(slot);
     }
     slots.map((item, _)=> {
-      if(item.id == 0){
+      if(item.id == 3){
         item.type = "seeding";
       }
-      if(item.id == 1){
+      if(item.id == 4){
         item.type = "watering";
       }
       return item ;

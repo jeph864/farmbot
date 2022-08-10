@@ -231,6 +231,15 @@ function setup(args) {
         var dbase = exports.DBSetup.getDatabase();
         var sch1 = new scheduler_1.Scheduler(database);
         var event_collector = (new scheduler_1.Scheduler(dbase)).getAgenda();
+        console.debug("initializing the slots ...");
+        exports.slots_container.findSlots()
+            .then(function (_) {
+            console.debug("initialized the dynamic slots");
+        }).catch(function (e) {
+            console.error(e);
+            console.log("Couldn't initialize dynamic slots. Quitting...");
+            process.exit();
+        });
         event_collector.define("collectEvents", function (_) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {

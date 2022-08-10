@@ -19,7 +19,7 @@ export class SeedingJob extends  Job{
   constructor(bot: Farmbot, config:any = {}) {
     super(bot, config);
     this.collection = SEEDING_COLLECTION;
-    this.tray_pos = {x:990, y:725, z: -430}
+    this.tray_pos = {x:990, y:725, z: -310}
     this.collection_seq = SEEDING_COLLECTION_SEQ;
     this.config.pin_id = 30538;
     this.watering_job = new WateringJob(bot);

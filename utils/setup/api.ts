@@ -216,6 +216,15 @@ export function setup(args: SetupArgs) {
       const dbase = DBSetup.getDatabase();
       const sch1 = new Scheduler(database)
       const event_collector = (new Scheduler(dbase)).getAgenda();
+      console.debug("initializing the slots ...")
+      slots_container.findSlots()
+        .then(_ => {
+          console.debug("initialized the dynamic slots")
+        }).catch(e => {
+          console.error(e);
+          console.log("Couldn't initialize dynamic slots. Quitting...")
+        process.exit();
+      })
       event_collector.define("collectEvents", async (_) => {
         await event_queue.collectEvents();
       })
