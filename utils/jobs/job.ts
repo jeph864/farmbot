@@ -64,7 +64,7 @@ export abstract class Job{
   }
 
   abstract initParams (jobParams: JobParams) : JobParams
-  abstract runStep (args: JobStep);
+  abstract runStep (args: JobStep, amount: number);
 
   //abstract  executeJob (job_id : number, callback) : void;
   minPos = (pos1: Position, pos2: Position) => {
@@ -124,17 +124,19 @@ export abstract class Job{
   executeJob = (job_id, callback) => {
     let started = new Date();
     let _this = this;
+    let amount = 100;
     return _this.getAllJobs({id: job_id}, function(e, d){
       if(e) {
         callback(e, null);
       }
       let ready_job = d[0];
+      if(typeof  ready_job.amount !== "undefined") amount = ready_job.amount
       return slots_container.getRightSlot(_this.type_name)
         .then(_ => {
           return _this.calculateSteps(ready_job)
         })
         .then(steps => {
-          return _this.executeAllSteps(steps)
+          return _this.executeAllSteps(steps, amount)
             .then(function(_){
             return _this.updateLastRun(job_id, started)
               .then((_) => {
@@ -306,11 +308,11 @@ export abstract class Job{
       { kind: "update_resource", args: args, body: body}
     ]));
   };
-  executeAllSteps = async (items) => {
+  executeAllSteps = async (items, amount = 100) => {
     let _this = this;
     let results : Array<RpcOk|RpcError>= [];
     for(let item of items){
-      let r = await _this.runStep(item)
+      let r = await _this.runStep(item, amount)
         .then(function(ack){
           results.push(ack)
         });

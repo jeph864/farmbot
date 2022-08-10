@@ -77,17 +77,20 @@ var WateringJob = /** @class */ (function (_super) {
             input.working_area.end_pos = Object.assign({ x: 0, y: 0, z: 0 }, input.working_area.end_pos);
             return Object.assign(_this_1.getDefaultParams(), input);
         };
-        _this_1.runStep = function (dest) {
-            return _this_1.doWatering(dest, 100);
+        _this_1.runStep = function (dest, amount) {
+            if (amount === void 0) { amount = 0; }
+            return _this_1.doWatering(dest, amount, 100);
         };
-        _this_1.doWatering = function (dest, speed) {
+        _this_1.doWatering = function (dest, amount, speed) {
+            if (amount === void 0) { amount = 10; }
             if (speed === void 0) { speed = 100; }
             var _this = _this_1;
+            var time_from_amount = _this_1.getTime(amount);
             return _this_1.bot.moveAbsolute({ x: dest.x, y: dest.y, z: dest.z, speed: speed })
                 .then(function (_) {
                 return _this.bot.writePin({ pin_mode: 0, pin_number: _this.pin_number, pin_value: 1 });
             }).then(function (_) {
-                return _this.delay(5000);
+                return _this.delay(time_from_amount);
             }).then(function (_) {
                 return _this.bot.writePin({ pin_mode: 0, pin_number: _this.pin_number, pin_value: 0 });
             }).catch(function (e) {
@@ -101,6 +104,12 @@ var WateringJob = /** @class */ (function (_super) {
             //if(!update) callback(data);
             update = update;
             callback(data);
+        };
+        _this_1.getTime = function (amount) {
+            if (_this_1.water_factor <= 0)
+                _this_1.water_factor = 4.5 / 250;
+            var time = amount * _this_1.water_factor * 1000;
+            return time;
         };
         _this_1.updateJob = function (jobParams, callback) {
             if (typeof jobParams.seeding_id !== undefined) {
@@ -164,6 +173,7 @@ var WateringJob = /** @class */ (function (_super) {
         _this_1.pin_number = 8;
         config.pin_id = 30536;
         _this_1.type_name = "watering";
+        _this_1.water_factor = 4.5 / 250;
         return _this_1;
     }
     return WateringJob;

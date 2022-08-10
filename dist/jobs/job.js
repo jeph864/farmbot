@@ -112,17 +112,20 @@ var Job = /** @class */ (function () {
         this.executeJob = function (job_id, callback) {
             var started = new Date();
             var _this = _this_1;
+            var amount = 100;
             return _this.getAllJobs({ id: job_id }, function (e, d) {
                 if (e) {
                     callback(e, null);
                 }
                 var ready_job = d[0];
+                if (typeof ready_job.amount !== "undefined")
+                    amount = ready_job.amount;
                 return api_1.slots_container.getRightSlot(_this.type_name)
                     .then(function (_) {
                     return _this.calculateSteps(ready_job);
                 })
                     .then(function (steps) {
-                    return _this.executeAllSteps(steps)
+                    return _this.executeAllSteps(steps, amount)
                         .then(function (_) {
                         return _this.updateLastRun(job_id, started)
                             .then(function (_) {
@@ -305,32 +308,35 @@ var Job = /** @class */ (function () {
                 { kind: "update_resource", args: args, body: body }
             ]));
         };
-        this.executeAllSteps = function (items) { return __awaiter(_this_1, void 0, void 0, function () {
-            var _this, results, _i, items_1, item, r;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _this = this;
-                        results = [];
-                        _i = 0, items_1 = items;
-                        _a.label = 1;
-                    case 1:
-                        if (!(_i < items_1.length)) return [3 /*break*/, 4];
-                        item = items_1[_i];
-                        return [4 /*yield*/, _this.runStep(item)
-                                .then(function (ack) {
-                                results.push(ack);
-                            })];
-                    case 2:
-                        r = _a.sent();
-                        _a.label = 3;
-                    case 3:
-                        _i++;
-                        return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/, results];
-                }
+        this.executeAllSteps = function (items, amount) {
+            if (amount === void 0) { amount = 100; }
+            return __awaiter(_this_1, void 0, void 0, function () {
+                var _this, results, _i, items_1, item, r;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            _this = this;
+                            results = [];
+                            _i = 0, items_1 = items;
+                            _a.label = 1;
+                        case 1:
+                            if (!(_i < items_1.length)) return [3 /*break*/, 4];
+                            item = items_1[_i];
+                            return [4 /*yield*/, _this.runStep(item, amount)
+                                    .then(function (ack) {
+                                    results.push(ack);
+                                })];
+                        case 2:
+                            r = _a.sent();
+                            _a.label = 3;
+                        case 3:
+                            _i++;
+                            return [3 /*break*/, 1];
+                        case 4: return [2 /*return*/, results];
+                    }
+                });
             });
-        }); };
+        };
         this.convertMl = function (duration) {
             return duration;
         };

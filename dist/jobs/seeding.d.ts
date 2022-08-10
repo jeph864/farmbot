@@ -14,7 +14,7 @@ export declare class SeedingJob extends Job {
     constructor(bot: Farmbot, config?: any);
     private getDefaultParams;
     initParams: (inputJob: Seeding) => Seeding;
-    runStep: (dest: any) => Promise<void>;
+    runStep: (dest: any, no_amount?: number) => Promise<void>;
     plantSeed: (bay_pos: Position, dest: Position, speed?: number) => Promise<void>;
     afterUpdate: (jobParams: any, callback: any, update?: boolean) => void;
 }

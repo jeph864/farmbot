@@ -8,6 +8,7 @@ const WATERING_COLLECTION_SEQ = "watering_jobs_seq";
 
 export class WateringJob extends Job {
   private pin_number : number;
+  private water_factor: number;
 
   constructor(bot: Farmbot, config:any = {}) {
     super(bot, config);
@@ -16,6 +17,7 @@ export class WateringJob extends Job {
     this.pin_number = 8;
     config.pin_id = 30536;
     this.type_name = "watering";
+    this.water_factor = 4.5/250;
   }
 
   private getDefaultParams  =  () => {
@@ -70,16 +72,17 @@ export class WateringJob extends Job {
     input.working_area.end_pos = Object.assign({x:0 ,y:0,z: 0}, input.working_area.end_pos);
     return Object.assign(this.getDefaultParams(), input);
   }
-  runStep = (dest) =>{
-    return this.doWatering(dest, 100)
+  runStep = (dest, amount = 0) =>{
+    return this.doWatering(dest, amount, 100)
   }
-   doWatering = (dest: Position, speed:number = 100) => {
+   doWatering = (dest: Position, amount = 10, speed:number = 100) => {
     let _this = this;
+    const time_from_amount = this.getTime(amount);
     return this.bot.moveAbsolute({x:dest.x, y:dest.y,z:dest.z, speed:speed})
       .then (function(_){
         return _this.bot.writePin({pin_mode : 0, pin_number:_this.pin_number, pin_value:1})
       }).then(function(_){
-        return _this.delay(5000);
+        return _this.delay(time_from_amount);
       }).then(function(_){
         return _this.bot.writePin({pin_mode : 0, pin_number:_this.pin_number, pin_value:0})
       }).catch( e => {
@@ -91,6 +94,11 @@ export class WateringJob extends Job {
     //if(!update) callback(data);
     update = update;
     callback(data)
+  }
+  getTime = (amount : number) => {
+    if (this.water_factor <= 0) this.water_factor =  4.5/250;
+    const time = amount* this.water_factor*1000;
+    return time;
   }
   updateJob = (jobParams, callback) => {
     if(typeof jobParams.seeding_id !== undefined){

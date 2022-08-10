@@ -65,7 +65,8 @@ export class SeedingJob extends  Job{
     inputJob.working_area.width = width, inputJob.working_area.length = length ;
     return Object.assign(this.getDefaultParams(), inputJob);
   }
-  runStep = (dest ) => {
+  runStep = (dest , no_amount = 0) => {
+    no_amount;
     return this.plantSeed(this.tray_pos, dest, 100);
   };
  plantSeed = (bay_pos: Position, dest: Position, speed:number = 100) => {

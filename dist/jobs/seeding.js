@@ -63,7 +63,9 @@ var SeedingJob = /** @class */ (function (_super) {
             inputJob.working_area.width = width, inputJob.working_area.length = length;
             return Object.assign(_this_1.getDefaultParams(), inputJob);
         };
-        _this_1.runStep = function (dest) {
+        _this_1.runStep = function (dest, no_amount) {
+            if (no_amount === void 0) { no_amount = 0; }
+            no_amount;
             return _this_1.plantSeed(_this_1.tray_pos, dest, 100);
         };
         _this_1.plantSeed = function (bay_pos, dest, speed) {
