@@ -78,11 +78,7 @@ var WateringJob = /** @class */ (function (_super) {
                 var sorter = function (a, b) { return distance(a, point) - distance(b, point); };
                 locations.sort(sorter);
             };
-            // let status = await getStatus();
-            console.log(api_1.status_message);
             sortByDistance(locations, { x: api_1.status_message.x, y: api_1.status_message.y });
-            //sortByDistance(locations, {x: 50, y: 40});
-            console.log(locations);
             return _this_1.removeUnsafeLocations(locations);
         };
         // @ts-ignore

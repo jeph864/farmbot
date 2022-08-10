@@ -75,8 +75,7 @@ export class WateringJob extends Job {
       const sorter = (a, b) => distance(a, point) - distance(b, point);
       locations.sort(sorter);
    };
-  
-   sortByDistance(locations, {x: status_message.x1, y: status_message.x2});
+  sortByDistance(locations, {x: status_message.x, y: status_message.y});
 
     return this.removeUnsafeLocations(locations);
   }

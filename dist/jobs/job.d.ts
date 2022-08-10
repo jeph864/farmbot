@@ -41,7 +41,7 @@ export declare abstract class Job {
     writePin: (value?: number, pin_id?: number, mode?: number) => Promise<RpcOk | RpcError>;
     move: (dest: Position, speed: CSInteger) => Promise<RpcOk | RpcError>;
     markAs: (args: any, body: any) => Promise<RpcOk | RpcError>;
-    executeAllSteps: (items: any) => Promise<(RpcOk | RpcError)[]>;
+    executeAllSteps: (items: any, job_type: any) => Promise<(RpcOk | RpcError)[]>;
     convertMl: (duration: number) => number;
     write: (pin_number: any, value: any, pin_mode?: number) => Promise<RpcOk | RpcError>;
     getJob: (job_id: any) => Promise<import("mongodb").WithId<import("bson").Document> | null>;

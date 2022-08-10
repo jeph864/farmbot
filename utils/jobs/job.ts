@@ -153,7 +153,7 @@ export abstract class Job{
         })
         .then(steps => {
           //console.log("steps:",steps);
-          return _this.executeAllSteps(steps)
+          return _this.executeAllSteps(steps, _this.type_name)
             .then(function(_){
             return _this.updateLastRun(job_id, started)
               .then((_) => {
@@ -325,16 +325,42 @@ export abstract class Job{
       { kind: "update_resource", args: args, body: body}
     ]));
   };
-  executeAllSteps = async (items) => {
+  executeAllSteps = async (items, job_type) => {
     let _this = this;
+    let curr_items: Array<object> = JSON.parse(JSON.stringify(items)) as typeof items;
+    console.log("curr_items:", items);
+
     let results : Array<RpcOk|RpcError>= [];
     for(let item of items){
-      console.log("item",typeof item);
+      console.log("qqqqq",items.length)
+      console.log("item----",curr_items);
+      console.log("....",job_type)
       //sort here and return positin to item
-      let r = await _this.runStep(item)
+      let r = await _this.runStep(curr_items[0])
         .then(function(ack){
           results.push(ack)
+          console.log("results of watering step:",curr_items[0]);
         });
+
+        curr_items.shift();
+
+        if(curr_items.length !== 0 && job_type == "watering")
+        {
+          const distance = (coor1, coor2) => {
+            const x = coor2.x - coor1.x;
+            const y = coor2.y - coor1.y;
+            return Math.sqrt((x*x) + (y*y));
+          };
+        
+        const sortByDistance = (curr_items, point) => {
+            const sorter = (a, b) => distance(a, point) - distance(b, point);
+            curr_items.sort(sorter);
+        };
+        console.log("current coordinates: ", status_message.x, status_message.y)
+        sortByDistance(curr_items, {x: status_message.x, y: status_message.y});
+
+     }
+
     }
     return results;
   }
