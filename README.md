@@ -37,13 +37,13 @@ node app.js
 ### Coordinates of the Farmbot
 
 - Soil
-   - z: -430 (now)
-   - maximum z movement for the farmbot is -460
+   - z: -310 (now)
+   - maximum z movement for the farmbot is ???
 - Box with seeds
    - this ist the actual position, can be moved easily
    - x: 990
    - y: 725
-   - z: -430
+   - z: -310
 
 ### Coordinates of the First toolbox
 
