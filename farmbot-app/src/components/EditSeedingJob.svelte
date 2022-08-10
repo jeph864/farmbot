@@ -16,9 +16,7 @@
     export let y2;
     let jobCreated=""
     export let job;
-    export function Toggle(){
 
-    }
     function setData(x1Data,y1Data,x2Data,y2Data)
     {
         x1 = x1Data;
