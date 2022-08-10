@@ -182,9 +182,6 @@ async function createUnsafeArea(unsafe_area) {
 
 }
 
-async function deleteUnsafeArea(unsafe_area){
-  //TODO
-}
 
 async function createWateringJob(watering_Job) {
   const url = `${baseUrl}/jobs/watering/update/`
@@ -249,6 +246,22 @@ async function getTools(){
   });
   return res.json();
 }
+
+async function deleteUnsafeArea(unsafe_zone_id) {
+  const url = `${baseUrl}/unsafelocation/delete?id=${unsafe_zone_id}`
+  console.log(url)
+  const res = await fetch(url, {
+    method: "GET",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    //body: {job_id : unsafe_zone_id}
+  });
+  return res.json();
+}
+
+
 
 async function toggleWateringJob(job_id, activation_status){
   const url = `${baseUrl}/jobs/watering/activate?id=${job_id}&status=${activation_status}`

@@ -179,7 +179,7 @@
   <div class="wrapper">
 
     <p style="font-weight: bold">Toolbox: </p>
-    <p>Actual tool attached: {tools[6]}</p>
+    <p>Current tool attached: {tools[tools[6]]}</p>
 
     <div id="one">
       <select bind:value={tools[5]} style="background-color: rgba(238, 236, 193, 0.85);">

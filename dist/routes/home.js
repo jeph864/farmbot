@@ -205,6 +205,32 @@ router.get('/jobs/watering/activate', function (req, res) {
         res.send("An error has occurred");
     });
 });
+router.delete('/jobs/watering', function (req, res) {
+    // @ts-ignore
+    var id = parseInt(req.query.id);
+    api_1.watering_jobs.deleteJob(id)
+        .then(function (r) {
+        if (r && r.deletedCount == 0) {
+            res.status(400);
+            res.send("Watering job with ID " + id + " does not exists or has been deleted");
+        }
+        else
+            res.send("Watering job deleted successfully");
+    });
+});
+router.delete('/jobs/seeding', function (req, res) {
+    // @ts-ignore
+    var id = parseInt(req.query.id);
+    api_1.seeding_jobs.deleteJob(id)
+        .then(function (r) {
+        if (r && r.deletedCount == 0) {
+            res.status(400);
+            res.send("Seeding job with ID " + id + " does not exists or has been deleted");
+        }
+        else
+            res.send("Seeding job deleted successfully");
+    });
+});
 router.get('/slots/', function (_, res) {
     var slots = new dynamic_slots_1.Slots(api_1.DBSetup.getDatabase());
     slots.findSlots()
