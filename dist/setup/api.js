@@ -55,15 +55,6 @@ var client = new mongodb_1.MongoClient(MONGO_URL);
 var dbConnection;
 exports.FAKE_USER = 0;
 exports.REAL_USER = 1;
-exports.app_status = {
-    location: { x: 0, y: 0, z: 0 },
-    busy: "init",
-    running: {
-        name: "",
-        type: "",
-        progress: 0.0
-    }
-};
 var users;
 var CLIENT_USER_COLLECTION = "clientUser";
 var API_DATA_COLLECTION = "apiData";
@@ -241,6 +232,16 @@ function setup(args) {
                 //console.log(status_message)
             }
         });
+        exports.app_status = {
+            location: { x: 0, y: 0, z: 0 },
+            busy: "init",
+            running: {
+                name: "",
+                type: "",
+                progress: 0.0,
+                job_id: -1
+            }
+        };
         console.log("Initializing the Jobs");
         exports.unsafe_locations = new unsafe_locations_1.UnsafeLocation({ db: exports.DBSetup.getDatabase() });
         exports.seeding_jobs = new seeding_1.SeedingJob(exports.bot);
@@ -303,6 +304,21 @@ function setup(args) {
         queue_cleaner.every("10 seconds", "cleanEventQueue")
             .then(function (_) {
             return queue_cleaner.start();
+        }).then(function (_) { });
+        var status_updater = (new scheduler_1.Scheduler(dbase)).getAgenda();
+        status_updater.define("statusUpdater", function (_) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, exports.event_queue.getActiveEvent()];
+                    case 1:
+                        exports.app_status = _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        status_updater.every("3 seconds", "statusUpdater")
+            .then(function (_) {
+            return status_updater.start();
         }).then(function (_) { });
     });
 }

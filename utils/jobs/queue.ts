@@ -230,7 +230,10 @@ getScheduledEvents = () => {
     let busy;
     if(EventQueue.busy) busy= "busy";
     else busy = "idle"
-    return this.db.collection(this.collection)
+
+    let prog = 0;
+    if (app_status.running.progress >0) prog = app_status.running.progress
+      return this.db.collection(this.collection)
       .findOne({status: 0})
       .then( r => {
         if(r){
@@ -238,29 +241,33 @@ getScheduledEvents = () => {
             type: r.type,
             job_id: r.job_id,
             name: "",
-            progress: 0.0
+            progress: prog
           }
           if(r.type == "seeding") handler = this.seeding;
           else handler = this.watering;
           return handler.getJob(r.job_id)
             .then( data => {
               running.name = data.name;
-              return Promise.resolve({running: running, busy : busy});
+              app_status.running = running;
+              app_status.busy = busy;
+              return Promise.resolve(app_status);
             })
         }else{
           running = {
             type: "",
             job_id: "",
             name: "",
-            progress: 0.0
+            progress:  prog
           };
-          return Promise.resolve({running: running, busy : busy})
+
+          app_status.running = running;
+          app_status.busy = busy;
+          return Promise.resolve(app_status)
         }
       })
   }
   cleanEvents = () => {
     if(EventQueue.busy){
-      console.log("Queue might be busy.... please hold")
       return Promise.resolve(EventQueue.busy)
     }else{
       return this.db.collection(this.collection)

@@ -116,9 +116,9 @@ router.get('/appstatus', function(__, res, _){
   if(status_message){
     app_status.location = status_message;
     event_queue.getActiveEvent()
-      .then(r => {
-        app_status.running = r.running;
-        app_status.busy = r.busy
+      .then(_ => {
+        //app_status.running = r.running;
+        //app_status.busy = r.busy
         res.json(app_status)
       })
   }else{

@@ -306,6 +306,9 @@ var EventQueue = /** @class */ (function () {
                 busy = "busy";
             else
                 busy = "idle";
+            var prog = 0;
+            if (api_1.app_status.running.progress > 0)
+                prog = api_1.app_status.running.progress;
             return _this_1.db.collection(_this_1.collection)
                 .findOne({ status: 0 })
                 .then(function (r) {
@@ -314,7 +317,7 @@ var EventQueue = /** @class */ (function () {
                         type: r.type,
                         job_id: r.job_id,
                         name: "",
-                        progress: 0.0
+                        progress: prog
                     };
                     if (r.type == "seeding")
                         handler = _this_1.seeding;
@@ -323,7 +326,9 @@ var EventQueue = /** @class */ (function () {
                     return handler.getJob(r.job_id)
                         .then(function (data) {
                         running.name = data.name;
-                        return Promise.resolve({ running: running, busy: busy });
+                        api_1.app_status.running = running;
+                        api_1.app_status.busy = busy;
+                        return Promise.resolve(api_1.app_status);
                     });
                 }
                 else {
@@ -331,15 +336,16 @@ var EventQueue = /** @class */ (function () {
                         type: "",
                         job_id: "",
                         name: "",
-                        progress: 0.0
+                        progress: prog
                     };
-                    return Promise.resolve({ running: running, busy: busy });
+                    api_1.app_status.running = running;
+                    api_1.app_status.busy = busy;
+                    return Promise.resolve(api_1.app_status);
                 }
             });
         };
         this.cleanEvents = function () {
             if (EventQueue.busy) {
-                console.log("Queue might be busy.... please hold");
                 return Promise.resolve(EventQueue.busy);
             }
             else {

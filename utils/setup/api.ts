@@ -21,15 +21,7 @@ export let event_queue: EventQueue;
 export let slots_container: Slots
 export const FAKE_USER = 0;
 export const REAL_USER = 1;
-export let app_status: AppStatus = {
-  location:{x:0, y:0,z:0},
-  busy: "init",
-  running:{
-    name: "",
-    type:"",
-    progress: 0.0
-  }
-}
+export let app_status: AppStatus ;
 
 
 export let bot: Farmbot;
@@ -227,6 +219,16 @@ export function setup(args: SetupArgs) {
           //console.log(status_message)
         }
       })
+        app_status= {
+        location:{x:0, y:0,z:0},
+        busy: "init",
+        running:{
+          name: "",
+          type:"",
+          progress: 0.0,
+          job_id: -1
+        }
+      }
       console.log("Initializing the Jobs")
       unsafe_locations = new UnsafeLocation({db: DBSetup.getDatabase()})
       seeding_jobs = new SeedingJob(bot);
@@ -268,6 +270,14 @@ export function setup(args: SetupArgs) {
       queue_cleaner.every("10 seconds", "cleanEventQueue")
         .then(_ => {
           return queue_cleaner.start();
+        }).then(_ => {})
+      const status_updater = (new Scheduler(dbase)).getAgenda();
+      status_updater.define("statusUpdater", async (_) => {
+        app_status = await event_queue.getActiveEvent();
+      })
+      status_updater.every("3 seconds", "statusUpdater")
+        .then(_ => {
+          return status_updater.start();
         }).then(_ => {})
 
     })

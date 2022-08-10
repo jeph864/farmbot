@@ -90,6 +90,7 @@ interface Running {
     name: string;
     type: string;
     progress: number;
+    job_id: number;
 }
 export interface AppStatus {
     location: BotLocation;

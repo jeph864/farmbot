@@ -125,7 +125,7 @@ var Job = /** @class */ (function () {
                     return _this.calculateSteps(ready_job);
                 })
                     .then(function (steps) {
-                    return _this.executeAllSteps(steps, amount, ready_job.plant_type)
+                    return _this.executeAllSteps(steps, amount, ready_job.plant_type, ready_job.id)
                         .then(function (_) {
                         return _this.updateLastRun(job_id, started)
                             .then(function (_) {
@@ -308,15 +308,18 @@ var Job = /** @class */ (function () {
                 { kind: "update_resource", args: args, body: body }
             ]));
         };
-        this.executeAllSteps = function (items, amount, plant_type) {
+        this.executeAllSteps = function (items, amount, plant_type, job_id) {
             if (amount === void 0) { amount = 100; }
+            if (job_id === void 0) { job_id = -1; }
             return __awaiter(_this_1, void 0, void 0, function () {
-                var _this, results, _i, items_1, item, r;
+                var _this, results, finished_steps, total_number_of_steps, _i, items_1, item, r;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             _this = this;
                             results = [];
+                            finished_steps = 0;
+                            total_number_of_steps = items.length;
                             _i = 0, items_1 = items;
                             _a.label = 1;
                         case 1:
@@ -324,6 +327,10 @@ var Job = /** @class */ (function () {
                             item = items_1[_i];
                             return [4 /*yield*/, _this.runStep(item, amount, plant_type)
                                     .then(function (ack) {
+                                    finished_steps++;
+                                    if (job_id !== -1 && api_1.app_status.running.job_id == job_id) {
+                                        api_1.app_status.running.progress = finished_steps / total_number_of_steps;
+                                    }
                                     results.push(ack);
                                 })];
                         case 2:

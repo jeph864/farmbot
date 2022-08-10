@@ -1,5 +1,5 @@
 import { CSInteger, Farmbot, NamedPin, RpcError, RpcOk, rpcRequest } from "farmbot";
-import {DBSetup, unsafe_locations, slots_container} from "../setup/api";
+import { DBSetup, unsafe_locations, slots_container, app_status } from "../setup/api";
 import { Db, MongoClient } from "mongodb";
 import {
   WorkingArea, Position, JobParams,
@@ -136,7 +136,7 @@ export abstract class Job{
           return _this.calculateSteps(ready_job)
         })
         .then(steps => {
-          return _this.executeAllSteps(steps, amount, ready_job.plant_type)
+          return _this.executeAllSteps(steps, amount, ready_job.plant_type, ready_job.id)
             .then(function(_){
             return _this.updateLastRun(job_id, started)
               .then((_) => {
@@ -308,12 +308,18 @@ export abstract class Job{
       { kind: "update_resource", args: args, body: body}
     ]));
   };
-  executeAllSteps = async (items, amount = 100, plant_type) => {
+  executeAllSteps = async (items, amount = 100, plant_type, job_id = -1) => {
     let _this = this;
     let results : Array<RpcOk|RpcError>= [];
+    let finished_steps = 0;
+    let total_number_of_steps = items.length;
     for(let item of items){
       let r = await _this.runStep(item, amount, plant_type)
         .then(function(ack){
+          finished_steps++;
+          if(job_id !== -1 && app_status.running.job_id == job_id){
+            app_status.running.progress = finished_steps/total_number_of_steps;
+          }
           results.push(ack)
         });
     }
