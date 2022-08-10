@@ -90,39 +90,6 @@
 </ActionItem>
 
 <style>
-    main {
-        text-align: center;
-        padding: 16px;
-        margin: auto;
-    }
-
-    #myTable {
-        table-layout: fixed;
-    }
-    button{
-        background-color: #f8f7e5;
-        border-color: grey;
-        border-radius: 8px;
-        padding: 3px;
-        font-size: 14px;
-    }
-    button:hover {
-        background-color: #eae9d4;
-        border-radius: 12px;
-    }
-    input{
-        border-radius: 6px;
-        background-color: #f8f7e5;
-        border-color: #dddddd;
-    }
-    select{
-        border-radius: 6px;
-        background-color: #f8f7e5;
-        font-size: 15px;
-        border: #dddddd;
-        padding: 3px;
-
-    }
 
 
 </style>

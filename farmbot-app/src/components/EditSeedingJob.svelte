@@ -148,7 +148,7 @@
                             <td>&ensp;</td>
                         </tr>
                         <tr>
-                            <td>Working area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
+                            <td>Working area: <br /><br /> (coordinates in mm) <br />(x1,y1): lower left corner<br />(x2,y2): upper right corner</td>
                             <td use = {setData(editValue.working_area.beg_pos.x,editValue.working_area.beg_pos.y,editValue.working_area.end_pos.x,editValue.working_area.end_pos.y)}>x1: <input  type = "number" value={x1} id="x1"><br /> y1: <input type = "number" value={y1} id="y1"> <br /> x2: <input type = "number" value={x2} id="x2"> <br /> y2: <input type = "number" value={y2} id="y2"></td>
 
                         </tr>

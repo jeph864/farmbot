@@ -23,11 +23,6 @@
   let coords1 = spring({ x: 30, y: 30 } );
   let coords2 = spring({ x: 100, y: 200 } );
 
-  coordinates.x1= $coords1.x*3;
-  coordinates.y1= $coords1.y*3;
-  coordinates.x2= $coords2.x*3;
-  coordinates.y2= $coords2.y*3;
-
 
   let plants
 
@@ -115,14 +110,6 @@
 
   function handleMouseOutUP(e) {
     colourUP = 'rgba(143, 188, 143, 0.68)';
-    mouseOnPlant=false;
-  }
-
-  function handleMouseOverU(e) {
-    mouseOnPlant=true;
-  }
-
-  function handleMouseOutU(e) {
     mouseOnPlant=false;
   }
 
@@ -238,10 +225,8 @@
 
 
     {#if showPlantType}
-      <br />
       <p>The plant you clicked is: <br />{markedPlant} </p>
     {:else}
-      <br />
       <p>Click a plant to find out what it is!</p>
     {/if}
 
@@ -303,8 +288,8 @@
 
         {#each Object.values(data) as area}
 
-              <rect on:mouseover={handleMouseOverU} on:mouseout={handleMouseOutU} class="unsafe" x={area.location.beg.x/3} y={402-(area.location.beg.y/3)-((area.location.end.y-area.location.beg.y)/3)} width={(area.location.end.x-area.location.beg.x)/3} height={(area.location.end.y-area.location.beg.y)/3}>{area.name}</rect>
-              <text on:mouseover={handleMouseOverU} on:mouseout={handleMouseOutU} x={(area.location.beg.x/3)+10} y={(402-(area.location.beg.y/3))-((area.location.end.y-area.location.beg.y)/6)+5}>{area.name}</text>
+              <rect class="unsafe" x={area.location.beg.x/3} y={402-(area.location.beg.y/3)-((area.location.end.y-area.location.beg.y)/3)} width={(area.location.end.x-area.location.beg.x)/3} height={(area.location.end.y-area.location.beg.y)/3}>{area.name}</rect>
+              <text x={(area.location.beg.x/3)+10} y={(402-(area.location.beg.y/3))-((area.location.end.y-area.location.beg.y)/6)+5}>{area.name}</text>
 
         {/each}
       {:catch error}

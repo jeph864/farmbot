@@ -250,5 +250,19 @@ async function getTools(){
   return res.json();
 }
 
+async function toggleWateringJob(job_id, activation_status){
+  const url = `${baseUrl}/jobs/watering/activate?id=${job_id}&status=${activation_status}`
+  console.log(url)
+  const res = await fetch(url, {
+    method: "GET",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  });
+  return res.json();
 
-export {deleteUnsafeArea, createUnsafeArea, createJob, updateTools, getTools, searchJobs, executeJob, getStatus,getJobs, getWateringJobs,createWateringJob, executeWateringJob, updateJob, getPlantPos, getUnsafeAreas}
+}
+
+
+export {toggleWateringJob, deleteUnsafeArea, createUnsafeArea, createJob, updateTools, getTools, searchJobs, executeJob, getStatus,getJobs, getWateringJobs,createWateringJob, executeWateringJob, updateJob, getPlantPos, getUnsafeAreas}

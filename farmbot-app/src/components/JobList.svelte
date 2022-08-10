@@ -101,12 +101,12 @@
     }
 
     th {
-        text-align: left;
+        text-align: center;
         padding: 6px;
     }
     td {
         border: 1px solid #dddddd;
-        text-align: left;
+        text-align: center;
         padding: 6px;
     }
 

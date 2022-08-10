@@ -53,7 +53,7 @@
         <td><input bind:value={name}></td>
       </tr>
       <tr>
-        <td>Unsafe area: <br /><br /> (coordinates in mm) <br />(x1,y1): upper left corner<br />(x2,y2): lower right corner</td>
+        <td>Unsafe area: <br /><br /> (coordinates in mm) <br />(x1,y1): lower left corner<br />(x2,y2): upper right corner</td>
         <td>x1: <input type = "number" bind:value={x1}><br /> y1: <input type = "number" bind:value={y1}> <br /> x2: <input type = "number" bind:value={x2}> <br /> y2: <input type = "number" bind:value={y2}></td>
       </tr>
       <tr>
@@ -61,7 +61,7 @@
         <td>&ensp;</td>
       </tr>
       <tr>
-        <td>Height: </td>
+        <td>Height (in mm): </td>
         <td><input type = "number" bind:value={height}></td>
       </tr>
       <tr>
