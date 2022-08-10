@@ -25,6 +25,7 @@ export declare class UnsafeLocation {
     getSeq: () => Promise<{
         next_id: number;
     }>;
+    delete: (id: number) => Promise<import("mongodb").DeleteResult>;
     setSeq: (set?: boolean) => any;
 }
 export {};

@@ -48,6 +48,10 @@ var UnsafeLocation = /** @class */ (function () {
                     });
             });
         };
+        this.delete = function (id) {
+            return _this_1.db.collection(_this_1.collection)
+                .deleteOne({ id: id });
+        };
         this.setSeq = function (set) {
             if (set === void 0) { set = true; }
             var db = api_1.DBSetup.getDatabase();

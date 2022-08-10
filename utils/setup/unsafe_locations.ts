@@ -74,6 +74,10 @@ export class UnsafeLocation {
 })
 
 }
+delete = (id: number) => {
+    return this.db.collection(this.collection)
+      .deleteOne({id: id})
+}
 setSeq =  (set = true) => {
   const db = DBSetup.getDatabase();
   // @ts-ignore

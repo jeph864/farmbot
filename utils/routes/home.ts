@@ -319,6 +319,38 @@ router.get('/unsafelocation', (__, res, _) => {
     res.send("An error has occurred")
   })
 })
+router.get('/unsafelocation/delete', (req, res) => {
+  // @ts-ignore
+  const  id = parseInt(req.query.id);
+  unsafe_locations.delete(id)
+    .then(r => {
+      if(r && r.deletedCount == 0){
+        res.status(400);
+        res.send("Unsafe location with ID "+id + " does not exists or has been deleted")
+      }else
+      res.send("deleted successfully")
+    }).catch( e => {
+      console.error(e)
+      res.status(400)
+      res.send("Failed to delete")
+  })
+})
+router.delete('/unsafelocation', (req, res) => {
+  // @ts-ignore
+  const  id = parseInt(req.query.id);
+  unsafe_locations.delete(id)
+    .then(r => {
+      if(r && r.deletedCount == 0){
+        res.status(400);
+        res.send("Unsafe location with ID "+id + " does not exists or has been deleted")
+      }else
+        res.send("deleted successfully")
+    }).catch( e => {
+    console.error(e)
+    res.status(400)
+    res.send("Failed to delete")
+  })
+})
 router.get('/unsafe/remove', (__, res, _) => {
   console.log("Unsafe check")
   seeding_jobs.getJob(1)
