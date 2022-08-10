@@ -82,6 +82,20 @@ var Job = /** @class */ (function () {
                     locations.push(location_1);
                 }
             }
+            console.log(locations);
+            var distance = function (coor1, coor2) {
+                var x = coor2.x - coor1.x;
+                var y = coor2.y - coor1.y;
+                return Math.sqrt((x * x) + (y * y));
+            };
+            var sortByDistance = function (locations, point) {
+                var sorter = function (a, b) { return distance(a, point) - distance(b, point); };
+                locations.sort(sorter);
+            };
+            // let status = await getStatus();
+            //console.log(status_message.x1,status_message.x2);
+            //  sortByDistance(locations, {x: status_message.x1, y: status_message.x2});
+            sortByDistance(locations, { x: 990, y: 725 });
             console.log("Locations: " + locations.length);
             return _this_1.removeUnsafeLocations(locations);
         };
@@ -122,6 +136,7 @@ var Job = /** @class */ (function () {
                     return _this.calculateSteps(ready_job);
                 })
                     .then(function (steps) {
+                    //console.log("steps:",steps);
                     return _this.executeAllSteps(steps)
                         .then(function (_) {
                         return _this.updateLastRun(job_id, started)
@@ -317,6 +332,7 @@ var Job = /** @class */ (function () {
                     case 1:
                         if (!(_i < items_1.length)) return [3 /*break*/, 4];
                         item = items_1[_i];
+                        console.log("item", typeof item);
                         return [4 /*yield*/, _this.runStep(item)
                                 .then(function (ack) {
                                 results.push(ack);

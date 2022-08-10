@@ -1,5 +1,5 @@
 import { CSInteger, Farmbot, NamedPin, RpcError, RpcOk, rpcRequest } from "farmbot";
-import {DBSetup, unsafe_locations, slots_container} from "../setup/api";
+import {DBSetup, unsafe_locations, slots_container, status_message} from "../setup/api";
 import { Db, MongoClient } from "mongodb";
 import {
   WorkingArea, Position, JobParams,
@@ -90,7 +90,25 @@ export abstract class Job{
         locations.push( location )
       }
     }
+    console.log(locations);
+    
+    const distance = (coor1, coor2) => {
+      const x = coor2.x - coor1.x;
+      const y = coor2.y - coor1.y;
+      return Math.sqrt((x*x) + (y*y));
+   };
+   
+   const sortByDistance = (locations, point) => {
+      const sorter = (a, b) => distance(a, point) - distance(b, point);
+      locations.sort(sorter);
+   };
+  // let status = await getStatus();
+   //console.log(status_message.x1,status_message.x2);
+  //  sortByDistance(locations, {x: status_message.x1, y: status_message.x2});
+  sortByDistance(locations, {x: 990, y: 725});
+
     console.log("Locations: "+ locations.length)
+
     return  this.removeUnsafeLocations(locations);
   }
   removeUnsafeLocations = (locations, radius = 0) => {
@@ -134,6 +152,7 @@ export abstract class Job{
           return _this.calculateSteps(ready_job)
         })
         .then(steps => {
+          //console.log("steps:",steps);
           return _this.executeAllSteps(steps)
             .then(function(_){
             return _this.updateLastRun(job_id, started)
@@ -310,6 +329,8 @@ export abstract class Job{
     let _this = this;
     let results : Array<RpcOk|RpcError>= [];
     for(let item of items){
+      console.log("item",typeof item);
+      //sort here and return positin to item
       let r = await _this.runStep(item)
         .then(function(ack){
           results.push(ack)

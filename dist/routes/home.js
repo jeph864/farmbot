@@ -10,7 +10,7 @@ var api_1 = require("../setup/api");
 var dynamic_slots_1 = require("../setup/dynamic_slots");
 var router = express_1.default.Router();
 router.use(function timeLog(_, __, next) {
-    console.log('Time: ', Date.now());
+    //console.log('Time: ', Date.now());
     next();
 });
 router.get('/search/', function (req, res, next) {
@@ -132,6 +132,7 @@ router.post('/jobs/watering/execute', function (req, res, _) {
     if (!req.query.id) {
         var dest_location = req.body.dest;
         var tray_location = req.body.tray_pos;
+        console.log("dest loc:", dest_location);
         api_1.watering_jobs.doWatering(dest_location)
             .then(function (_) {
             res.send("Finished Planting step");
