@@ -21,7 +21,7 @@ export declare abstract class Job {
     protected df_position: Position;
     protected df_working_area: WorkingArea;
     abstract initParams(jobParams: JobParams): JobParams;
-    abstract runStep(args: JobStep, amount: number): any;
+    abstract runStep(args: JobStep, amount: number, plant_type: string): any;
     minPos: (pos1: Position, pos2: Position) => Position;
     maxPos: (pos1: Position, pos2: Position) => Position;
     calculateSteps: (job: any) => Promise<any>;
@@ -41,7 +41,7 @@ export declare abstract class Job {
     writePin: (value?: number, pin_id?: number, mode?: number) => Promise<RpcOk | RpcError>;
     move: (dest: Position, speed: CSInteger) => Promise<RpcOk | RpcError>;
     markAs: (args: any, body: any) => Promise<RpcOk | RpcError>;
-    executeAllSteps: (items: any, amount?: number) => Promise<(RpcOk | RpcError)[]>;
+    executeAllSteps: (items: any, amount: number | undefined, plant_type: any) => Promise<(RpcOk | RpcError)[]>;
     convertMl: (duration: number) => number;
     write: (pin_number: any, value: any, pin_mode?: number) => Promise<RpcOk | RpcError>;
     getJob: (job_id: any) => Promise<import("mongodb").WithId<import("bson").Document> | null>;
