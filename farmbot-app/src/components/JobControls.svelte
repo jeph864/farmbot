@@ -265,19 +265,15 @@
 
         {#each Object.values(data) as plant}
 
-            {#if plant.stage === "planted"}
-              {#if plant.name === "radish"}
-                <circle on:mouseover={handleMouseOverR} on:mouseout={handleMouseOutR} on:click={() => clickPlants('radish')} style="fill:{colourRG}" cx={plant.location.x/3} cy={402-plant.location.y/3} r=10 />
-                <circle on:mouseover={handleMouseOverR} on:mouseout={handleMouseOutR} on:click={() => clickPlants('radish')} style="fill:{colourRR}" cx={plant.location.x/3} cy={402-plant.location.y/3+8} r=6 />
+              {#if plant.plant_type === "radish"}
+                <circle on:mouseover={handleMouseOverR} on:mouseout={handleMouseOutR} on:click={() => clickPlants('radish')} style="fill:{colourRG}" cx={plant.x_coord/3} cy={402-plant.y_coord/3} r=10 />
+                <circle on:mouseover={handleMouseOverR} on:mouseout={handleMouseOutR} on:click={() => clickPlants('radish')} style="fill:{colourRR}" cx={plant.x_coord/3} cy={402-plant.y_coord/3+8} r=6 />
                 {:else} <!-- maybe more types later:  {#if plant.name === "lettuce"} -->
-                  <circle on:mouseover={handleMouseOverL} on:mouseout={handleMouseOutL} on:click={() => clickPlants(plant.name)} style="fill:{colourL}" cx={plant.location.x/3} cy={402-plant.location.y/3} r=12 />
+                  <circle on:mouseover={handleMouseOverL} on:mouseout={handleMouseOutL} on:click={() => clickPlants(plant.plant_type)} style="fill:{colourL}" cx={plant.x_coord/3} cy={402-plant.y_coord/3} r=12 />
                 <!--  {:else} --><!-- default case
-                    <circle on:click={() => clickPlants(plant.name)} style="fill:green" cx={plant.location.x/3} cy={plant.location.y/3} r=10 />
+                    <circle on:click={() => clickPlants(plant.name)} style="fill:green" cx={plant.x_coords/3} cy={plant.y_coords/3} r=10 />
                 {/if}-->
               {/if}
-            {:else}
-              <circle on:mouseover={handleMouseOverUP} on:mouseout={handleMouseOutUP} on:click={() => clickPlants(plant.name+", but it is not planted yet")} style="fill: {colourUP}" cx={plant.location.x/3} cy={402-plant.location.y/3} r=8 />
-            {/if}
 
       {/each}
     {:catch error}

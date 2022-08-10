@@ -118,36 +118,14 @@ async function getStatus(){
 async function getPlantPos(){
   //TODO: create fetcher for getting plant positions
 
-  //for test purpose:  -> delete this after fetcher is implemented
-  let plant1 = {
-    location:{
-      x: 2000,
-      y: 700,
-      z: 0
+  const url = `${baseUrl}/jobs/plantCoordinates/getAll`
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
     },
-    name: "radish",
-    stage: "planted"
-  }
-  let plant3 = {
-    location:{
-      x: 2200,
-      y: 700,
-      z: 0
-    },
-    name: "radish",
-    stage: "planted"
-  }
-  let plant2 = {
-    location:{
-      x: 2000,
-      y: 600,
-      z: 0
-    },
-    name: "apple",
-    stage: "planned"
-  }
-  let plants=[plant1,plant2,plant3]
-  return plants
+  });
+  return res.json();
 }
 
 async function getUnsafeAreas() {
