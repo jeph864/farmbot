@@ -122,7 +122,7 @@ var Job = /** @class */ (function () {
                     return _this.calculateSteps(ready_job);
                 })
                     .then(function (steps) {
-                    return _this.executeAllSteps(steps)
+                    return _this.executeAllSteps(steps, ready_job.plant_type)
                         .then(function (_) {
                         return _this.updateLastRun(job_id, started)
                             .then(function (_) {
@@ -305,7 +305,7 @@ var Job = /** @class */ (function () {
                 { kind: "update_resource", args: args, body: body }
             ]));
         };
-        this.executeAllSteps = function (items) { return __awaiter(_this_1, void 0, void 0, function () {
+        this.executeAllSteps = function (items, plant_type) { return __awaiter(_this_1, void 0, void 0, function () {
             var _this, results, _i, items_1, item, r;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -317,7 +317,7 @@ var Job = /** @class */ (function () {
                     case 1:
                         if (!(_i < items_1.length)) return [3 /*break*/, 4];
                         item = items_1[_i];
-                        return [4 /*yield*/, _this.runStep(item)
+                        return [4 /*yield*/, _this.runStep(item, plant_type)
                                 .then(function (ack) {
                                 results.push(ack);
                             })];

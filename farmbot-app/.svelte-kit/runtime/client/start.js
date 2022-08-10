@@ -4,6 +4,7 @@ import { assets, set_paths } from '../paths.js';
 import Root from '__GENERATED__/root.svelte';
 import { components, dictionary, matchers } from '__GENERATED__/client-manifest.js';
 import { init } from './singletons.js';
+export { set_public_env } from '../env-public.js';
 
 /**
  * @param {unknown} err
@@ -569,6 +570,9 @@ function create_client({ target, session, base, trailing_slash }) {
 		if (!ready) return;
 		session_id += 1;
 
+		const current_load_uses_session = current.branch.some((node) => node?.uses.session);
+		if (!current_load_uses_session) return;
+
 		update(new URL(location.href), [], true);
 	});
 	ready = true;
@@ -689,6 +693,10 @@ function create_client({ target, session, base, trailing_slash }) {
 			await native_navigation(url);
 			return false; // unnecessary, but TypeScript prefers it this way
 		}
+
+		// if this is an internal navigation intent, use the normalized
+		// URL for the rest of the function
+		url = intent?.url || url;
 
 		// abort if user navigated during update
 		if (token !== current_token) return false;
@@ -872,8 +880,11 @@ function create_client({ target, session, base, trailing_slash }) {
 		};
 
 		for (let i = 0; i < filtered.length; i += 1) {
-			const loaded = filtered[i].loaded;
-			result.props[`props_${i}`] = loaded ? await loaded.props : null;
+			// Only set props if the node actually updated. This prevents needless rerenders.
+			if (!current.branch.some((node) => node === filtered[i])) {
+				const loaded = filtered[i].loaded;
+				result.props[`props_${i}`] = loaded ? await loaded.props : null;
+			}
 		}
 
 		const page_changed =
@@ -1343,9 +1354,12 @@ function create_client({ target, session, base, trailing_slash }) {
 			const params = route.exec(path);
 
 			if (params) {
-				const id = normalize_path(url.pathname, trailing_slash) + url.search;
+				const normalized = new URL(
+					url.origin + normalize_path(url.pathname, trailing_slash) + url.search + url.hash
+				);
+				const id = normalized.pathname + normalized.search;
 				/** @type {import('./types').NavigationIntent} */
-				const intent = { id, route, params: decode_params(params), url };
+				const intent = { id, route, params: decode_params(params), url: normalized };
 				return intent;
 			}
 		}
@@ -1382,9 +1396,6 @@ function create_client({ target, session, base, trailing_slash }) {
 			return;
 		}
 
-		const pathname = normalize_path(url.pathname, trailing_slash);
-		const normalized = new URL(url.origin + pathname + url.search + url.hash);
-
 		update_scroll_positions(current_history_index);
 
 		accepted();
@@ -1392,12 +1403,12 @@ function create_client({ target, session, base, trailing_slash }) {
 		if (started) {
 			stores.navigating.set({
 				from: current.url,
-				to: normalized
+				to: url
 			});
 		}
 
 		await update(
-			normalized,
+			url,
 			redirect_chain,
 			false,
 			{
@@ -1406,7 +1417,7 @@ function create_client({ target, session, base, trailing_slash }) {
 				details
 			},
 			() => {
-				const navigation = { from, to: normalized };
+				const navigation = { from, to: url };
 				callbacks.after_navigate.forEach((fn) => fn(navigation));
 
 				stores.navigating.set(null);

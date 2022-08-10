@@ -10,7 +10,7 @@ var api_1 = require("../setup/api");
 var dynamic_slots_1 = require("../setup/dynamic_slots");
 var router = express_1.default.Router();
 router.use(function timeLog(_, __, next) {
-    console.log('Time: ', Date.now());
+    //console.log('Time: ', Date.now());
     next();
 });
 router.get('/search/', function (req, res, next) {
@@ -321,6 +321,14 @@ router.get('/unsafe/remove', function (__, res, _) {
     }).catch(function (e) {
         console.error(e);
         res.send("Failed to remove unsafe locations");
+    });
+});
+router.get('/jobs/plantCoordinates/getAll', function (_, res) {
+    api_1.seeding_jobs.getPlantCoordinates()
+        .then(function (results) {
+        if (results) {
+            res.json(results);
+        }
     });
 });
 exports.indexrouter = router;

@@ -11,10 +11,12 @@ export declare class SeedingJob extends Job {
     private tray_pos;
     private watering_job;
     private pin_number;
+    private plant_coordinates;
     constructor(bot: Farmbot, config?: any);
     private getDefaultParams;
     initParams: (inputJob: Seeding) => Seeding;
-    runStep: (dest: any) => Promise<void>;
-    plantSeed: (bay_pos: Position, dest: Position, speed?: number) => Promise<void>;
+    runStep: (dest: any, plant_type: any) => Promise<void>;
+    plantSeed: (bay_pos: Position, dest: Position, speed?: number, plant_type?: string) => Promise<void>;
     afterUpdate: (jobParams: any, callback: any, update?: boolean) => void;
+    getPlantCoordinates: () => Promise<import("mongodb").WithId<import("bson").Document>[]>;
 }

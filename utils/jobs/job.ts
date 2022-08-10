@@ -64,7 +64,7 @@ export abstract class Job{
   }
 
   abstract initParams (jobParams: JobParams) : JobParams
-  abstract runStep (args: JobStep);
+  abstract runStep (args: JobStep, plant_type);
 
   //abstract  executeJob (job_id : number, callback) : void;
   minPos = (pos1: Position, pos2: Position) => {
@@ -134,7 +134,7 @@ export abstract class Job{
           return _this.calculateSteps(ready_job)
         })
         .then(steps => {
-          return _this.executeAllSteps(steps)
+          return _this.executeAllSteps(steps, ready_job.plant_type)
             .then(function(_){
             return _this.updateLastRun(job_id, started)
               .then((_) => {
@@ -306,11 +306,11 @@ export abstract class Job{
       { kind: "update_resource", args: args, body: body}
     ]));
   };
-  executeAllSteps = async (items) => {
+  executeAllSteps = async (items, plant_type) => {
     let _this = this;
     let results : Array<RpcOk|RpcError>= [];
     for(let item of items){
-      let r = await _this.runStep(item)
+      let r = await _this.runStep(item, plant_type)
         .then(function(ack){
           results.push(ack)
         });

@@ -19,6 +19,7 @@ exports.SeedingJob = exports.SEEDING_COLLECTION = void 0;
 var job_1 = require("./job");
 var watering_1 = require("./watering");
 var queue_1 = require("./queue");
+var plants_1 = require("../resources/plants");
 exports.SEEDING_COLLECTION = "seeding_jobs";
 var SEEDING_COLLECTION_SEQ = "seeding_jobs_seq";
 var SeedingJob = /** @class */ (function (_super) {
@@ -63,11 +64,12 @@ var SeedingJob = /** @class */ (function (_super) {
             inputJob.working_area.width = width, inputJob.working_area.length = length;
             return Object.assign(_this_1.getDefaultParams(), inputJob);
         };
-        _this_1.runStep = function (dest) {
-            return _this_1.plantSeed(_this_1.tray_pos, dest, 100);
+        _this_1.runStep = function (dest, plant_type) {
+            return _this_1.plantSeed(_this_1.tray_pos, dest, 100, plant_type);
         };
-        _this_1.plantSeed = function (bay_pos, dest, speed) {
+        _this_1.plantSeed = function (bay_pos, dest, speed, plant_type) {
             if (speed === void 0) { speed = 100; }
+            if (plant_type === void 0) { plant_type = ""; }
             var _this = _this_1;
             var safety_position_z = _this_1.ground_level + _this_1.safe_height;
             dest = _this_1.getAbsolutePlantPosition(dest);
@@ -91,8 +93,18 @@ var SeedingJob = /** @class */ (function (_super) {
             })
                 .then(function (_) {
                 console.log("Moved successfully to plant position ");
+                var p = {
+                    plant_type: plant_type,
+                    x_coord: dest.x,
+                    y_coord: dest.y
+                };
+                return _this.plant_coordinates.save(p);
+            })
+                .then(function (_) {
+                console.log("plant coordinates saved");
                 return _this.bot.writePin({ pin_mode: 0, pin_number: _this.pin_number, pin_value: 0 });
-            }).then(function (_) {
+            })
+                .then(function (_) {
                 console.log("Wrote to pin: 0");
                 return _this.bot.moveAbsolute({ x: dest.x, y: dest.y, z: safety_position_z, speed: speed });
             }).then(function (_) {
@@ -112,6 +124,9 @@ var SeedingJob = /** @class */ (function (_super) {
               callback(e,r);
             })*/
         };
+        _this_1.getPlantCoordinates = function () {
+            return _this_1.plant_coordinates.getALL();
+        };
         _this_1.collection = exports.SEEDING_COLLECTION;
         _this_1.tray_pos = { x: 990, y: 725, z: -310 };
         _this_1.collection_seq = SEEDING_COLLECTION_SEQ;
@@ -119,6 +134,7 @@ var SeedingJob = /** @class */ (function (_super) {
         _this_1.watering_job = new watering_1.WateringJob(bot);
         _this_1.pin_number = 9;
         _this_1.type_name = "seeding";
+        _this_1.plant_coordinates = new plants_1.PlantCoordinates(_this_1.db);
         return _this_1;
     }
     return SeedingJob;

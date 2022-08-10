@@ -32,7 +32,7 @@ export declare class Users {
     createClientUser: (username: string, password: string, args: UserArgs) => Promise<import("mongodb").ModifyResult<import("bson").Document>>;
     getClientUser: (username: string) => Promise<import("mongodb").WithId<import("bson").Document> | null>;
     saveApiDate: (username: string, data: any) => Promise<import("mongodb").UpdateResult>;
-    getApiData: (username: string) => Promise<import("mongodb").WithId<import("bson").Document> | null>;
+    getApiData: (username: string) => Promise<import("mongodb").WithId<import("bson").Document>>;
 }
 export declare const Api: {
     connect: (token: string) => Promise<unknown>;
