@@ -368,7 +368,10 @@ var Job = /** @class */ (function () {
             return date.addHours(hours);
         };
         this.getStatus = function () { };
-        this.deleteJob = function () { };
+        this.deleteJob = function (job_id) {
+            return _this_1.db.collection(_this_1.collection)
+                .deleteOne({ id: job_id });
+        };
         this.lock = function () { };
         this.unlock = function () { };
         this.getDelayedJobs = function (callback) {

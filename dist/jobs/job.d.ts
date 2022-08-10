@@ -50,7 +50,7 @@ export declare abstract class Job {
     delay: (t: any) => Promise<unknown>;
     __addHours: (hours: any, date: Date) => any;
     getStatus: () => void;
-    deleteJob: () => void;
+    deleteJob: (job_id: number) => Promise<import("mongodb").DeleteResult>;
     lock: () => void;
     unlock: () => void;
     getDelayedJobs: (callback: any) => void;
