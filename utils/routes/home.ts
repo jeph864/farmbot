@@ -218,6 +218,30 @@ router.get('/jobs/watering/activate', (req, res) => {
     res.send("An error has occurred")
   })
 })
+router.delete('/jobs/watering', (req, res) => {
+  // @ts-ignore
+  const id = parseInt(req.query.id)
+  watering_jobs.deleteJob(id)
+    .then( r => {
+      if(r && r.deletedCount == 0){
+        res.status(400);
+        res.send("Watering job with ID "+id + " does not exists or has been deleted")
+      }else
+        res.send("Watering job deleted successfully")
+    })
+})
+router.delete('/jobs/seeding', (req, res) => {
+  // @ts-ignore
+  const id = parseInt(req.query.id)
+  seeding_jobs.deleteJob(id)
+    .then( r => {
+      if(r && r.deletedCount == 0){
+        res.status(400);
+        res.send("Seeding job with ID "+id + " does not exists or has been deleted")
+      }else
+        res.send("Seeding job deleted successfully")
+    })
+})
 router.get('/slots/', (_, res) => {
   const slots = new Slots(DBSetup.getDatabase());
   slots.findSlots()

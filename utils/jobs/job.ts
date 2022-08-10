@@ -355,7 +355,10 @@ getJob = (job_id) => {
 
   }
   getStatus = () => {};
-  deleteJob = () => {};
+  deleteJob = (job_id:number) => {
+    return this.db.collection(this.collection)
+      .deleteOne({id: job_id})
+  };
   lock = () => {};
   unlock = () => {};
   getDelayedJobs = (callback) =>{
