@@ -295,6 +295,64 @@ var EventQueue = /** @class */ (function () {
         this.getEventEmitter = function () {
             return _this_1.event_emitter;
         };
+        this.changeBuyStatus = function (status) {
+            EventQueue.busy = status;
+        };
+        this.getActiveEvent = function () {
+            var running;
+            var handler;
+            var busy;
+            if (EventQueue.busy)
+                busy = "busy";
+            else
+                busy = "idle";
+            return _this_1.db.collection(_this_1.collection)
+                .findOne({ status: 0 })
+                .then(function (r) {
+                if (r) {
+                    running = {
+                        type: r.type,
+                        job_id: r.job_id,
+                        name: "",
+                        progress: 0.0
+                    };
+                    if (r.type == "seeding")
+                        handler = _this_1.seeding;
+                    else
+                        handler = _this_1.watering;
+                    return handler.getJob(r.job_id)
+                        .then(function (data) {
+                        running.name = data.name;
+                        return Promise.resolve({ running: running, busy: busy });
+                    });
+                }
+                else {
+                    running = {
+                        type: "",
+                        job_id: "",
+                        name: "",
+                        progress: 0.0
+                    };
+                    return Promise.resolve({ running: running, busy: busy });
+                }
+            });
+        };
+        this.cleanEvents = function () {
+            if (EventQueue.busy) {
+                console.log("Queue might be busy.... please hold");
+                return Promise.resolve(EventQueue.busy);
+            }
+            else {
+                return _this_1.db.collection(_this_1.collection)
+                    .deleteOne({ status: 0 })
+                    .then(function (r) {
+                    if (r && r.deletedCount > 0) {
+                        EventQueue.busy = false;
+                    }
+                    return Promise.resolve(EventQueue.busy);
+                });
+            }
+        };
         this.queue = [];
         this.db = api_1.DBSetup.getDatabase();
         this.collection = EVENT_COLLECTION;

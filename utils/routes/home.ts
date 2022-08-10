@@ -10,7 +10,7 @@ import {
   slots_container,
   SetupArgs,
   setup,
-  FAKE_USER, DBSetup
+  FAKE_USER, DBSetup, app_status
 } from "../setup/api";
 import { Slots } from "../setup/dynamic_slots";
 import { UnsafeLocation } from "../setup/unsafe_locations";
@@ -107,6 +107,20 @@ router.get('/events/process', (__, res, _) => {
 router.get('/status', function(__, res, _){
   if(status_message){
     res.json(status_message)
+  }else{
+    res.send("No status available yet");
+  }
+});
+
+router.get('/appstatus', function(__, res, _){
+  if(status_message){
+    app_status.location = status_message;
+    event_queue.getActiveEvent()
+      .then(r => {
+        app_status.running = r.running;
+        app_status.busy = r.busy
+        res.json(app_status)
+      })
   }else{
     res.send("No status available yet");
   }

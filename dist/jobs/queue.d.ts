@@ -26,4 +26,7 @@ export declare class EventQueue {
     getScheduledEvents: () => any;
     process: () => any;
     getEventEmitter: () => EventEmitter;
+    changeBuyStatus: (status: boolean) => void;
+    getActiveEvent: () => any;
+    cleanEvents: () => any;
 }

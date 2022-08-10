@@ -4,6 +4,7 @@ import { WateringJob } from "../jobs/watering";
 import { EventQueue } from "../jobs/queue";
 import { Slots } from "./dynamic_slots";
 import { UnsafeLocation } from "./unsafe_locations";
+import { AppStatus } from "../jobs/interfaces";
 export declare let unsafe_locations: UnsafeLocation;
 export declare let status_message: any;
 export declare let seeding_jobs: SeedingJob;
@@ -12,6 +13,7 @@ export declare let event_queue: EventQueue;
 export declare let slots_container: Slots;
 export declare const FAKE_USER = 0;
 export declare const REAL_USER = 1;
+export declare let app_status: AppStatus;
 export declare let bot: Farmbot;
 declare type UserArgs = {
     device_id?: "" | string;

@@ -40,7 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setup = exports.DBSetup = exports.Api = exports.Users = exports.bot = exports.REAL_USER = exports.FAKE_USER = exports.slots_container = exports.event_queue = exports.watering_jobs = exports.seeding_jobs = exports.status_message = exports.unsafe_locations = void 0;
+exports.setup = exports.DBSetup = exports.Api = exports.Users = exports.bot = exports.app_status = exports.REAL_USER = exports.FAKE_USER = exports.slots_container = exports.event_queue = exports.watering_jobs = exports.seeding_jobs = exports.status_message = exports.unsafe_locations = void 0;
 var mongodb_1 = require("mongodb");
 var axios_1 = __importDefault(require("axios"));
 var farmbot_1 = require("farmbot");
@@ -55,6 +55,15 @@ var client = new mongodb_1.MongoClient(MONGO_URL);
 var dbConnection;
 exports.FAKE_USER = 0;
 exports.REAL_USER = 1;
+exports.app_status = {
+    location: { x: 0, y: 0, z: 0 },
+    busy: "init",
+    running: {
+        name: "",
+        type: "",
+        progress: 0.0
+    }
+};
 var users;
 var CLIENT_USER_COLLECTION = "clientUser";
 var API_DATA_COLLECTION = "apiData";
@@ -241,7 +250,6 @@ function setup(args) {
         exports.event_queue = new queue_1.EventQueue(exports.bot);
         //schedulers
         var dbase = exports.DBSetup.getDatabase();
-        var sch1 = new scheduler_1.Scheduler(database);
         var event_collector = (new scheduler_1.Scheduler(dbase)).getAgenda();
         console.debug("initializing the slots ...");
         exports.slots_container.findSlots()
@@ -280,6 +288,21 @@ function setup(args) {
         queue_executor.every("5 seconds", "runQueuedJobs")
             .then(function (_) {
             return queue_executor.start();
+        }).then(function (_) { });
+        var queue_cleaner = (new scheduler_1.Scheduler(dbase)).getAgenda();
+        queue_cleaner.define("cleanEventQueue", function (_) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, exports.event_queue.cleanEvents()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        queue_cleaner.every("10 seconds", "cleanEventQueue")
+            .then(function (_) {
+            return queue_cleaner.start();
         }).then(function (_) { });
     });
 }

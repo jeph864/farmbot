@@ -89,3 +89,16 @@ export interface Vec2{
   x: number;
   y: number;
 }
+
+type BotLocation = Position;
+type Busy = "idle"| "busy"|"init"
+interface Running {
+  name: string;
+  type: string;
+  progress: number;
+}
+export interface AppStatus {
+  location: BotLocation;
+  busy: Busy;
+  running: Running;
+}

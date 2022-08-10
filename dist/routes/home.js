@@ -103,6 +103,20 @@ router.get('/status', function (__, res, _) {
         res.send("No status available yet");
     }
 });
+router.get('/appstatus', function (__, res, _) {
+    if (api_1.status_message) {
+        api_1.app_status.location = api_1.status_message;
+        api_1.event_queue.getActiveEvent()
+            .then(function (r) {
+            api_1.app_status.running = r.running;
+            api_1.app_status.busy = r.busy;
+            res.json(api_1.app_status);
+        });
+    }
+    else {
+        res.send("No status available yet");
+    }
+});
 router.post('/steps', function (req, res, _) {
     var job = req.body;
     var steps = api_1.seeding_jobs.calculateSteps(job);

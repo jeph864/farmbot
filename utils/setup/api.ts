@@ -7,6 +7,7 @@ import { EventQueue } from "../jobs/queue";
 import { Scheduler } from "../jobs/scheduler";
 import { Slots } from "./dynamic_slots";
 import { UnsafeLocation } from "./unsafe_locations";
+import { AppStatus } from "../jobs/interfaces";
 
 const MONGO_URL: string = process.env.MONGO_URI !;
 
@@ -20,6 +21,15 @@ export let event_queue: EventQueue;
 export let slots_container: Slots
 export const FAKE_USER = 0;
 export const REAL_USER = 1;
+export let app_status: AppStatus = {
+  location:{x:0, y:0,z:0},
+  busy: "init",
+  running:{
+    name: "",
+    type:"",
+    progress: 0.0
+  }
+}
 
 
 export let bot: Farmbot;
@@ -226,7 +236,6 @@ export function setup(args: SetupArgs) {
       event_queue = new EventQueue(bot);
       //schedulers
       const dbase = DBSetup.getDatabase();
-      const sch1 = new Scheduler(database)
       const event_collector = (new Scheduler(dbase)).getAgenda();
       console.debug("initializing the slots ...")
       slots_container.findSlots()
@@ -252,6 +261,15 @@ export function setup(args: SetupArgs) {
         .then(_ => {
           return queue_executor.start();
         }).then(_ => {})
+      const queue_cleaner = (new Scheduler(dbase)).getAgenda();
+      queue_cleaner.define("cleanEventQueue", async (_) => {
+        await event_queue.cleanEvents();
+      })
+      queue_cleaner.every("10 seconds", "cleanEventQueue")
+        .then(_ => {
+          return queue_cleaner.start();
+        }).then(_ => {})
+
     })
 }
 

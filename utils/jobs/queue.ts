@@ -4,7 +4,7 @@ import { SeedingJob , SEEDING_COLLECTION} from "./seeding";
 import { WateringJob, WATERING_COLLECTION } from "./watering";
 import { EventEmitter } from "events";
 //import * as dbConnect from "../../utils/conn";
-import { DBSetup } from "../setup/api";
+import { app_status, DBSetup } from "../setup/api";
 
 const EVENT_COLLECTION = "events";
 const EVENT_COLLECTION_SEQ = "events_seq";
@@ -220,5 +220,57 @@ getScheduledEvents = () => {
   }
   getEventEmitter = () => {
     return this.event_emitter;
+  }
+  changeBuyStatus = (status: boolean) => {
+    EventQueue.busy = status;
+  }
+  getActiveEvent = () => {
+    let running;
+    let handler ;
+    let busy;
+    if(EventQueue.busy) busy= "busy";
+    else busy = "idle"
+    return this.db.collection(this.collection)
+      .findOne({status: 0})
+      .then( r => {
+        if(r){
+          running = {
+            type: r.type,
+            job_id: r.job_id,
+            name: "",
+            progress: 0.0
+          }
+          if(r.type == "seeding") handler = this.seeding;
+          else handler = this.watering;
+          return handler.getJob(r.job_id)
+            .then( data => {
+              running.name = data.name;
+              return Promise.resolve({running: running, busy : busy});
+            })
+        }else{
+          running = {
+            type: "",
+            job_id: "",
+            name: "",
+            progress: 0.0
+          };
+          return Promise.resolve({running: running, busy : busy})
+        }
+      })
+  }
+  cleanEvents = () => {
+    if(EventQueue.busy){
+      console.log("Queue might be busy.... please hold")
+      return Promise.resolve(EventQueue.busy)
+    }else{
+      return this.db.collection(this.collection)
+        .deleteOne({status: 0})
+        .then(r => {
+          if(r && r.deletedCount > 0){
+            EventQueue.busy = false;
+          }
+          return Promise.resolve( EventQueue.busy);
+        })
+    }
   }
 }
