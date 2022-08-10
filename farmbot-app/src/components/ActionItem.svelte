@@ -64,6 +64,7 @@
   }
 
   .content {
+      flex-direction: column;
     display: flex;
     justify-content: center;
     padding: 16px;

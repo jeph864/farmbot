@@ -104,7 +104,7 @@ async function executeJob(job_id) {
 }
 
 async function getStatus(){
-  const url = `${baseUrl}/status`
+  const url = `${baseUrl}/AppStatus`
   const res = await fetch(url, {
     method: "GET",
     headers: {
@@ -116,8 +116,6 @@ async function getStatus(){
 
 
 async function getPlantPos(){
-  //TODO: create fetcher for getting plant positions
-
   const url = `${baseUrl}/jobs/plantCoordinates/getAll`
   const res = await fetch(url, {
     method: "GET",

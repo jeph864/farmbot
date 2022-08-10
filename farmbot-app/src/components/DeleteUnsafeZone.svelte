@@ -14,7 +14,7 @@
 
   function deleteZone(id){
     deleteUnsafeArea(id)
-    //gettingZones()
+    gettingZones()
   }
 
 </script>
