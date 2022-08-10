@@ -27,9 +27,10 @@
     console.log(id);
   }
 
-  function edit(name){
+  function edit(name,id){
     //TODO
     jobName.Name = name;
+    jobName.ID = id;
   }
 
 </script>

@@ -1,5 +1,6 @@
 <script>
 	import JobControls from "./JobControls.svelte";
+	import jQuery from 'jquery';
 </script>
 
 <main>
