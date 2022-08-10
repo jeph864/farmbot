@@ -19,7 +19,7 @@ const router = express.Router();
 
 
 router.use(function timeLog(_, __, next) {
-  console.log('Time: ', Date.now());
+ // console.log('Time: ', Date.now());
   next();
 });
 

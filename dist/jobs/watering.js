@@ -67,6 +67,20 @@ var WateringJob = /** @class */ (function (_super) {
                     locations.push(location_1);
                 }
             }
+            console.log(locations);
+            //   const distance = (coor1, coor2) => {
+            //      const x = coor2.x - coor1.x;
+            //      const y = coor2.y - coor1.y;
+            //      return Math.sqrt((x*x) + (y*y));
+            //   };
+            //   const sortByDistance = (locations, point) => {
+            //      const sorter = (a, b) => distance(a, point) - distance(b, point);
+            //      locations.sort(sorter);
+            //   };
+            //  // let status = await getStatus();
+            //   sortByDistance(locations, {x: 50, y: 40});
+            //   //sortByDistance(locations, {x: 50, y: 40});
+            //   console.log(locations);
             return _this_1.removeUnsafeLocations(locations);
         };
         // @ts-ignore

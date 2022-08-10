@@ -10,7 +10,7 @@ var api_1 = require("../setup/api");
 var dynamic_slots_1 = require("../setup/dynamic_slots");
 var router = express_1.default.Router();
 router.use(function timeLog(_, __, next) {
-    console.log('Time: ', Date.now());
+    // console.log('Time: ', Date.now());
     next();
 });
 router.get('/search/', function (req, res, next) {
