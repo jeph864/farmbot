@@ -1375,9 +1375,7 @@ async function render_response({
 	/** @type {import('types').NormalizedLoadOutputCache | undefined} */
 	let cache;
 
-	const stack = error?.stack;
-
-	if (options.dev && error) {
+	if (error) {
 		error.stack = options.get_stack(error);
 	}
 
@@ -1474,10 +1472,7 @@ async function render_response({
 
 	// prettier-ignore
 	const init_app = `
-		import { set_public_env, start } from ${s(options.prefix + entry.file)};
-
-		set_public_env(${s(options.public_env)});
-
+		import { start } from ${s(options.prefix + entry.file)};
 		start({
 			target: document.querySelector('[data-sveltekit-hydrate="${target}"]').parentNode,
 			paths: ${s(options.paths)},
@@ -1599,12 +1594,9 @@ async function render_response({
 	const assets =
 		options.paths.assets || (segments.length > 0 ? segments.map(() => '..').join('/') : '.');
 
-	// TODO flush chunks as early as we can
-	const html =
-		(await resolve_opts.transformPageChunk({
-			html: options.template({ head, body, assets, nonce: /** @type {string} */ (csp.nonce) }),
-			done: true
-		})) || '';
+	const html = await resolve_opts.transformPage({
+		html: options.template({ head, body, assets, nonce: /** @type {string} */ (csp.nonce) })
+	});
 
 	const headers = new Headers({
 		'content-type': 'text/html',
@@ -1624,11 +1616,6 @@ async function render_response({
 		if (report_only_header) {
 			headers.set('content-security-policy-report-only', report_only_header);
 		}
-	}
-
-	if (options.dev && error) {
-		// reset stack, otherwise it may be 'fixed' a second time
-		error.stack = stack;
 	}
 
 	return new Response(html, {
@@ -3383,7 +3370,7 @@ async function respond(request, options, state) {
 	/** @type {import('types').RequiredResolveOptions} */
 	let resolve_opts = {
 		ssr: true,
-		transformPageChunk: default_transform
+		transformPage: default_transform
 	};
 
 	// TODO match route before calling handle?
@@ -3393,17 +3380,9 @@ async function respond(request, options, state) {
 			event,
 			resolve: async (event, opts) => {
 				if (opts) {
-					// TODO remove for 1.0
-					// @ts-expect-error
-					if (opts.transformPage) {
-						throw new Error(
-							'transformPage has been replaced by transformPageChunk — see https://github.com/sveltejs/kit/pull/5657 for more information'
-						);
-					}
-
 					resolve_opts = {
 						ssr: opts.ssr !== false,
-						transformPageChunk: opts.transformPageChunk || default_transform
+						transformPage: opts.transformPage || default_transform
 					};
 				}
 

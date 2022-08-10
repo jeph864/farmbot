@@ -377,6 +377,6 @@ getJob = (job_id) => {
   }
   updatePlant = (plant :Plant) => {
     return this.db.collection(this.plants)
-      .updateOne({$and: [{x: plant.location.x}, {y:plant.location.y}, {z:plant.location.z}]},{$set: plant}, {upsert: true})
+      .updateOne({$and: [{x: plant.x_coord}, {y:plant.y_coord}]},{$set: plant}, {upsert: true})
   };
 };
