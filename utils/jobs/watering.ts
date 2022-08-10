@@ -2,6 +2,7 @@ import { Job,  } from "./job";
 import {JobParams, JobStep, Position, Seeding, Watering} from "./interfaces";
 import { Farmbot } from "farmbot";
 import { EventQueue } from "./queue";
+import { status_message } from "../setup/api";
 
 export const WATERING_COLLECTION = "watering_jobs";
 const WATERING_COLLECTION_SEQ = "watering_jobs_seq";
@@ -60,6 +61,24 @@ export class WateringJob extends Job {
         locations.push( location )
       }
     }
+
+
+    const distance = (coor1, coor2) => {
+      const x = coor2.x - coor1.x;
+      const y = coor2.y - coor1.y;
+      return Math.sqrt((x*x) + (y*y));
+   };
+   
+   const sortByDistance = (locations, point) => {
+      const sorter = (a, b) => distance(a, point) - distance(b, point);
+      locations.sort(sorter);
+   };
+  // let status = await getStatus();
+   
+   sortByDistance(locations, {x: 350, y: 350});
+   //sortByDistance(locations, {x: 50, y: 40});
+   console.log(locations);
+
     return this.removeUnsafeLocations(locations);
   }
   // @ts-ignore
