@@ -68,6 +68,7 @@
     coordinates.y2= y2;
   }
 
+
   let markedPlant="test";
   let showPlantType=false;
   let mouseOnPlant=false;
@@ -179,9 +180,9 @@
   <div class="wrapper">
 
     <p style="font-weight: bold">Toolbox: </p>
-    <p>Current tool attached: {tools[tools[6]]}</p>
+    Current tool attached: {tools[tools[6]]}
 
-    <div id="one">
+    <div style="margin-top: 5px" id="one">
       <select bind:value={tools[5]} style="background-color: rgba(238, 236, 193, 0.85);">
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
@@ -199,8 +200,8 @@
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>
     </div>
-    <br />
-    <div id="four">
+
+    <div style="margin-top: 10px" id="four">
       <select bind:value={tools[2]} style="background-color: rgba(238, 236, 193, 0.85);">
         {#each options as value}<option {value}>{value}</option>{/each}
       </select>

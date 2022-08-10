@@ -120,10 +120,10 @@
 
                 {#each Object.values(editData) as editValue}
                     <table id="myTable" border="0" cellpadding="3">
-                        <tr>
+                      <!--  <tr>
                             <td>ID of the job:</td>
                             <td><input type = "number" value={editValue.id} id="id" readonly></td>
-                        </tr>
+                        </tr> -->
                         <tr>
                             <td>Name of the job:</td>
                             <td><input value={editValue.name} id="name"></td>

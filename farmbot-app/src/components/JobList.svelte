@@ -28,7 +28,6 @@
   }
 
   function edit(name){
-    //TODO
     jobName.Name = name;
   }
 
@@ -44,6 +43,7 @@
   <table style="width:100%;"id>
     <caption style="background-color: #b3d9b3">
       <th><p style="">Seeding jobs</p></th>
+      <th> </th>
       <th>
         <button style="background-color: #edfded" on:click={gettingJobs}>
           Refresh

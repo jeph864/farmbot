@@ -40,6 +40,7 @@
   <table style="width:100%;" id>
     <caption style="background-color: #b3d9b3">
       <th><p style="">Watering jobs</p></th>
+      <th></th>
       <th>
         <button style="background-color: #edfded" on:click={gettingWateringJobs}>
           Refresh
