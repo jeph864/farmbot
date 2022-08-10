@@ -1,5 +1,5 @@
 <script>
-  import { executeWateringJob, getWateringJobs } from "../fetchers.js";
+  import { executeWateringJob, getWateringJobs, toggleWateringJob } from "../fetchers.js";
   import ActiveJob from "./ActiveJob.svelte";
 
   export let wateringJobs
@@ -14,15 +14,14 @@
   wateringJobs = gettingWateringJobs();
 
 
-  export async function onUpdate(){
-    wateringJobs = undefined;
-    wateringJobs = gettingWateringJobs();
-  }
-
   function toggleJob(id,active){
-    //TODO: activate/deactivate watering job
-    //update(id, active -> !active)
-    x=!x;
+    if(active){
+      toggleWateringJob(id, 0)
+    }
+    else{
+      toggleWateringJob(id, 1)
+    }
+    gettingWateringJobs()
 
   }
 
@@ -66,11 +65,11 @@
         <td>{value.nextRunAt.toString()}</td>
         <td style="width: 70px">
 
-          <ActiveJob active={x} />
+          <ActiveJob active={value.scheduled} />
 
         </td>
-        <td><button on:click={toggleJob(value.id, x)}>toggle job</button></td>
-        <td><button on:click={execute(value.id)}>execute now</button></td>
+        <td style="width: 70px"><button on:click={toggleJob(value.id, value.scheduled)}>toggle job</button></td>
+        <td style="width: 100px"><button on:click={execute(value.id)}>execute now</button></td>
       </tr>
     {/each}
     </tbody>
@@ -90,12 +89,12 @@
     }
 
     th {
-        text-align: left;
+        text-align: center;
         padding: 6px;
     }
     td {
         border: 1px solid #dddddd;
-        text-align: left;
+        text-align: center;
         padding: 6px;
     }
     thead tr th {

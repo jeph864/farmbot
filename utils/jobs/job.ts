@@ -64,7 +64,7 @@ export abstract class Job{
   }
 
   abstract initParams (jobParams: JobParams) : JobParams
-  abstract runStep (args: JobStep, amount: number);
+  abstract runStep (args: JobStep, amount: number, plant_type:string);
 
   //abstract  executeJob (job_id : number, callback) : void;
   minPos = (pos1: Position, pos2: Position) => {
@@ -136,7 +136,7 @@ export abstract class Job{
           return _this.calculateSteps(ready_job)
         })
         .then(steps => {
-          return _this.executeAllSteps(steps, amount)
+          return _this.executeAllSteps(steps, amount, ready_job.plant_type)
             .then(function(_){
             return _this.updateLastRun(job_id, started)
               .then((_) => {
@@ -308,11 +308,11 @@ export abstract class Job{
       { kind: "update_resource", args: args, body: body}
     ]));
   };
-  executeAllSteps = async (items, amount = 100) => {
+  executeAllSteps = async (items, amount = 100, plant_type) => {
     let _this = this;
     let results : Array<RpcOk|RpcError>= [];
     for(let item of items){
-      let r = await _this.runStep(item, amount)
+      let r = await _this.runStep(item, amount, plant_type)
         .then(function(ack){
           results.push(ack)
         });
@@ -379,6 +379,6 @@ getJob = (job_id) => {
   }
   updatePlant = (plant :Plant) => {
     return this.db.collection(this.plants)
-      .updateOne({$and: [{x: plant.location.x}, {y:plant.location.y}, {z:plant.location.z}]},{$set: plant}, {upsert: true})
+      .updateOne({$and: [{x: plant.x_coord}, {y:plant.y_coord}]},{$set: plant}, {upsert: true})
   };
 };

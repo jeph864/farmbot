@@ -19,7 +19,7 @@ const router = express.Router();
 
 
 router.use(function timeLog(_, __, next) {
-  console.log('Time: ', Date.now());
+  //console.log('Time: ', Date.now());
   next();
 });
 
@@ -389,6 +389,15 @@ router.get('/unsafe/remove', (__, res, _) => {
     }).catch( e => {
       console.error(e)
     res.send("Failed to remove unsafe locations")
+    })
+})
+
+router.get('/jobs/plantCoordinates/getAll', function(_, res){
+  seeding_jobs.getPlantCoordinates()
+    .then( function(results) {
+      if (results){
+        res.json(results);
+      }
     })
 })
 

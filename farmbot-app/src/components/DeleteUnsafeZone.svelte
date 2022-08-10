@@ -12,9 +12,9 @@
   }
   zones = gettingZones();
 
-  function deleteZone(area){
-    deleteUnsafeArea(area)
-    gettingZones()
+  function deleteZone(id){
+    deleteUnsafeArea(id)
+    //gettingZones()
   }
 
 </script>
@@ -38,7 +38,7 @@
     {#each Object.values(data) as value}
       <tr>
         <td><p style="">{value.name}</p></td>
-        <td><button on:click={deleteZone(value)}>delete</button></td>
+        <td><button on:click={deleteZone(value.id)}>delete</button></td>
       </tr>
     {/each}
     </tbody>
@@ -57,7 +57,6 @@
 <style>
     table {
         border-collapse: collapse;
-        width: 100%;
     }
 
     thead tr th {
@@ -65,13 +64,14 @@
     }
 
     th {
-        text-align: left;
+        text-align: center;
         padding: 6px;
     }
     td {
         border: 1px solid #dddddd;
-        text-align: left;
+        text-align: center;
         padding: 6px;
+        width: 50%;
     }
     thead tr th {
         position:sticky; top:0; background: rgba(222, 220, 171, 0.85);

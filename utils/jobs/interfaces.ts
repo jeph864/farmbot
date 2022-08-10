@@ -80,10 +80,9 @@ export interface Event{
 
 
 export interface Plant {
-  location : Position;
-  name: string;
-  stage: PlantStage;
-  id: number;
+  plant_type : string;
+  x_coord: number;
+  y_coord: number;
 }
 export type Stage = "Not Planted"| "Planted"| "Watered"
 export interface Vec2{

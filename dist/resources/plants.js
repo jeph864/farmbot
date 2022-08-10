@@ -14,18 +14,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PlantCoordinates = void 0;
 var Resource = /** @class */ (function () {
     function Resource() {
     }
     return Resource;
 }());
-var Plant = /** @class */ (function (_super) {
-    __extends(Plant, _super);
-    function Plant() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    return Plant;
-}(Resource));
 var PlantGroup = /** @class */ (function (_super) {
     __extends(PlantGroup, _super);
     function PlantGroup() {
@@ -33,3 +28,21 @@ var PlantGroup = /** @class */ (function (_super) {
     }
     return PlantGroup;
 }(Resource));
+var PlantCoordinates = /** @class */ (function () {
+    function PlantCoordinates(db) {
+        var _this = this;
+        this.save = function (location) {
+            return _this.db.collection(_this.collection)
+                .insertOne(location);
+        };
+        this.getALL = function () {
+            return _this.db.collection(_this.collection)
+                .find()
+                .toArray();
+        };
+        this.db = db;
+        this.collection = "plants_coordinates";
+    }
+    return PlantCoordinates;
+}());
+exports.PlantCoordinates = PlantCoordinates;
