@@ -307,6 +307,40 @@ router.get('/unsafelocation', function (__, res, _) {
         res.send("An error has occurred");
     });
 });
+router.get('/unsafelocation/delete', function (req, res) {
+    // @ts-ignore
+    var id = parseInt(req.query.id);
+    api_1.unsafe_locations.delete(id)
+        .then(function (r) {
+        if (r && r.deletedCount == 0) {
+            res.status(400);
+            res.send("Unsafe location with ID " + id + " does not exists or has been deleted");
+        }
+        else
+            res.send("deleted successfully");
+    }).catch(function (e) {
+        console.error(e);
+        res.status(400);
+        res.send("Failed to delete");
+    });
+});
+router.delete('/unsafelocation', function (req, res) {
+    // @ts-ignore
+    var id = parseInt(req.query.id);
+    api_1.unsafe_locations.delete(id)
+        .then(function (r) {
+        if (r && r.deletedCount == 0) {
+            res.status(400);
+            res.send("Unsafe location with ID " + id + " does not exists or has been deleted");
+        }
+        else
+            res.send("deleted successfully");
+    }).catch(function (e) {
+        console.error(e);
+        res.status(400);
+        res.send("Failed to delete");
+    });
+});
 router.get('/unsafe/remove', function (__, res, _) {
     console.log("Unsafe check");
     api_1.seeding_jobs.getJob(1)
