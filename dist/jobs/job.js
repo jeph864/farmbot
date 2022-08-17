@@ -327,18 +327,16 @@ var Job = /** @class */ (function () {
             if (amount === void 0) { amount = 100; }
             if (job_id === void 0) { job_id = -1; }
             return __awaiter(_this_1, void 0, void 0, function () {
-                var _this, curr_items, results, _loop_1, _i, items_1, item;
-                var _this, results, finished_steps, total_number_of_steps, _i, items_1, item, r;
+                var _this, curr_items, results, finished_steps, total_number_of_steps, _loop_1, _i, items_1, item;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
                             _this = this;
-
                             curr_items = JSON.parse(JSON.stringify(items));
                             console.log("curr_items:", items);
-
                             results = [];
-
+                            finished_steps = 0;
+                            total_number_of_steps = items.length;
                             _loop_1 = function (item) {
                                 var r, distance_1, sortByDistance;
                                 return __generator(this, function (_b) {
@@ -347,8 +345,12 @@ var Job = /** @class */ (function () {
                                             console.log("qqqqq", items.length);
                                             console.log("item----", curr_items);
                                             console.log("....", job_type);
-                                            return [4 /*yield*/, _this.runStep(curr_items[0])
+                                            return [4 /*yield*/, _this.runStep(curr_items[0], amount, plant_type)
                                                     .then(function (ack) {
+                                                    finished_steps++;
+                                                    if (job_id !== -1 && api_1.app_status.running.job_id == job_id) {
+                                                        api_1.app_status.running.progress = finished_steps / total_number_of_steps;
+                                                    }
                                                     results.push(ack);
                                                     console.log("results of watering step:", curr_items[0]);
                                                 })];
@@ -372,24 +374,14 @@ var Job = /** @class */ (function () {
                                     }
                                 });
                             };
-                            
-                            finished_steps = 0;
-                            total_number_of_steps = items.length;
                             _i = 0, items_1 = items;
                             _a.label = 1;
                         case 1:
                             if (!(_i < items_1.length)) return [3 /*break*/, 4];
                             item = items_1[_i];
-                            return [4 /*yield*/, _this.runStep(item, amount, plant_type)
-                                    .then(function (ack) {
-                                    finished_steps++;
-                                    if (job_id !== -1 && api_1.app_status.running.job_id == job_id) {
-                                        api_1.app_status.running.progress = finished_steps / total_number_of_steps;
-                                    }
-                                    results.push(ack);
-                                })];
+                            return [5 /*yield**/, _loop_1(item)];
                         case 2:
-                            r = _a.sent();
+                            _a.sent();
                             _a.label = 3;
                         case 3:
                             _i++;
