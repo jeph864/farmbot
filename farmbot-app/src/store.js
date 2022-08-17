@@ -5,6 +5,13 @@ export const jobName = {
   },
   get getName() {
     return this.Name;
+  },
+  ID : '',
+  set setID(theID) {
+    this.ID = theID;
+  },
+  get getID() {
+    return this.ID;
   }
 };
 export const coordinates = {
