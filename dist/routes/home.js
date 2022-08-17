@@ -146,6 +146,7 @@ router.post('/jobs/watering/execute', function (req, res, _) {
     if (!req.query.id) {
         var dest_location = req.body.dest;
         var tray_location = req.body.tray_pos;
+        // console.log("dest loc:", dest_location);
         api_1.watering_jobs.doWatering(dest_location)
             .then(function (_) {
             res.send("Finished Planting step");

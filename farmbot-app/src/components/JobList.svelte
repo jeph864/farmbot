@@ -27,8 +27,9 @@
     console.log(id);
   }
 
-  function edit(name){
+  function edit(name,id){
     jobName.Name = name;
+    jobName.ID = id;
   }
 
 </script>
@@ -74,7 +75,7 @@
         <td>{value.working_area.width}</td>
         <td>{value.working_area.length}</td>
         <td><button on:click={execute(value.id)}>execute</button></td>
-        <td><button on:click={edit(value.name)}>Edit</button></td>
+        <td><button on:click={edit(value.name,value.id)}>Edit</button></td>
       </tr>
     {/each}
     </tbody>

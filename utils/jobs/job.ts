@@ -1,5 +1,5 @@
 import { CSInteger, Farmbot, NamedPin, RpcError, RpcOk, rpcRequest } from "farmbot";
-import { DBSetup, unsafe_locations, slots_container, app_status } from "../setup/api";
+import { DBSetup, unsafe_locations, slots_container, status_message, app_status } from "../setup/api";
 import { Db, MongoClient } from "mongodb";
 import {
   WorkingArea, Position, JobParams,
@@ -90,7 +90,25 @@ export abstract class Job{
         locations.push( location )
       }
     }
+    console.log(locations);
+    
+    const distance = (coor1, coor2) => {
+      const x = coor2.x - coor1.x;
+      const y = coor2.y - coor1.y;
+      return Math.sqrt((x*x) + (y*y));
+   };
+   
+   const sortByDistance = (locations, point) => {
+      const sorter = (a, b) => distance(a, point) - distance(b, point);
+      locations.sort(sorter);
+   };
+  // let status = await getStatus();
+   //console.log(status_message.x1,status_message.x2);
+  //  sortByDistance(locations, {x: status_message.x1, y: status_message.x2});
+  sortByDistance(locations, {x: 990, y: 725});
+
     console.log("Locations: "+ locations.length)
+
     return  this.removeUnsafeLocations(locations);
   }
   removeUnsafeLocations = (locations, radius = 0) => {
@@ -136,7 +154,8 @@ export abstract class Job{
           return _this.calculateSteps(ready_job)
         })
         .then(steps => {
-          return _this.executeAllSteps(steps, amount, ready_job.plant_type, ready_job.id)
+          //console.log("steps:",steps);
+          return _this.executeAllSteps(steps, amount, ready_job.plant_type, ready_job.id, _this.type_name)
             .then(function(_){
             return _this.updateLastRun(job_id, started)
               .then((_) => {
@@ -308,20 +327,48 @@ export abstract class Job{
       { kind: "update_resource", args: args, body: body}
     ]));
   };
-  executeAllSteps = async (items, amount = 100, plant_type, job_id = -1) => {
+  executeAllSteps = async (items, amount = 100, plant_type, job_id = -1, job_type) => {
     let _this = this;
+    let curr_items: Array<object> = JSON.parse(JSON.stringify(items)) as typeof items;
+    console.log("curr_items:", items);
+
     let results : Array<RpcOk|RpcError>= [];
     let finished_steps = 0;
     let total_number_of_steps = items.length;
     for(let item of items){
-      let r = await _this.runStep(item, amount, plant_type)
+      console.log("qqqqq",items.length)
+      console.log("item----",curr_items);
+      console.log("....",job_type)
+      //sort here and return positin to item
+      let r = await _this.runStep(curr_items[0], amount, plant_type)
         .then(function(ack){
           finished_steps++;
           if(job_id !== -1 && app_status.running.job_id == job_id){
             app_status.running.progress = finished_steps/total_number_of_steps;
           }
           results.push(ack)
+          console.log("results of watering step:",curr_items[0]);
         });
+
+        curr_items.shift();
+
+        if(curr_items.length !== 0 && job_type == "watering")
+        {
+          const distance = (coor1, coor2) => {
+            const x = coor2.x - coor1.x;
+            const y = coor2.y - coor1.y;
+            return Math.sqrt((x*x) + (y*y));
+          };
+        
+        const sortByDistance = (curr_items, point) => {
+            const sorter = (a, b) => distance(a, point) - distance(b, point);
+            curr_items.sort(sorter);
+        };
+        console.log("current coordinates: ", status_message.x, status_message.y)
+        sortByDistance(curr_items, {x: status_message.x, y: status_message.y});
+
+     }
+
     }
     return results;
   }

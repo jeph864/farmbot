@@ -2,6 +2,7 @@
     import ActionItem from "./ActionItem.svelte";
     import {updateJob, getJobs, searchJobs, createJob} from "../fetchers.js";
     import {jobName,coordinates} from "../store.js";
+    import swal from 'sweetalert';
 
 
     let name ;
@@ -15,6 +16,7 @@
     export let y2;
     let jobCreated=""
     export let job;
+
     function setData(x1Data,y1Data,x2Data,y2Data)
     {
         x1 = x1Data;
@@ -57,7 +59,7 @@
         y1 = parseInt(document.getElementById("y1").value);
         x2 = parseInt(document.getElementById("x2").value);
         y2 = parseInt(document.getElementById("y2").value);
-        id = parseInt(document.getElementById("id").value);
+        id = jobName.ID;
 
 
         if(min_dist>=0){
@@ -82,13 +84,19 @@
                                 }
                             }
                         });
-                        jobCreated = "Job Update Successful"
-                        alert("Job Update Successful");
+                        swal("Job Update Successful");
+                        jobName.Name='';
+                        jobName.ID='';
+                        coordinates.x1 = '';
+                        coordinates.x2 = '';
+                        coordinates.y1 = '';
+                        coordinates.y2 = '';
+
                     }
-                    else { alert("y2 cannot be greater than y1"); }
-                } else { alert("x2 cannot be greater than x1"); }
-            } else{ alert("planting depth must be a positive number") }
-        } else{ alert("plant distance must be a positive number") }
+                    else { swal("y2 cannot be greater than y1"); }
+                } else { swal("x2 cannot be greater than x1"); }
+            } else{ swal("planting depth must be a positive number") }
+        } else{ swal("plant distance must be a positive number") }
     }
     export async function  searchJob(data){
         job = await searchJobs(data);
@@ -111,7 +119,7 @@
 
         {#if jobName.Name!==''}
             <p use = {searchJob(jobName.Name)}></p>
-        {/if}
+
 
         <div>
 
@@ -120,10 +128,6 @@
 
                 {#each Object.values(editData) as editValue}
                     <table id="myTable" border="0" cellpadding="3">
-                      <!--  <tr>
-                            <td>ID of the job:</td>
-                            <td><input type = "number" value={editValue.id} id="id" readonly></td>
-                        </tr> -->
                         <tr>
                             <td>Name of the job:</td>
                             <td><input value={editValue.name} id="name"></td>
@@ -157,12 +161,14 @@
                             <td></td>
                         </tr>
                     </table>
-                    <button on:click={refresh()}>
+
+                    <button on:click={refresh}>
                         show area
                     </button>
                     <button on:click={edit}>
                         Update seeding job
                     </button>
+
 
                 {/each}
             {/await}
@@ -171,6 +177,7 @@
 
             <br /> <p style="color: green;">{jobCreated}</p>
         </div>
+        {/if}
 
     </div>
 

@@ -18,6 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WateringJob = exports.WATERING_COLLECTION = void 0;
 var job_1 = require("./job");
 var queue_1 = require("./queue");
+var api_1 = require("../setup/api");
 exports.WATERING_COLLECTION = "watering_jobs";
 var WATERING_COLLECTION_SEQ = "watering_jobs_seq";
 var WateringJob = /** @class */ (function (_super) {
@@ -67,6 +68,17 @@ var WateringJob = /** @class */ (function (_super) {
                     locations.push(location_1);
                 }
             }
+            console.log(locations);
+            var distance = function (coor1, coor2) {
+                var x = coor2.x - coor1.x;
+                var y = coor2.y - coor1.y;
+                return Math.sqrt((x * x) + (y * y));
+            };
+            var sortByDistance = function (locations, point) {
+                var sorter = function (a, b) { return distance(a, point) - distance(b, point); };
+                locations.sort(sorter);
+            };
+            sortByDistance(locations, { x: api_1.status_message.x, y: api_1.status_message.y });
             return _this_1.removeUnsafeLocations(locations);
         };
         // @ts-ignore
