@@ -1565,12 +1565,10 @@ function create_client({ target, session, base, trailing_slash }) {
 				const is_svg_a_element = a instanceof SVGAElement;
 				const url = get_href(a);
 
-				// Ignore non-HTTP URL protocols (e.g. `mailto:`, `tel:`, `myapp:`, etc.)
+				// Ignore if url does not have origin (e.g. `mailto:`, `tel:`.)
 				// MEMO: Without this condition, firefox will open mailer twice.
-				// See:
-				// - https://github.com/sveltejs/kit/issues/4045
-				// - https://github.com/sveltejs/kit/issues/5725
-				if (!is_svg_a_element && !(url.protocol === 'https:' || url.protocol === 'http:')) return;
+				// See: https://github.com/sveltejs/kit/issues/4045
+				if (!is_svg_a_element && url.origin === 'null') return;
 
 				// Ignore if tag has
 				// 1. 'download' attribute
