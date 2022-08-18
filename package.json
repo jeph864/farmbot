@@ -1,0 +1,47 @@
+{
+  "name": "radish",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://df-git.informatik.uni-kl.de/teaching/df-project/ss22/radish.git"
+  },
+  "dependencies": {
+    "agenda": "^4.3.0",
+    "axios": "^0.27.2",
+    "body": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "farmbot": "^15.0.0",
+    "generic-session": "^0.1.2",
+    "hyperscript": "^2.0.2",
+    "mongodb": "^4.7.0",
+    "pwd": "^1.1.0",
+    "redirecter": "^0.0.1",
+    "request": "^2.88.2",
+    "routes-router": "^4.3.1",
+    "send-data": "^8.0.0"
+  },
+  "prettier": {
+    "semi": true
+  },
+  "author": "Radish Group",
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.18.2",
+    "@tsconfig/node16": "^1.0.3",
+    "@types/agenda": "^4.1.0",
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.11.45",
+    "eslint": "^8.17.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.7.0",
+    "typescript": "^4.7.4"
+  }
+}
